@@ -1,5 +1,7 @@
 :root {
-    --dark-gray: #5c6784
+    --dark-gray: #5c6784;
+    --back-btn-col: #2364D2FF;
+    --back-btn-col-bg: #2364D2FF;
 }
 
 body {
@@ -114,7 +116,27 @@ img {
     color: forestgreen;
 }
 
-.no-card-msg{
+.no-card-msg {
     color: red;
     font-size: 2em;
+}
+
+/*back btn*/
+.btn-back {
+    display: inline-block;
+    width: 100%;
+    background-color: var(--dark-gray);
+    color: lightgrey;
+    border-radius: 0.4em;
+    padding: 0.3em;
+    border: 1px solid var(--dark-gray);
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    /*filter: brightness(118%);*/
+    background-color: lightgrey;
+    color: var(--dark-gray);
+    cursor: pointer;
+    border: 1px solid var(--dark-gray);
 }

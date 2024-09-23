@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title th:text="#{card.man.tab.title}">Card Management</title>
     <th:block th:insert="~{fragment/common::head}"></th:block>
-
+    <link th:href="@{/css/credit_card/card-manage.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -14,8 +14,19 @@
 
     <div class="container-card-manage rounded mt-4">
 
-        <div>
-            <span class="fs-4" th:text="#{card.man.page.title}">Credit Card Management</span>
+        <div class="d-flex text-center">
+            <div class="col-1">
+                <a class="btn btn-back" th:href="@{/credit-card/deposit}">
+                    <span class="align-left">
+                        <i class="fa-solid fa-chevron-left chevron-left"></i>
+                        <span th:text="#{cc.dep.form.back}">Back</span>
+                    </span>
+                </a>
+            </div>
+            <div class="col-10">
+                <span class="fs-4" th:text="#{card.man.page.title}">Credit Card Management</span>
+            </div>
+            <div class="col-1"></div>
         </div>
 
         <div th:if="${cards.size() == 0}">
@@ -89,11 +100,6 @@
         </div>
     </div>
 </div>
-
-<link th:href="@{/css/credit_card/card-manage.css}" rel="stylesheet">
-
-<link rel="stylesheet" th:href="@{/css/index.css}"/>
-
 
 </body>
 </html>

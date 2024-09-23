@@ -5,6 +5,8 @@
     --success: #4bb543;
     --fail: #ff4350;
     --btn-blue: #2364d2;
+    --back-btn-col: #2364D2FF;
+    --back-btn-col-bg: #2364D2FF;
 }
 
 body {
@@ -735,13 +737,13 @@ body {
 
 /* deposit / add credit card */
 .btn-back {
-    color: #2364D2FF;
+    color: var(--back-btn-col);
     font-weight: bolder;
 }
 
 .btn-back:hover {
-    background-color: #2364D2FF;
-    color: whitesmoke;
+    background-color: var(--back-btn-col-bg);
+    color: whitesmoke !important;
     font-weight: bolder;
 }
 
@@ -807,6 +809,6 @@ body {
 
 .card-management-btn:hover {
     color: white;
-    background-color: var(--btn-blue);
+    background: var(--btn-blue);
     font-weight: bold;
 }
