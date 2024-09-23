@@ -94,7 +94,6 @@ public class CreditCardService {
 
         CreditCardEntity creditCardEntity = byCardNumber.get();
 
-
         boolean cvcMatch = creditCardEntity.getCardCvc().toString().equals(cvc);
         boolean cardNumMatch = creditCardEntity.getCardNumber().equals(cardNum);
         boolean userIdMatch = creditCardEntity.getOwner().getId().equals(currentLoggedUserId);

@@ -7,6 +7,8 @@ import com.casino.blackjack.service.auth.UserService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Optional;
 
 @Service
@@ -25,6 +27,8 @@ public class WalletService {
 
         Optional<WalletEntity> walletById = walletRepository.getReferenceByOwnerId(ownerId);
 
+        String depositSumFormatted = depositSum.replaceAll(",", "");;
+
         if (walletById.isEmpty()) {
 
             Optional<UserEntity> byId = userService.findById(ownerId);
@@ -34,7 +38,7 @@ public class WalletService {
             }
 
             WalletEntity walletEntity = new WalletEntity()
-                    .setBalance(new BigDecimal(depositSum))
+                    .setBalance(new BigDecimal(depositSumFormatted))
                     .setOwner(byId.get())
                     .setLastWin(BigDecimal.ZERO)
                     .setCurrentBet(BigDecimal.ZERO);
@@ -45,7 +49,7 @@ public class WalletService {
         }
 
         WalletEntity walletEntity = walletById.get();
-        walletEntity.deposit(new BigDecimal(depositSum));
+        walletEntity.deposit(new BigDecimal(depositSumFormatted));
         walletRepository.save(walletEntity);
     }
 }
