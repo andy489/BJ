@@ -1,7 +1,7 @@
 # Blackjack
 
 ```sh
-cd github/Blackjack
+cd {path-to-ptoj}/BJ
 open -a docker
 docker-compose up -d
 ```

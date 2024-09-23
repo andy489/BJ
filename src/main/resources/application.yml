@@ -1,12 +1,12 @@
 spring:
   application:
-    name: Blackjack
+    name: BJ
   main:
     banner-mode: off
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/bjdb?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
-    username: ${DB_USER}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/bjdb?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
+    username: ${DB_USER:root}
     password:
   jpa:
     hibernate:
@@ -29,14 +29,14 @@ spring:
 
 google.recaptcha:
   enabled: true
-  site: ${RECAPTCHA_SITE_KEY}
-  secret: ${RECAPTCHA_SITE_SECRET}
+  site: ${RECAPTCHA_SITE_KEY:6LftLZQpAAAAABngcJW_QJ-hZ3XCfb8GqAisD0s5}
+  secret: ${RECAPTCHA_SITE_SECRET:6LftLZQpAAAAAOo1uLD7ocJ_TudnvG578TfkAGK3}
 
 auth:
   register:
     auto-login: false
   login:
-    remember-me-key: ${REMEMBER_ME_KEY}
+    remember-me-key: ${REMEMBER_ME_KEY:1234}
   activation-token:
     cleanup-cron: "*/60 */10 * * * *"
     expires-after-minutes: 60
@@ -46,11 +46,11 @@ auth:
 
 # mail-hog: "localhost:8025"
 mail:
-  app-mail: ${APP_MAIL}
-  host: ${MAIL_HOST}
-  port: ${MAIL_PORT}
-  username: ${MAIL_USER}
-  password: ${MAIL_PASS}
+  app-mail: ${APP_MAIL:blackjack@bj.com}
+  host: ${MAIL_HOST:localhost}
+  port: ${MAIL_PORT:1025}
+  username: ${MAIL_USER:root}
+  password: ${MAIL_PASS:root}
   smtp-auth: true
   transport-protocol: smtp
 

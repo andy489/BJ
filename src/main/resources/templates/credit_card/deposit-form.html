@@ -59,7 +59,7 @@
                     </select>
                     <span class="invalid-feedback alert alert-danger fs-6 p-1">
                         <span th:if="${#fields.errors('cardNumber').size() > 0}"
-                              th:text="${#fields.errors('cardNumber').get(0).endsWith('expired')?
+                              th:text="${#fields.errors('cardNumber').contains('expired')?
                               #fields.errors('cardNumber').get(1) :
                               #fields.errors('cardNumber').get(0)}">
                         </span>
@@ -84,8 +84,7 @@
 
                 <div class="card-input">
                     <a class="btn btn-outline-primary card-management-btn w-100"
-                       th:href="@{/credit-card/manage}"
-                       th:text="#{cc.dep.management.btn}">
+                        th:href="@{/credit-card/manage}" th:text="#{cc.dep.management.btn}">
                         Card management
                     </a>
                 </div>
@@ -98,10 +97,10 @@
                            id="cvc-deposit"
                            class="card-input__input"/>
                     <span class="invalid-feedback alert alert-danger fs-6 p-1">
-                            <span th:if="${#fields.errors('cvcDeposit').size() > 0}"
-                                  th:text="${#fields.errors('cvcDeposit').get(0)}">
-                            </span>
+                        <span th:if="${#fields.errors('cvcDeposit').size() > 0}"
+                              th:text="${#fields.errors('cvcDeposit').get(0)}">
                         </span>
+                    </span>
                 </div>
 
                 <div class="card-input">
