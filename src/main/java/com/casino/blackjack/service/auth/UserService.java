@@ -131,7 +131,6 @@ public class UserService {
                 .setFirstName(userRegistrationDTO.getFirstName())
                 .setLastName(userRegistrationDTO.getLastName())
                 .setIsActive(false)
-                .setMyGame(null)
                 .setMyWallet(null);
 
         newUser = userRepository.save(newUser);

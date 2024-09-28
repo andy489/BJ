@@ -20,11 +20,17 @@ public class GameEntity extends BaseEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private String hash;
+
     private String playerCards;
 
     private String dealerCards;
 
-    private String hash;
+    private String availableDecisions;
+
+    private Double winMultiplier;
+
+    private Boolean finalized;
 
     @OneToOne
     private UserEntity owner;

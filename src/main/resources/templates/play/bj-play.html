@@ -109,7 +109,8 @@
                 </form>
             </div>
             <div class="col-1 decision dec-dea">
-                <form action="">
+                <form th:action="@{/play/deal}"
+                      th:method="post">
                     <button type="submit" class="btn btn-decision btn-deal"
                             th:classappend="${#lists.contains(game.getAvailableDecisions(), 5) ? '' : 'disabled'}">
                     </button>

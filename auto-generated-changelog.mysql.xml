@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="andreystoev (generated)" id="1719247556598-1">
+    <changeSet author="stoevand" id="1727547362552-1">
         <createTable tableName="activation_tokens">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -12,12 +12,12 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-2">
+    <changeSet author="stoevand" id="1727547362552-2">
         <createTable tableName="credit_cards">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="card_cvc" type="INT">
+            <column name="card_cvc" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="card_holder" type="VARCHAR(255)">
@@ -37,19 +37,35 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-3">
-        <createTable tableName="games">
+    <changeSet author="stoevand" id="1727547362552-3">
+        <createTable tableName="last_games">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
+            <column name="available_decisions" type="VARCHAR(255)"/>
             <column name="dealer_cards" type="VARCHAR(255)"/>
+            <column name="finalized" type="BIT(1)"/>
+            <column name="hash" type="VARCHAR(255)"/>
             <column name="player_cards" type="VARCHAR(255)"/>
+            <column name="win_multiplier" type="DOUBLE"/>
             <column name="owner_id" type="BIGINT">
                 <constraints unique="true"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-4">
+    <changeSet author="stoevand" id="1727547362552-4">
+        <createTable tableName="past_games">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="dealer_cards" type="VARCHAR(255)"/>
+            <column name="hash" type="VARCHAR(255)"/>
+            <column name="player_cards" type="VARCHAR(255)"/>
+            <column name="win_multiplier" type="DOUBLE"/>
+            <column name="owner_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="stoevand" id="1727547362552-5">
         <createTable tableName="reset_pass_tokens">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -61,17 +77,17 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-5">
+    <changeSet author="stoevand" id="1727547362552-6">
         <createTable tableName="roles">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="role" type="ENUM(9)">
+            <column name="role" type="ENUM('REGULAR', 'MODERATOR', 'ADMIN')">
                 <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-6">
+    <changeSet author="stoevand" id="1727547362552-7">
         <createTable tableName="users">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -83,7 +99,7 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="first_name" type="VARCHAR(255)"/>
-            <column name="gender" type="ENUM(11)">
+            <column name="gender" type="ENUM('MALE', 'FEMALE', 'UNSPECIFIED')">
                 <constraints nullable="false"/>
             </column>
             <column name="is_active" type="BIT(1)"/>
@@ -92,15 +108,12 @@
             <column name="username" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="my_game_id" type="BIGINT">
-                <constraints unique="true"/>
-            </column>
             <column name="my_wallet_id" type="BIGINT">
                 <constraints unique="true"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-7">
+    <changeSet author="stoevand" id="1727547362552-8">
         <createTable tableName="users_roles">
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -110,7 +123,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-8">
+    <changeSet author="stoevand" id="1727547362552-9">
         <createTable tableName="wallets">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -123,41 +136,46 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-9">
-        <createIndex indexName="FK2ycif7hrrfm42c8vbt5mhk6do" tableName="credit_cards">
+    <changeSet author="stoevand" id="1727547362552-10">
+        <createIndex associatedWith="" indexName="FK2ycif7hrrfm42c8vbt5mhk6do" tableName="credit_cards">
             <column name="owner_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-10">
-        <createIndex indexName="FKj6m8fwv7oqv74fcehir1a9ffy" tableName="users_roles">
+    <changeSet author="stoevand" id="1727547362552-11">
+        <createIndex associatedWith="" indexName="FKbr4s7fht37juwsprroekga814" tableName="past_games">
+            <column name="owner_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="stoevand" id="1727547362552-12">
+        <createIndex associatedWith="" indexName="FKj6m8fwv7oqv74fcehir1a9ffy" tableName="users_roles">
             <column name="role_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-11">
+    <changeSet author="stoevand" id="1727547362552-13">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="users_roles" constraintName="FK2o0jvgh89lemvvo17cbqvdxaa" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-12">
+    <changeSet author="stoevand" id="1727547362552-14">
         <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="credit_cards" constraintName="FK2ycif7hrrfm42c8vbt5mhk6do" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-13">
+    <changeSet author="stoevand" id="1727547362552-15">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="last_games" constraintName="FK5i4pq76eceuacj8wd21v8rm76" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="stoevand" id="1727547362552-16">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="reset_pass_tokens" constraintName="FK5syo597w66qi11pv80m4pjt3t" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-14">
-        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="games" constraintName="FK5tly2ihx4t84to6lfb4qrjo1b" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    <changeSet author="stoevand" id="1727547362552-17">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="past_games" constraintName="FKbr4s7fht37juwsprroekga814" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-15">
+    <changeSet author="stoevand" id="1727547362552-18">
         <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="wallets" constraintName="FKd516f3xp7i3dfxiysb07g76wi" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-16">
+    <changeSet author="stoevand" id="1727547362552-19">
         <addForeignKeyConstraint baseColumnNames="my_wallet_id" baseTableName="users" constraintName="FKg8hjels0rnpri0a1a7rwuosw2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="wallets" validate="true"/>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-17">
+    <changeSet author="stoevand" id="1727547362552-20">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="activation_tokens" constraintName="FKgtry5rof27b5hdur1a11y0gsn" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-18">
+    <changeSet author="stoevand" id="1727547362552-21">
         <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="users_roles" constraintName="FKj6m8fwv7oqv74fcehir1a9ffy" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="roles" validate="true"/>
-    </changeSet>
-    <changeSet author="andreystoev (generated)" id="1719247556598-19">
-        <addForeignKeyConstraint baseColumnNames="my_game_id" baseTableName="users" constraintName="FKjp8yq920g76vn76huy2aih4ga" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="games" validate="true"/>
     </changeSet>
 </databaseChangeLog>

@@ -21,7 +21,7 @@ public class PlayController extends BaseController {
     @GetMapping
     public ModelAndView sitOnTable() {
 
-        Game game = gameService.extractLastGame();
+        Game game = gameService.sitOnTable();
 
         ModelAndView mav = new ModelAndView();
         mav.addObject("game", game);
@@ -29,13 +29,9 @@ public class PlayController extends BaseController {
         return super.view("play/bj-play", mav);
     }
 
-    @PostMapping
-    public ModelAndView hit(ModelAndView modelAndView) {
-
-//        Game game = gameService.hit();
-
-
-
-        return super.redirect("play/bj-play");
+    @PostMapping("/deal")
+    public ModelAndView deal(ModelAndView modelAndView) {
+        gameService.deal();
+        return super.redirect("/play");
     }
 }

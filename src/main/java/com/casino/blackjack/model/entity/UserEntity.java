@@ -63,9 +63,6 @@ public class UserEntity extends BaseEntity {
     private Set<CreditCardEntity> creditCard;
 
     @OneToOne(fetch = FetchType.EAGER)
-    private GameEntity myGame;
-
-    @OneToOne(fetch = FetchType.EAGER)
     private WalletEntity myWallet;
 
     public UserEntity addRole(RoleEntity role) {
