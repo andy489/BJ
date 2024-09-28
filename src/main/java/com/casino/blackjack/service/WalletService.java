@@ -7,8 +7,6 @@ import com.casino.blackjack.service.auth.UserService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Optional;
 
 @Service

@@ -10,9 +10,7 @@ public class Mapper {
     @Bean
     ObjectMapper getObjectMapper(){
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper;
+        return new ObjectMapper();
     }
 
 }

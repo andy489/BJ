@@ -1,14 +1,14 @@
 :root {
     --primary: #639c9c;
     --shadow: 0 1px 5px rgba(104, 104, 104, 0.8);
-    --weather-box-border-color: #4e555b;
+    --dark-gray: #4e555b;
 }
 
 .container-header {
     margin: auto;
     background-color: rgba(0, 0, 0, 0.4); /* Black w/opacity/see-through */
     font-weight: bold;
-    border: 4px solid var(--weather-box-border-color);
+    border: 4px solid var(--dark-gray);
     z-index: 2;
     text-align: center;
     position: relative;
@@ -34,7 +34,7 @@ ul.navbar-nav {
     float: right;
 }
 
-.logout-container{
+.logout-container {
     font-weight: bolder;
     font-size: larger;
 }
@@ -46,16 +46,16 @@ ul.navbar-nav {
     text-align: center;
 }
 
-.login-greeter{
+.login-greeter {
     color: whitesmoke;
     font-weight: normal;
 }
 
-.nav-link:hover{
+.nav-link:hover {
     text-decoration: none;
 }
 
-.footer-icon:hover, .nav-link:hover{
+.footer-icon:hover, .nav-link:hover {
     -webkit-text-fill-color: white;
     text-shadow: 4px 4px 8px black, 0 0 25px var(--primary), 0 0 5px var(--primary);
 }

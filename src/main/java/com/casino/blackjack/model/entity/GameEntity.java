@@ -7,18 +7,24 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.List;
+import java.io.Serial;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "games")
+@Table(name = "last_games")
 @Getter
 @Setter
 @Accessors(chain = true)
-public class GameEntity extends BaseEntity {
+public class GameEntity extends BaseEntity implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private String playerCards;
 
     private String dealerCards;
+
+    private String hash;
 
     @OneToOne
     private UserEntity owner;

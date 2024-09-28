@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Play BJ</title>
+    <th:block th:insert="~{fragment/common::head}"></th:block>
+    <link th:href="@{/css/play/bj-play.css}" rel="stylesheet">
+</head>
+<body>
+
+<header th:replace="~{fragment/common::navbar}"></header>
+
+<div class="wrapper" th:object="${game}">
+    <div class="cards-wrapper">
+        <div class="game-metadata-wrapper">
+            <span class="game-info">User</span>
+            <div class="small-deli"></div>
+            <span class="game-metadata" th:text="${#authentication.getPrincipal().getUsername()}">pesho489</span>
+            <span class="deli"></span>
+            <span class="game-info">Game ID</span>
+            <div class="small-deli"></div>
+            <span class="game-metadata" th:text="*{hash}">489489</span>
+        </div>
+        <div class="game-wrapper">
+            <div class="row dealer-cards">
+                <div class="dealer-cards-box">
+                    <div class="col-12 play-card-wrapper">
+                        <img th:each="c, i : *{dealerCards}"
+                             th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
+                             alt="" class="play-card"
+                             th:classappend="'d-' + *{dealerCardsEven} + '-' + ${game.dDealerCards + i.index}">
+                    </div>
+                    <div class="score-box">
+                        <span class="curr-result-user">Dealer</span>
+                        <div class="small-deli"></div>
+                        <span class="curr-result-box" th:text="*{dealerScore()}">100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row player-cards">
+                <div class="player-cards-box">
+                    <div class="col-12 play-card-wrapper">
+                        <img th:each="c, i : *{playerCards}"
+                             th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
+                             alt="" class="play-card"
+                             th:classappend="'d-' + *{playerCardsEven} + '-' + ${game.dPlayerCards + i.index}">
+                    </div>
+                    <div class="score-box">
+                        <div class="curr-result-user">Player</div>
+                        <div class="small-deli"></div>
+                        <div class="curr-result-box" th:text="*{playerScore()}">100/200</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  DECISION  -->
+    <div class="row decision-box-wrapper">
+        <div class="row inner-decision-box-wrapper justify-content-center">
+            <div class="col-1 decision dec-sur">
+                <form action="">
+                    <button type="submit" class="btn btn-decision btn-surrender"
+                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 0) ? '' : 'disabled'}">
+                    </button>
+                    <div class="btn-cmd">
+                        Surrender
+                    </div>
+                </form>
+            </div>
+            <div class="col-1 decision dec-spl">
+                <form action="">
+                    <button type="submit" class="btn btn-decision btn-split"
+                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 1) ? '' : 'disabled'}">
+                    </button>
+                    <div class="btn-cmd">
+                        Split
+                    </div>
+                </form>
+            </div>
+            <div class="col-1 decision dec-dou">
+                <form action="">
+                    <button type="submit" class="btn btn-decision btn-double"
+                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 0) ? '' : 'disabled'}">
+                    </button>
+                    <div class="btn-cmd"
+                         th:classappend="${#lists.contains(game.getAvailableDecisions(), 2) ? '' : 'disabled'}">Double
+                    </div>
+                </form>
+            </div>
+            <div class="col-1 decision dec-sta">
+                <form action="">
+                    <button type="submit" class="btn btn-decision btn-stand"
+                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 3) ? '' : 'disabled'}">
+                    </button>
+                    <div class="btn-cmd">Stand
+                    </div>
+                </form>
+            </div>
+            <div class="col-1 decision dec-hit">
+                <form action="">
+                    <button type="submit" class="btn btn-decision btn-hit"
+                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 4) ? '' : 'disabled'}">
+                    </button>
+                    <div class="btn-cmd">
+                        Hit
+                    </div>
+                </form>
+            </div>
+            <div class="col-1 decision dec-dea">
+                <form action="">
+                    <button type="submit" class="btn btn-decision btn-deal"
+                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 5) ? '' : 'disabled'}">
+                    </button>
+                    <div class="btn-cmd">
+                        Deal
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--  EO:DECISION  -->
+
+    <!--  BET CHIP  -->
+    <div class="row chip-box-wrapper">
+        <div class="row inner-chip-box-wrapper justify-content-center">
+            <div class="col-1 chip">
+                <form action="">
+                    <button type="submit" class="btn btn-chip chip-250">
+                        <span class="chip-value">2.5</span>
+                    </button>
+                </form>
+            </div>
+            <div class="col-1 chip">
+                <form action="">
+                    <button type="submit" class="btn btn-chip chip-500">
+                        <span class="chip-value">5</span>
+                    </button>
+                </form>
+            </div>
+            <div class="col-1 chip">
+                <form action="">
+                    <button type="submit" class="btn btn-chip chip-1000">
+                        <span class="chip-value">10</span>
+                    </button>
+                </form>
+            </div>
+            <div class="col-1 chip">
+                <form action="">
+                    <button type="submit" class="btn btn-chip chip-2500">
+                        <span class="chip-value">25</span>
+                    </button>
+                </form>
+            </div>
+            <div class="col-1 chip">
+                <form action="">
+                    <button type="submit" class="btn btn-chip chip-5000">
+                        <span class="chip-value">50</span>
+                    </button>
+                </form>
+            </div>
+            <div class="col-1 chip">
+                <form action="">
+                    <button type="submit" class="btn btn-chip chip-10000">
+                        <span class="chip-value">100</span>
+                    </button>
+                </form>
+            </div>
+            <div class="col-1 bet-action">
+                <form action="">
+                    <button type="submit" class="btn btn-bet">
+                        <i class="fas fa-redo-alt fa-2x"></i>
+                    </button>
+                    <span>Repeat</span>
+                </form>
+            </div>
+            <div class="col-1 bet-action">
+                <form action="">
+                    <button type="submit" class="btn btn-bet">
+                        <i class="fas fa-angle-double-up fa-2x"></i>
+                    </button>
+                    <span>Double</span>
+                </form>
+            </div>
+            <div class="col-1 bet-action">
+                <form action="">
+                    <button type="submit" class="btn btn-bet">
+                        <i class="fas fa-window-close fa-2x"></i>
+                    </button>
+                    <span>Clear</span>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--  EO:BET CHIP  -->
+
+    <!--  BALANCE  -->
+    <div class="row balance-box-wrapper">
+        <div class="col-1"></div>
+        <div class="col-2 cash-stat">
+            <div class="balance-box-title">
+                Balance
+            </div>
+            <div class="row balance-box-value">
+                <div class="col-1">
+                    <span>€</span>
+                </div>
+                <div class="col-8">
+                    <span>100.55</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-2 cash-stat">
+            <div class="last-bet-box-title">
+                Last Win
+            </div>
+            <div class="row last-bet-box-value">
+                <div class="col-1">
+                    <span>€</span>
+                </div>
+                <div class="col-8">
+                    <span>0.00</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-2 cash-stat">
+            <div class="curr-bet-box-title">
+                Current Bet
+            </div>
+            <div class="row curr-bet-box-value">
+                <div class="col-1">
+                    <span>€</span>
+                </div>
+                <div class="col-8">
+                    <span>0.00</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-2 bet-legend">
+            <div>
+                <span>Min bet:</span>
+                <span>10.0</span>
+                <span>€</span>
+            </div>
+            <div>
+                <span>Max bet:</span>
+                <span>1000.0</span>
+                <span>€</span>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <!--  EO:BALANCE  -->
+</div>
+</body>
+</html>

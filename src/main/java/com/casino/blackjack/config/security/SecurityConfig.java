@@ -1,7 +1,7 @@
 package com.casino.blackjack.config.security;
 
 import com.casino.blackjack.repo.UserRepository;
-import com.casino.blackjack.service.auth.BlackjackUserDetailsService;
+import com.casino.blackjack.service.auth.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +52,10 @@ public class SecurityConfig {
                                     "/rules",
                                     "/test/**")
                             .permitAll()
-                            .requestMatchers("/credit-card/**").authenticated()
+                            .requestMatchers(
+                                    "/credit-card/**",
+                                    "/play/**"
+                            ).authenticated()
                             .requestMatchers(HttpMethod.POST, "/auth/**")
                             .anonymous()
                             .requestMatchers(HttpMethod.GET, "/auth/**")
@@ -101,7 +104,7 @@ public class SecurityConfig {
 
     @Bean
     UserDetailsService userDetailsService(UserRepository userRepository) {
-        return new BlackjackUserDetailsService(userRepository);
+        return new AppUserDetailsService(userRepository);
     }
 
     @Bean

@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 // NOTE: This is not annotated as @Service, because we will return it as a bean.
-public class BlackjackUserDetailsService implements UserDetailsService {
+public class AppUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public BlackjackUserDetailsService(UserRepository userRepository) {
+    public AppUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -36,7 +36,7 @@ public class BlackjackUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities =
                 userEntity.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRole().name())).toList();
 
-        CustomUserDetails customUserDetails = new CustomUserDetails()
+        return new CustomUserDetails()
                 .setId(userEntity.getId())
                 .setUsername(userEntity.getUsername())
                 .setPassword(userEntity.getPassword())
@@ -46,8 +46,5 @@ public class BlackjackUserDetailsService implements UserDetailsService {
                 .setFirstName(userEntity.getFirstName())
                 .setLastName(userEntity.getLastName())
                 .setAuthorities(simpleGrantedAuthorities);
-
-
-        return customUserDetails;
     }
 }

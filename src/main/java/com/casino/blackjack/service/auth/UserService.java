@@ -14,7 +14,6 @@ import com.casino.blackjack.repo.RoleRepository;
 import com.casino.blackjack.repo.UserActivationTokenRepository;
 import com.casino.blackjack.repo.UserRepository;
 import com.casino.blackjack.repo.UserResetPassTokenRepository;
-import com.casino.blackjack.service.mail.MailService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -50,7 +49,7 @@ public class UserService {
 
     private final UserDetailsService userDetailsService;
 
-    private final BlackjackUserDetailsService blackjackUserDetailsService;
+    private final AppUserDetailsService appUserDetailsService;
 
     private final Boolean autoLogin;
 
@@ -74,7 +73,7 @@ public class UserService {
         this.encoder = encoder;
         this.userDetailsService = userDetailsService;
         this.autoLogin = autoLogin;
-        this.blackjackUserDetailsService = new BlackjackUserDetailsService(userRepository);
+        this.appUserDetailsService = new AppUserDetailsService(userRepository);
         this.appEventPublisher = appEventPublisher;
         this.userActivationTokenRepository = userActivationTokenRepository;
         this.userResetPassTokenRepository = userResetPassTokenRepository;
@@ -157,7 +156,7 @@ public class UserService {
     }
 
     public Authentication login(String username) {
-        UserDetails userDetails = blackjackUserDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = appUserDetailsService.loadUserByUsername(username);
 
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 userDetails,
@@ -193,7 +192,7 @@ public class UserService {
 
         redirectAttributes.addFlashAttribute("username", username);
 
-        UserDetails userDetails = blackjackUserDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = appUserDetailsService.loadUserByUsername(username);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 userDetails,
@@ -259,6 +258,18 @@ public class UserService {
             CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 
             return principal.getId();
+        } else {
+            return null;
+        }
+    }
+
+    public UserEntity getCurrentLoggedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+
+            return userRepository.getReferenceById(principal.getId());
         } else {
             return null;
         }

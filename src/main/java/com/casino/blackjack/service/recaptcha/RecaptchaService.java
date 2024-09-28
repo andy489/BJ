@@ -26,7 +26,7 @@ public class RecaptchaService {
     }
 
     public Optional<RecaptchaResponseDTO> verify(String token) {
-        if (recaptchaConfig.isEnabled()) {
+        if (recaptchaConfig.getEnabled()) {
             return Optional.ofNullable(webClient.post()
                     .uri(this::buildReCaptchaURI)
                     .body(BodyInserters.fromFormData("secret", recaptchaConfig.getSecret())

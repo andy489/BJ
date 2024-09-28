@@ -56,6 +56,14 @@
             <span class="nav-func align-middle"
                   th:text="#{nav.rules}">Rules</span>
         </a>
+
+        <a class="nav-link active mb-0" th:href="@{/play}">
+            <span class="nav-icon align-middle">
+                <i class="fa-solid fa-play"></i>
+            </span>
+            <span class="nav-func align-middle"
+                  th:text="#{nav.play}">Play</span>
+        </a>
     </div>
 
     <div class="container-header-right d-flex align-items-center">
@@ -82,9 +90,11 @@
              class="d-flex align-items-center logout-container">
             <div class="d-inline-block login-greeter fs-5">
                 <th:block th:if="${#authentication.getPrincipal().getGender().toString()} == 'FEMALE'"
-                          th:text="#{nav.greeter.female}">Welcome,</th:block>
+                          th:text="#{nav.greeter.female}">Welcome,
+                </th:block>
                 <th:block th:unless="${#authentication.getPrincipal().getGender().toString()} == 'FEMALE'"
-                          th:text="#{nav.greeter.male}">Welcome,</th:block>
+                          th:text="#{nav.greeter.male}">Welcome,
+                </th:block>
 
                 <th:block sec:authentication="name">{name}</th:block>
                 !

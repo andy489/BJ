@@ -1,10 +1,9 @@
-version: '3.3'
 services:
   db:
     image: mysql
     restart: always
     environment:
-      MYSQL_DATABASE: 'blackjack'
+      MYSQL_DATABASE: 'bjdb'
       # MYSQL_PASSWORD: ${DB_PASS}
       MYSQL_ALLOW_EMPTY_PASSWORD: true
       # MYSQL_ROOT_PASSWORD: ${DB_PASS}
@@ -21,3 +20,4 @@ services:
     ports:
       - "1025:1025" # smtp server
       - "8025:8025" # web ui
+    platform: linux/amd64/v8

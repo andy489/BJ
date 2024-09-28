@@ -1,0 +1,437 @@
+:root {
+    --dark-gray: #4e555b;
+    --white-gray: #84909a;
+    --btn-circle: #036c2e;
+}
+
+body {
+    background: fixed 100% url('./../../images/background/09-play-bj-bg-red.jpg');
+    background-size: cover;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 18px;
+}
+
+.game-metadata-wrapper {
+    text-align: center;
+    margin-bottom: 0.8em;
+    color: whitesmoke;
+    font-weight: bolder;
+    min-width: 44em;
+}
+
+.deli {
+    display: inline-block;
+    width: 1em;
+}
+
+.small-deli {
+    display: inline-block;
+}
+
+.score-box {
+    position: relative;
+    bottom: -0.5em;
+    text-align: center;
+}
+
+.play-card-wrapper, .play-card {
+    height: 12em;
+    position: relative;
+    justify-content: center;
+}
+
+.play-card-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+.game-metadata {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 0.45em;
+    padding: 0.3em;
+    border: var(--dark-gray) solid 0.15em;
+    display: inline-block;
+    min-width: 7em;
+}
+
+/*game wrapper*/
+.game-wrapper {
+    height: 32em;
+}
+
+.dealer-cards, .player-cards {
+    height: 16em;
+    text-align: center;
+}
+
+.player-cards-box, .dealer-cards-box {
+    min-width: 44em;
+}
+
+.curr-result-user {
+    color: whitesmoke;
+    font-weight: bolder;
+    display: inline-block;
+}
+
+.curr-result-box {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: whitesmoke;
+    border: var(--dark-gray) solid 0.15em;
+    border-radius: 0.45em;
+    padding: 0.3em;
+    font-weight: bolder;
+    min-width: 3em;
+    display: inline-block;
+}
+
+/*EO:game wrapper*/
+
+.cash-stat {
+    min-width: 8em;
+}
+
+.chip-box-wrapper {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.decision-box-wrapper {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.inner-decision-box-wrapper {
+    padding: 0.5em;
+    min-width: 39em;
+}
+
+.inner-chip-box-wrapper {
+    padding: 0.5em;
+    min-width: 57em;
+}
+
+/*chip-box-wrapper*/
+.chip-box-wrapper {
+
+}
+
+.btn-chip {
+    /*background: var(--btn-circle);*/
+    background-size: 100%;
+    filter: brightness(125%);
+    width: 4.5em;
+    height: 4.5em;
+    border-radius: 2.5em;
+    color: black;
+    text-align: center;
+    box-shadow: 0.07em 0.07em var(--dark-gray);
+}
+
+.btn-chip:hover {
+    filter: brightness(150%);
+}
+
+.btn-chip:active {
+    transform: scale(0.94);
+    /* Scaling button to 0.94 to its original size */
+    box-shadow: 0.03em 0.03em var(--dark-gray);
+    /* Lowering the shadow */
+}
+
+.chip-value {
+    font-size: large;
+    font-weight: bolder;
+}
+
+.chip, .bet-action {
+    text-align: center;
+    color: whitesmoke;
+    min-width: 5em;
+    max-width: 5em;
+}
+
+.chip-250 {
+    background-image: url('../../images/betting_chip/chip-250.png');
+}
+
+.chip-500 {
+    background-image: url('../../images/betting_chip/chip-500.png');
+}
+
+.chip-1000 {
+    background-image: url('../../images/betting_chip/chip-1000.png');
+}
+
+.chip-2500 {
+    background-image: url('../../images/betting_chip/chip-2500.png');
+}
+
+.chip-5000 {
+    background-image: url('../../images/betting_chip/chip-5000.png');
+}
+
+.chip-10000 {
+    background-image: url('../../images/betting_chip/chip-10000.png');
+}
+
+/*EO:chip-box-wrapper*/
+
+/*bet-action*/
+.btn-bet {
+    background: var(--btn-circle);
+    background-size: 100%;
+    filter: brightness(125%);
+    width: 4.5em;
+    height: 4.5em;
+    border-radius: 2.5em;
+    color: whitesmoke;
+    border: 0.2em dotted whitesmoke;
+    text-align: center;
+    box-shadow: 0.17em 0.17em var(--dark-gray);
+}
+
+.btn-bet:hover {
+    filter: brightness(150%);
+    color: whitesmoke;
+}
+
+.btn-bet:active {
+    transform: scale(0.94);
+    /* Scaling button to 0.94 to its original size */
+    box-shadow: 0.07em 0.07em var(--dark-gray);
+    /* Lowering the shadow */
+}
+
+/*EO:bet-action*/
+
+/*decision-box-wrapper*/
+.decision, .chip {
+    text-align: center;
+    color: whitesmoke;
+    min-width: 5.2em;
+    max-width: 5.2em;
+}
+
+.btn-decision {
+    background-size: 100%;
+    width: 4.5em;
+    height: 4.5em;
+    border-radius: 2.5em;
+    color: whitesmoke;
+    border: 0.2em solid whitesmoke;
+    text-align: center;
+    box-shadow: 0.17em 0.17em var(--dark-gray);
+}
+
+.btn-decision:hover {
+    filter: brightness(150%);
+}
+
+.btn-decision:active {
+    transform: scale(0.94);
+    /* Scaling button to 0.94 to its original size */
+    box-shadow: 0.07em 0.07em var(--dark-gray);
+    /* Lowering the shadow */
+}
+
+.dec-sur {
+
+}
+
+.dec-spl {
+    margin-top: 1.1em;
+
+}
+
+.dec-dou {
+    margin-top: 2.1em;
+
+}
+
+.dec-sta {
+    margin-top: 2.6em;
+}
+
+.dec-hit {
+    margin-top: 2.1em;
+}
+
+.dec-dea {
+    margin-top: 1.1em;
+
+}
+
+.btn-surrender {
+    background-image: url('../../images/decision/surrender.png');
+}
+
+.btn-split {
+    background-image: url('../../images/decision/split.png');
+}
+
+.btn-double {
+    background-image: url('../../images/decision/double.png');
+}
+
+.btn-stand {
+    background-image: url('../../images/decision/stand.png');
+}
+
+.btn-hit {
+    background-image: url('../../images/decision/hit.png');
+}
+
+.btn-deal {
+    background-image: url('../../images/decision/deal.png');
+}
+
+/*EO:decision-box-wrapper*/
+
+/*balance-box-wrapper (last box)*/
+.balance-box-wrapper {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 0.5em;
+    border-radius: 1em;
+    min-width: 39em;
+}
+
+.balance-box-title, .last-bet-box-title, .curr-bet-box-title {
+    color: whitesmoke;
+}
+
+.balance-box-value, .last-bet-box-value, .curr-bet-box-value {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: whitesmoke;
+    border: var(--dark-gray) solid 0.15em;
+    border-radius: 0.45em;
+    min-width: 8em;
+    max-width: 9em;
+}
+
+.bet-legend {
+    color: whitesmoke;
+    min-width: 10em;
+}
+
+/*EO:balance-box-wrapper (last-box)*/
+.d-0-0 {
+    right: -45.4em
+}
+
+.d-0-1 {
+    right: -38.4em
+}
+
+.d-0-2 {
+    right: -31.4em
+}
+
+.d-0-3 {
+    right: -24.4em
+}
+
+.d-0-4 {
+    right: -17.4em
+}
+
+.d-0-5 {
+    right: -10.4em
+}
+
+.d-0-6 {
+    right: -3.4em
+}
+
+.d-0-7 {
+    right: 3.4em
+}
+
+.d-0-8 {
+    right: 10.4em
+}
+
+.d-0-9 {
+    right: 17.4em
+}
+
+.d-0-10 {
+    right: 24.4em
+}
+
+.d-0-11 {
+    right: 31.4em
+}
+
+.d-0-12 {
+    right: 38.4em
+}
+
+.d-0-13 {
+    right: 45.4em
+}
+
+.d-1-0 {
+    right: -49.0em
+}
+
+.d-1-1 {
+    right: -42.0em
+}
+
+.d-1-2 {
+    right: -35.0em
+}
+
+.d-1-3 {
+    right: -28.0em
+}
+
+.d-1-4 {
+    right: -21.0em
+}
+
+.d-1-5 {
+    right: -14.0em
+}
+
+.d-1-6 {
+    right: -7.0em
+}
+
+.d-1-7 {
+    right: 0.0em
+}
+
+.d-1-8 {
+    right: 7.0em
+}
+
+.d-1-9 {
+    right: 14.0em
+}
+
+.d-1-10 {
+    right: 21.0em
+}
+
+.d-1-11 {
+    right: 28.0em
+}
+
+.d-1-12 {
+    right: 35.0em
+}
+
+.d-1-13 {
+    right: 42.0em
+}
+
+.d-1-14 {
+    right: 49.0em
+}
+
+/*card-displacement*/
+
+
+/*EO:card-displacement*/
