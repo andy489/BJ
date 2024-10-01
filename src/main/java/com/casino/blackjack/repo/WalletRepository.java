@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface WalletRepository extends JpaRepository<WalletEntity, Long> {
     Optional<WalletEntity> getReferenceByOwnerId(Long ownerId);
+
+    Optional<WalletEntity> findByOwnerId(Long ownerId);
 }

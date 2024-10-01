@@ -1,13 +1,13 @@
 package com.casino.blackjack.repo;
 
-import com.casino.blackjack.model.entity.PastGameEntity;
+import com.casino.blackjack.model.entity.PlayedGameEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface PastGameRepository extends JpaRepository<PastGameEntity, Long> {
+public interface PastGameRepository extends JpaRepository<PlayedGameEntity, Long> {
 
-    List<PastGameEntity> findByOwnerId(Long ownerId);
+    List<PlayedGameEntity> findByOwnerId(Long ownerId);
 
     List<Integer> findByHash(String gameHash);
 }

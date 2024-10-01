@@ -12,8 +12,6 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor(staticName = "of")
 @NoArgsConstructor
 public class Count {
-
-    private Boolean countType;
-    private Integer countValue;
-
+    private Integer left;
+    private Integer right;
 }

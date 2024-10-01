@@ -48,26 +48,32 @@
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="available_decisions" type="VARCHAR(31)"/>
-            <column name="dealer_cards" type="VARCHAR(255)"/>
-            <column name="finalized" type="BIT(1)"/>
             <column name="hash" type="VARCHAR(31)"/>
+            <column name="dealer_cards" type="VARCHAR(255)"/>
             <column name="player_cards" type="VARCHAR(255)"/>
+            <column name="available_choices" type="VARCHAR(31)"/>
+            <column name="taken_choices" type="VARCHAR(31)"/>
             <column name="win_multiplier" type="DOUBLE"/>
+            <column name="finalized" type="BIT(1)"/>
+            <column name="insurance" type="BIT(1)"/>
+            <column name="second_dealer_card_ten" type="BIT(1)"/>
             <column name="owner_id" type="BIGINT">
                 <constraints unique="true"/>
             </column>
         </createTable>
     </changeSet>
     <changeSet author="stoevand" id="4">
-        <createTable tableName="past_games">
+        <createTable tableName="played_games">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="dealer_cards" type="VARCHAR(255)"/>
             <column name="hash" type="VARCHAR(31)"/>
+            <column name="dealer_cards" type="VARCHAR(255)"/>
             <column name="player_cards" type="VARCHAR(255)"/>
+            <column name="taken_choices" type="VARCHAR(31)"/>
             <column name="win_multiplier" type="DOUBLE"/>
+            <column name="insurance" type="BIT(1)"/>
+            <column name="second_dealer_card_ten" type="BIT(1)"/>
             <column name="owner_id" type="BIGINT"/>
         </createTable>
     </changeSet>
@@ -148,7 +154,7 @@
         </createIndex>
     </changeSet>
     <changeSet author="stoevand" id="11">
-        <createIndex associatedWith="" indexName="FKbr4s7fht37juwsprroekga814" tableName="past_games">
+        <createIndex associatedWith="" indexName="FKbr4s7fht37juwsprroekga814" tableName="played_games">
             <column name="owner_id"/>
         </createIndex>
     </changeSet>
@@ -182,7 +188,7 @@
                                  referencedColumnNames="id" referencedTableName="users" validate="true"/>
     </changeSet>
     <changeSet author="stoevand" id="17">
-        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="past_games"
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="played_games"
                                  constraintName="FKbr4s7fht37juwsprroekga814" deferrable="false"
                                  initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
                                  referencedColumnNames="id" referencedTableName="users" validate="true"/>

@@ -30,4 +30,15 @@ public class WalletEntity extends BaseEntity{
 
         return balance;
     }
+
+    public void payBet(Double multiplier) {
+        lastWin = currentBet.multiply(new BigDecimal(multiplier));
+        balance = balance.add(lastWin);
+        currentBet = BigDecimal.ZERO;
+    }
+
+    public void placeBet(BigDecimal betValue) {
+        balance = balance.subtract(betValue);
+        currentBet = betValue;
+    }
 }

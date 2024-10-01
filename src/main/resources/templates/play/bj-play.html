@@ -5,6 +5,7 @@
     <title>Play BJ</title>
     <th:block th:insert="~{fragment/common::head}"></th:block>
     <link th:href="@{/css/play/bj-play.css}" rel="stylesheet">
+    <link th:href="@{/css/play/choice-modal.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -19,7 +20,9 @@
             <span class="deli"></span>
             <span class="game-info">Game ID</span>
             <div class="small-deli"></div>
-            <span class="game-metadata" th:text="*{hash}">489489</span>
+            <span class="game-metadata"
+                  th:classappend="*{hash == 'NO ID'} ? 'gray' : ''"
+                  th:text="*{hash}">489489</span>
         </div>
         <div class="game-wrapper">
             <div class="row dealer-cards">
@@ -56,13 +59,72 @@
         </div>
     </div>
 
+    <!--  CHOICE MODAL  -->
+    <div class="choice-modal-wrapper row"
+         th:classappend="${#lists.contains(game.getAvailableChoices(), 6) ? '' : 'd-none'}">
+        <div class="modal-title col-12">
+            EVEN MONEY?
+        </div>
+        <div class="col-6 choice-box">
+            <form th:action="@{/play/even}"
+                  th:method="post">
+                <button type="submit" class="btn btn-decision btn-even btn-even-yes"></button>
+                <input type="hidden" name="evenChoice" th:value="true">
+                <div class="btn-cmd">
+                    YES
+                </div>
+            </form>
+        </div>
+        <div class="col-6 choice-box">
+            <form th:action="@{/play/even}"
+                  th:method="post">
+                <button type="submit" class="btn btn-decision btn-even btn-even-no"></button>
+                <input type="hidden" name="evenChoice" th:value="false">
+                <div class="btn-cmd">
+                    NO
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--  EO:CHOICE MODAL  -->
+
+    <!--  CHOICE MODAL  -->
+    <div class="choice-modal-wrapper row"
+         th:classappend="${#lists.contains(game.getAvailableChoices(), 6) ? '' : 'd-none'}">
+        <div class="modal-title col-12">
+            INSURANCE?
+        </div>
+        <div class="col-6 choice-box">
+            <form th:action="@{/play/insurance}"
+                  th:method="post">
+                <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-yes"></button>
+                <input type="hidden" name="insurance" th:value="true">
+                <div class="btn-cmd">
+                    YES
+                </div>
+            </form>
+        </div>
+        <div class="col-6 choice-box">
+            <form th:action="@{/play/insurance}"
+                  th:method="post">
+                <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-no"></button>
+                <input type="hidden" name="insurance" th:value="false">
+                <div class="btn-cmd">
+                    NO
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--  EO:CHOICE MODAL  -->
+
     <!--  DECISION  -->
     <div class="row decision-box-wrapper">
         <div class="row inner-decision-box-wrapper justify-content-center">
             <div class="col-1 decision dec-sur">
-                <form action="">
+                <form th:action="@{/play/surrender}"
+                      th:method="post">
                     <button type="submit" class="btn btn-decision btn-surrender"
-                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 0) ? '' : 'disabled'}">
+                            th:classappend="${#lists.contains(game.getAvailableChoices(), 0) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd">
                         Surrender
@@ -72,7 +134,7 @@
             <div class="col-1 decision dec-spl">
                 <form action="">
                     <button type="submit" class="btn btn-decision btn-split"
-                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 1) ? '' : 'disabled'}">
+                            th:classappend="${#lists.contains(game.getAvailableChoices(), 1) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd">
                         Split
@@ -82,26 +144,27 @@
             <div class="col-1 decision dec-dou">
                 <form action="">
                     <button type="submit" class="btn btn-decision btn-double"
-                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 0) ? '' : 'disabled'}">
+                            th:classappend="${#lists.contains(game.getAvailableChoices(), 2) ? '' : 'disabled'}">
                     </button>
-                    <div class="btn-cmd"
-                         th:classappend="${#lists.contains(game.getAvailableDecisions(), 2) ? '' : 'disabled'}">Double
+                    <div class="btn-cmd">Double
                     </div>
                 </form>
             </div>
             <div class="col-1 decision dec-sta">
-                <form action="">
+                <form th:action="@{/play/stand}"
+                      th:method="post">
                     <button type="submit" class="btn btn-decision btn-stand"
-                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 3) ? '' : 'disabled'}">
+                            th:classappend="${#lists.contains(game.getAvailableChoices(), 3) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd">Stand
                     </div>
                 </form>
             </div>
             <div class="col-1 decision dec-hit">
-                <form action="">
+                <form th:action="@{/play/hit}"
+                      th:method="post">
                     <button type="submit" class="btn btn-decision btn-hit"
-                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 4) ? '' : 'disabled'}">
+                            th:classappend="${#lists.contains(game.getAvailableChoices(), 4) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd">
                         Hit
@@ -112,7 +175,7 @@
                 <form th:action="@{/play/deal}"
                       th:method="post">
                     <button type="submit" class="btn btn-decision btn-deal"
-                            th:classappend="${#lists.contains(game.getAvailableDecisions(), 5) ? '' : 'disabled'}">
+                            th:classappend="${#lists.contains(game.getAvailableChoices(), 5) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd">
                         Deal
@@ -124,7 +187,8 @@
     <!--  EO:DECISION  -->
 
     <!--  BET CHIP  -->
-    <div class="row chip-box-wrapper">
+    <div class="row chip-box-wrapper"
+         th:classappend="${#lists.contains(game.getAvailableChoices(), -1) ? '' : 'd-none'}">
         <div class="row inner-chip-box-wrapper justify-content-center">
             <div class="col-1 chip">
                 <form action="">
@@ -204,11 +268,8 @@
                 Balance
             </div>
             <div class="row balance-box-value">
-                <div class="col-1">
-                    <span>€</span>
-                </div>
                 <div class="col-8">
-                    <span>100.55</span>
+                    <span th:text="${#numbers.formatCurrency(game.wallet.balance)}">100.55</span>
                 </div>
             </div>
         </div>
@@ -217,11 +278,8 @@
                 Last Win
             </div>
             <div class="row last-bet-box-value">
-                <div class="col-1">
-                    <span>€</span>
-                </div>
                 <div class="col-8">
-                    <span>0.00</span>
+                    <span th:text="${#numbers.formatCurrency(game.wallet.lastWin)}">1.23</span>
                 </div>
             </div>
         </div>
@@ -231,29 +289,27 @@
                 Current Bet
             </div>
             <div class="row curr-bet-box-value">
-                <div class="col-1">
-                    <span>€</span>
-                </div>
                 <div class="col-8">
-                    <span>0.00</span>
+                    <span th:text="${#numbers.formatCurrency(game.wallet.currentBet)}">1.23</span>
                 </div>
             </div>
         </div>
         <div class="col-2 bet-legend">
             <div>
                 <span>Min bet:</span>
-                <span>10.0</span>
-                <span>€</span>
+                <span th:text="${#numbers.formatCurrency(10)}">10</span>
             </div>
             <div>
                 <span>Max bet:</span>
-                <span>1000.0</span>
-                <span>€</span>
+                <span th:text="${#numbers.formatCurrency(1000)}">1000</span>
             </div>
         </div>
         <div class="col-1"></div>
     </div>
     <!--  EO:BALANCE  -->
 </div>
+
+<!--<div id="dimmer"></div>-->
+
 </body>
 </html>

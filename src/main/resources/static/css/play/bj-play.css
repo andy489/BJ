@@ -28,6 +28,10 @@ body {
     display: inline-block;
 }
 
+.btn-cmd {
+    text-align: center;
+}
+
 .score-box {
     position: relative;
     bottom: -0.5em;
@@ -48,10 +52,14 @@ body {
 .game-metadata {
     background-color: rgba(0, 0, 0, 0.4);
     border-radius: 0.45em;
-    padding: 0.3em;
+    padding: 0.1em 0.3em;
     border: var(--dark-gray) solid 0.15em;
     display: inline-block;
-    min-width: 7em;
+    min-width: 4em;
+}
+
+.gray {
+    color: gray;
 }
 
 /*game wrapper*/
@@ -79,9 +87,9 @@ body {
     color: whitesmoke;
     border: var(--dark-gray) solid 0.15em;
     border-radius: 0.45em;
-    padding: 0.3em;
+    padding: 0.1em;
     font-weight: bolder;
-    min-width: 3em;
+    min-width: 2em;
     display: inline-block;
 }
 
@@ -125,17 +133,14 @@ body {
     border-radius: 2.5em;
     color: black;
     text-align: center;
-    box-shadow: 0.07em 0.07em var(--dark-gray);
+    box-shadow: 0.09em 0.09em var(--dark-gray);
 }
 
 .btn-chip:hover {
     filter: brightness(150%);
-}
-
-.btn-chip:active {
     transform: scale(0.94);
     /* Scaling button to 0.94 to its original size */
-    box-shadow: 0.03em 0.03em var(--dark-gray);
+    box-shadow: 0.04em 0.04em var(--dark-gray);
     /* Lowering the shadow */
 }
 
@@ -188,19 +193,16 @@ body {
     color: whitesmoke;
     border: 0.2em dotted whitesmoke;
     text-align: center;
-    box-shadow: 0.17em 0.17em var(--dark-gray);
+    box-shadow: 0.15em 0.15em var(--dark-gray);
 }
 
-.btn-bet:hover {
+.btn-bet:hover, .btn-decision:hover {
+    transform: scale(0.94);
+    /*    !* Scaling button to 0.94 to its original size *!*/
+    box-shadow: 0.04em 0.04em var(--dark-gray);
+    /*    !* Lowering the shadow *!*/
     filter: brightness(150%);
     color: whitesmoke;
-}
-
-.btn-bet:active {
-    transform: scale(0.94);
-    /* Scaling button to 0.94 to its original size */
-    box-shadow: 0.07em 0.07em var(--dark-gray);
-    /* Lowering the shadow */
 }
 
 /*EO:bet-action*/
@@ -221,18 +223,11 @@ body {
     color: whitesmoke;
     border: 0.2em solid whitesmoke;
     text-align: center;
-    box-shadow: 0.17em 0.17em var(--dark-gray);
+    box-shadow: 0.15em 0.15em var(--dark-gray);
 }
 
 .btn-decision:hover {
     filter: brightness(150%);
-}
-
-.btn-decision:active {
-    transform: scale(0.94);
-    /* Scaling button to 0.94 to its original size */
-    box-shadow: 0.07em 0.07em var(--dark-gray);
-    /* Lowering the shadow */
 }
 
 .dec-sur {
@@ -305,8 +300,7 @@ body {
     color: whitesmoke;
     border: var(--dark-gray) solid 0.15em;
     border-radius: 0.45em;
-    min-width: 8em;
-    max-width: 9em;
+    width: 8em;
 }
 
 .bet-legend {
