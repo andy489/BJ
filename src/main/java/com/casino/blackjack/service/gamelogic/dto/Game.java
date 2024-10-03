@@ -11,11 +11,9 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -38,9 +36,6 @@ import static com.casino.blackjack.service.gamelogic.util.Util.EVEN_MONEY_NO;
 import static com.casino.blackjack.service.gamelogic.util.Util.EVEN_MONEY_YES;
 import static com.casino.blackjack.service.gamelogic.util.Util.HEARTS_SUIT;
 import static com.casino.blackjack.service.gamelogic.util.Util.HIT;
-import static com.casino.blackjack.service.gamelogic.util.Util.INSURANCE_NO;
-import static com.casino.blackjack.service.gamelogic.util.Util.INSURANCE_YES;
-import static com.casino.blackjack.service.gamelogic.util.Util.JAKE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.Util.KING_RANK;
 import static com.casino.blackjack.service.gamelogic.util.Util.NINE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.Util.NO_ID_STR;
@@ -82,7 +77,9 @@ public class Game {
 
     private Wallet wallet;
 
-    private String errorMessage;
+    private List<Integer> errCodeList;
+
+    private Map<Integer, String> errCodeMsgMap;
 
     public Game() {
         hash = NO_ID_STR;
@@ -95,13 +92,47 @@ public class Game {
         takenChoices = new ArrayList<>();
 
         winMultiplier = 0.0d;
+
+        insurance = false;
+        secondDealerCardTen = false;
+
+        errCodeList = new ArrayList<>();
+
         finalized = false;
+    }
+
+    public Game(Game game) {
+        this.hash = game.hash;
+        this.dealt = game.dealt;
+        this.dealerCards = game.dealerCards;
+        this.playerCards = game.playerCards;
+        this.availableChoices = game.availableChoices;
+        this.takenChoices = game.takenChoices;
+        this.winMultiplier = game.winMultiplier;
+        this.insurance = game.insurance;
+        this.secondDealerCardTen = game.secondDealerCardTen;
+        this.finalized = game.finalized;
+        this.wallet = game.wallet;
+        this.errCodeList = game.errCodeList;
+        this.errCodeMsgMap = game.errCodeMsgMap;
     }
 
     public static Game of(GameEntity gameEntity, ObjectMapper om, WalletEntity walletEntity) {
 
+        Game game = of(gameEntity, om);
+
+        Wallet wallet = new Wallet()
+                .setBalance(walletEntity.getBalance())
+                .setLastWin(walletEntity.getLastWin())
+                .setCurrentBet(walletEntity.getCurrentBet());
+
+        return game.setWallet(wallet);
+    }
+
+    public static Game of(GameEntity gameEntity, ObjectMapper om) {
+
         List<Card> dealerCards, playerCards;
-        List<Integer> availableChoices, takenChoices;
+        List<Integer> availableChoices, takenChoices, errCodeList;
 
         try {
             dealerCards = om.readValue(gameEntity.getDealerCards(), new TypeReference<>() {
@@ -112,11 +143,13 @@ public class Game {
             });
             takenChoices = om.readValue(gameEntity.getTakenChoices(), new TypeReference<>() {
             });
+            errCodeList = om.readValue(gameEntity.getErrCodeList(), new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
-        Game game = new Game()
+        return new Game()
                 .setHash(gameEntity.getHash())
                 .setDealt(true)
                 .setDealerCards(dealerCards)
@@ -125,14 +158,8 @@ public class Game {
                 .setTakenChoices(takenChoices)
                 .setInsurance(gameEntity.getInsurance())
                 .setSecondDealerCardTen(gameEntity.getSecondDealerCardTen())
+                .setErrCodeList(errCodeList)
                 .setFinalized(gameEntity.getFinalized());
-
-        Wallet wallet = new Wallet()
-                .setBalance(walletEntity.getBalance())
-                .setLastWin(walletEntity.getLastWin())
-                .setCurrentBet(walletEntity.getCurrentBet());
-
-        return game.setWallet(wallet);
     }
 
     public Game deal() {
@@ -168,10 +195,15 @@ public class Game {
     }
 
     private void dealRandom() {
-        dealerCards.add(Card.of(randSuit(), randRank()));
+//        dealerCards.add(Card.of(randSuit(), randRank()));
+//
+//        playerCards.add(Card.of(randSuit(), randRank()));
+//        playerCards.add(Card.of(randSuit(), randRank()));
 
-        playerCards.add(Card.of(randSuit(), randRank()));
-        playerCards.add(Card.of(randSuit(), randRank()));
+        dealerCards.add(Card.of(randSuit(), ACE_RANK));
+
+        playerCards.add(Card.of(randSuit(), ACE_RANK));
+        playerCards.add(Card.of(randSuit(), TEN_RANK));
     }
 
     public Integer dealerCardsCount() {
@@ -316,13 +348,13 @@ public class Game {
             finalized = true;
             takeOneDealerCardToCheckForBJ();
 
-            if (Objects.equals(getLastTakenChoice(), EVEN_MONEY_YES)) {
+            if (getLastTakenChoice().equals(EVEN_MONEY_YES)) {
                 winMultiplier = DOUBLE_MULTI;
             } else {
                 winMultiplier = checkBJ(dealerCards) ? ZERO_MULTI : BJ_MULTI;
             }
 
-            return setAvailableChoices(List.of(DEAL));
+            return this.setAvailableChoices(List.of(DEAL, CHIP_OPERATIONS));
         }
 
         // HIT
@@ -469,5 +501,10 @@ public class Game {
 
     private void hit(List<Card> cards) {
         cards.add(Card.of(RNG.randSuit(), randRank()));
+    }
+
+    public Game addErr(Integer errCode) {
+        this.errCodeList.add(errCode);
+        return this;
     }
 }

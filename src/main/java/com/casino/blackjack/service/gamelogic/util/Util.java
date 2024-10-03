@@ -1,5 +1,9 @@
 package com.casino.blackjack.service.gamelogic.util;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Util {
     public static final int DISPLACEMENT_BASE = 7;
 
@@ -60,11 +64,38 @@ public class Util {
 
     public static final String NO_CURR_GAME_ERR = "NO CURR GAME ERROR";
     public static final String NO_TAKEN_CHOICES = "NO TAKEN CHOICES YET";
+    public static final String NO_WALLET_FOUND = "NO WALLET FOUND";
 
     public static final Integer DEALER_CARDS_PROP_IND = 0;
     public static final Integer PLAYER_CARDS_PROP_IND = 1;
     public static final Integer AVAILABLE_CHOICES_CARDS_PROP_IND = 2;
     public static final Integer TAKEN_CHOICES_PROP_IND = 3;
+    public static final Integer ERR_CODE_PROP_IND = 4;
 
     public static final Integer DEALER_THRESHOLD_17 = 17;
+
+    public static final BigDecimal MIN_BET = new BigDecimal("10.00");
+    public static final BigDecimal MAX_BET = new BigDecimal("1000.00");
+
+    public static final Integer ERR_CODE_INSUFFICIENT_FUNDS = 1;
+    public static final Integer ERR_CODE_INVALID_BET = 2;
+    public static final Integer ERR_CODE_LOW_BET = 3;
+    public static final Integer ERR_CODE_HIGH_BET = 4;
+
+    public static final String ERR_MSG_INSUFFICIENT_FUNDS = "INSUFFICIENT FUNDS! " +
+            "А deposit is required in order to place bet.";
+    public static final String ERR_MSG_INVALID_BET = "INVALID BET! " +
+            "Invalid bet format.";
+    public static final String ERR_MSG_LOW_BET = "LOW BET! " +
+            "Bet less than {MIN_BET} or exceeding {MAX BET} is not allowed.";
+    public static final String ERR_MSG_HIGH_BET = "HIGH BET! " +
+            "Bet less than {MIN_BET} or exceeding {MAX_BET} is not allowed.";
+
+    public static final Map<Integer, String> ERROR_MAP = new HashMap<>();
+    static {
+        ERROR_MAP.put(ERR_CODE_INSUFFICIENT_FUNDS, ERR_MSG_INSUFFICIENT_FUNDS);
+        ERROR_MAP.put(ERR_CODE_INVALID_BET, ERR_MSG_INVALID_BET);
+        ERROR_MAP.put(ERR_CODE_LOW_BET, ERR_MSG_LOW_BET);
+        ERROR_MAP.put(ERR_CODE_HIGH_BET, ERR_MSG_HIGH_BET);
+    }
 }

@@ -57,6 +57,7 @@
             <column name="finalized" type="BIT(1)"/>
             <column name="insurance" type="BIT(1)"/>
             <column name="second_dealer_card_ten" type="BIT(1)"/>
+            <column name="err_code_list" type="VARCHAR(63)"/>
             <column name="owner_id" type="BIGINT">
                 <constraints unique="true"/>
             </column>
@@ -142,6 +143,7 @@
             </column>
             <column name="balance" type="DECIMAL(38, 2)"/>
             <column name="current_bet" type="DECIMAL(38, 2)"/>
+            <column name="last_bet" type="DECIMAL(38, 2)"/>
             <column name="last_win" type="DECIMAL(38, 2)"/>
             <column name="owner_id" type="BIGINT">
                 <constraints unique="true"/>

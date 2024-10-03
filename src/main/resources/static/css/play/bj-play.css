@@ -196,7 +196,7 @@ body {
     box-shadow: 0.15em 0.15em var(--dark-gray);
 }
 
-.btn-bet:hover, .btn-decision:hover {
+.btn-bet:hover, .btn-decision:hover, .btn-err:hover {
     transform: scale(0.94);
     /*    !* Scaling button to 0.94 to its original size *!*/
     box-shadow: 0.04em 0.04em var(--dark-gray);
@@ -215,7 +215,7 @@ body {
     max-width: 5.2em;
 }
 
-.btn-decision {
+.btn-decision, .btn-err {
     background-size: 100%;
     width: 4.5em;
     height: 4.5em;
@@ -226,7 +226,7 @@ body {
     box-shadow: 0.15em 0.15em var(--dark-gray);
 }
 
-.btn-decision:hover {
+.btn-decision:hover, .btn-err:hover {
     filter: brightness(150%);
 }
 
@@ -300,7 +300,11 @@ body {
     color: whitesmoke;
     border: var(--dark-gray) solid 0.15em;
     border-radius: 0.45em;
-    width: 8em;
+    width: 7em;
+}
+
+.balance-box-value {
+    min-width: 8em;
 }
 
 .bet-legend {
@@ -309,6 +313,8 @@ body {
 }
 
 /*EO:balance-box-wrapper (last-box)*/
+
+/*card-displacement*/
 .d-0-0 {
     right: -45.4em
 }
@@ -425,7 +431,8 @@ body {
     right: 49.0em
 }
 
-/*card-displacement*/
-
-
 /*EO:card-displacement*/
+
+.low-bet {
+    color: indianred;
+}

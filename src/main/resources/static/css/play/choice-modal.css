@@ -1,4 +1,4 @@
-/* modal pop-up */
+/* choice modal pop-up */
 .choice-modal-wrapper {
     position: relative;
     align-items: center;
@@ -26,7 +26,10 @@
 
 .btn-sec-dec-no {
     background-image: url('../../images/decision/even-no.png');
+}
 
+.btn-err-ok {
+    background: var(--btn-circle);
 }
 
 .check-icon {
@@ -39,6 +42,7 @@
     text-align: center;
     align-content: center;
 }
+/* EO: choice modal pop-up */
 
 /*#dimmer {*/
 /*    display: inline-block;*/
@@ -55,3 +59,34 @@
 /*    background-color: rgba(0, 0, 0, 0.8);*/
 /*    opacity: 0.4;*/
 /*}*/
+
+/* err modal */
+.err-modal-wrapper {
+    position: relative;
+    align-items: center;
+    justify-content: space-around;
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 20em;
+    height: 11em;
+    z-index: 2;
+    margin: auto;
+    box-shadow: 0 0 0.5rem rgb(246, 246, 246);
+    border-radius: 0.3em;
+    border: var(--dark-gray) solid 0.15em;
+
+    color: whitesmoke;
+}
+
+.go-to-link{
+    font-weight: bolder;
+    border: whitesmoke 0.15em solid;
+    background-color: var(--btn-circle);
+    color: whitesmoke;
+}
+
+.go-to-link:hover{
+    border: whitesmoke 0.15em solid;
+    transform: scale(0.94);
+    filter: brightness(125%);
+}
+/* EO:err modal */

@@ -19,6 +19,7 @@ import java.util.List;
 
 import static com.casino.blackjack.service.gamelogic.util.Util.AVAILABLE_CHOICES_CARDS_PROP_IND;
 import static com.casino.blackjack.service.gamelogic.util.Util.DEALER_CARDS_PROP_IND;
+import static com.casino.blackjack.service.gamelogic.util.Util.ERR_CODE_PROP_IND;
 import static com.casino.blackjack.service.gamelogic.util.Util.PLAYER_CARDS_PROP_IND;
 import static com.casino.blackjack.service.gamelogic.util.Util.TAKEN_CHOICES_PROP_IND;
 
@@ -49,6 +50,8 @@ public class GameEntity extends BaseEntity implements Serializable {
 
     private Boolean secondDealerCardTen;
 
+    private String errCodeList;
+
     private Boolean finalized;
 
     @OneToOne
@@ -64,6 +67,7 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setPlayerCards(properties.get(PLAYER_CARDS_PROP_IND))
                 .setAvailableChoices(properties.get(AVAILABLE_CHOICES_CARDS_PROP_IND))
                 .setTakenChoices(properties.get(TAKEN_CHOICES_PROP_IND))
+                .setErrCodeList(properties.get(ERR_CODE_PROP_IND))
                 .setWinMultiplier(game.getWinMultiplier())
                 .setInsurance(game.getInsurance())
                 .setSecondDealerCardTen(game.getSecondDealerCardTen())
@@ -80,6 +84,7 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setPlayerCards(properties.get(PLAYER_CARDS_PROP_IND))
                 .setAvailableChoices(properties.get(AVAILABLE_CHOICES_CARDS_PROP_IND))
                 .setTakenChoices(properties.get(TAKEN_CHOICES_PROP_IND))
+                .setErrCodeList(properties.get(ERR_CODE_PROP_IND))
                 .setWinMultiplier(game.getWinMultiplier())
                 .setInsurance(game.getInsurance())
                 .setSecondDealerCardTen(game.getSecondDealerCardTen());
@@ -93,6 +98,7 @@ public class GameEntity extends BaseEntity implements Serializable {
             properties.add(om.writeValueAsString(game.getPlayerCards()));
             properties.add(om.writeValueAsString(game.getAvailableChoices()));
             properties.add(om.writeValueAsString(game.getTakenChoices()));
+            properties.add(om.writeValueAsString(game.getErrCodeList()));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

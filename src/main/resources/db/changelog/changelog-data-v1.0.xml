@@ -68,4 +68,15 @@
         </loadData>
     </changeSet>
 
+    <changeSet author="andy489" id="7">
+        <loadData commentLineStartsWith="#" encoding="UTF-8" file="./db/changelog/data/wallets.csv"
+                  quotchar="&quot;" separator="," tableName="wallets">
+            <column header="id" name="id" type="NUMERIC"/>
+            <column header="balance" name="balance" type="DECIMAL(38, 2)"/>
+            <column header="last_bet" name="last_bet" type="DECIMAL(38, 2)"/>
+            <column header="last_win" name="last_win" type="DECIMAL(38, 2)"/>
+            <column header="owner_id" name="owner_id" type="NUMERIC"/>
+        </loadData>
+    </changeSet>
+
 </databaseChangeLog>
