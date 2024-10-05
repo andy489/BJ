@@ -1,7 +1,6 @@
 package com.casino.blackjack.model.entity;
 
 import com.casino.blackjack.service.gamelogic.dto.Wallet;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -20,20 +19,26 @@ public class WalletEntity extends BaseEntity {
 
     private BigDecimal balance;
 
-    private BigDecimal currentBet;
+    private BigDecimal lastWin;
 
     private BigDecimal lastBet;
 
-    private BigDecimal lastWin;
+    private BigDecimal currentBet;
+
+    private BigDecimal handBet;
+
+    private BigDecimal insuranceBet;
 
     @OneToOne
     private UserEntity owner;
 
     public WalletEntity() {
         balance = BigDecimal.ZERO;
-        currentBet = BigDecimal.ZERO;
-        lastBet = BigDecimal.ZERO;
         lastWin = BigDecimal.ZERO;
+        lastBet = BigDecimal.ZERO;
+        currentBet = BigDecimal.ZERO;
+        handBet = BigDecimal.ZERO;
+        insuranceBet = BigDecimal.ZERO;
     }
 
     public static WalletEntity of(Wallet wallet) {
@@ -41,14 +46,18 @@ public class WalletEntity extends BaseEntity {
                 .setBalance(wallet.getBalance())
                 .setCurrentBet(wallet.getCurrentBet())
                 .setLastWin(wallet.getLastBet())
-                .setCurrentBet(wallet.getCurrentBet());
+                .setCurrentBet(wallet.getCurrentBet())
+                .setHandBet(wallet.getHandBet())
+                .setInsuranceBet(wallet.getInsuranceBet());
     }
 
     public static void map(WalletEntity walletEntity, Wallet wallet) {
         walletEntity.setBalance(wallet.getBalance())
                 .setLastWin(wallet.getLastWin())
                 .setLastBet(wallet.getLastBet())
-                .setCurrentBet(wallet.getCurrentBet());
+                .setCurrentBet(wallet.getCurrentBet())
+                .setHandBet(wallet.getHandBet())
+                .setInsuranceBet(wallet.getInsuranceBet());
     }
 
     public BigDecimal deposit(BigDecimal depositSum) {
@@ -57,15 +66,25 @@ public class WalletEntity extends BaseEntity {
         return balance;
     }
 
-    public void payBet(Double multiplier) {
-        lastWin = currentBet.multiply(new BigDecimal(multiplier));
+    public void payBet(Double handMultiplier, Double insuranceMultiplier) {
+        lastWin = handBet.multiply(new BigDecimal(handMultiplier))
+                .add(insuranceBet.multiply(new BigDecimal(insuranceMultiplier)));
+
         balance = balance.add(lastWin);
-        lastBet = currentBet;
         currentBet = BigDecimal.ZERO;
+        handBet = BigDecimal.ZERO;
+        insuranceBet = BigDecimal.ZERO;
     }
 
-    public void placeBet(BigDecimal betValue) {
+    public void placeHandBet(BigDecimal betValue) {
         balance = balance.subtract(betValue);
-        currentBet = betValue;
+        handBet = betValue;
+        currentBet = currentBet.add(betValue);
+    }
+
+    public void placeInsuranceBet(BigDecimal betValue) {
+        balance = balance.subtract(betValue);
+        insuranceBet = betValue;
+        currentBet = currentBet.add(betValue);
     }
 }

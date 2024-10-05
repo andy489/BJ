@@ -1,2 +1,2 @@
-id,balance,current_bet,last_bet,last_win,owner_id
-1,200.00,0.00,0.00,0.00,1
+id,balance,current_bet,last_bet,last_win,hand_bet,insurance_bet,owner_id
+1,200.00,0.00,0.00,0.00,0.00,0.00,1

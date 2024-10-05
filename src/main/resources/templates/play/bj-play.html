@@ -81,7 +81,7 @@
             <form th:action="@{/play/even}"
                   th:method="post">
                 <button type="submit" class="btn btn-decision btn-even btn-sec-dec-yes"></button>
-                <input type="hidden" name="evenChoice" value="true">
+                <input type="hidden" name="evenMoney" value="true">
                 <div class="btn-cmd"
                      th:with="yes=#{dec.yes}"
                      th:text="${#strings.toUpperCase(yes)}">
@@ -93,7 +93,7 @@
             <form th:action="@{/play/even}"
                   th:method="post">
                 <button type="submit" class="btn btn-decision btn-even btn-sec-dec-no"></button>
-                <input type="hidden" name="evenChoice" value="false">
+                <input type="hidden" name="evenMoney" value="false">
                 <div class="btn-cmd"
                      th:with="no=#{dec.no}"
                      th:text="${#strings.toUpperCase(no)}">
@@ -107,13 +107,14 @@
     <!--  CHOICE MODAL: INSURANCE  -->
     <div class="choice-modal-wrapper row"
          th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_09_INSURANCE_YES')) ? '' : 'd-none'}">
+         game.availableChoicesCodeMap.get('CHOICE_11_INSURANCE_NO')) ? '' : 'd-none'}">
         <div class="modal-title col-12"
              th:with="insurance=#{dec.insurance}"
              th:text="${#strings.toUpperCase(insurance)} + '?'">
             INSURANCE?
         </div>
-        <div class="col-6 choice-box">
+        <div class="col-6 choice-box" th:classappend="${#lists.contains(game.availableChoices,
+         game.availableChoicesCodeMap.get('CHOICE_09_INSURANCE_YES')) ? '' : 'd-none'}">
             <form th:action="@{/play/insurance}"
                   th:method="post">
                 <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-yes"></button>

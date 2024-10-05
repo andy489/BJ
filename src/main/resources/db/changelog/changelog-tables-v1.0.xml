@@ -53,10 +53,11 @@
             <column name="player_cards" type="VARCHAR(255)"/>
             <column name="available_choices" type="VARCHAR(31)"/>
             <column name="taken_choices" type="VARCHAR(31)"/>
-            <column name="win_multiplier" type="DOUBLE"/>
+            <column name="hand_multiplier" type="DOUBLE"/>
+            <column name="insurance_multiplier" type="DOUBLE"/>
             <column name="finalized" type="BIT(1)"/>
             <column name="insurance" type="BIT(1)"/>
-            <column name="second_dealer_card_ten" type="BIT(1)"/>
+            <column name="dealer_second_card_ten" type="BIT(1)"/>
             <column name="err_code_list" type="VARCHAR(63)"/>
             <column name="owner_id" type="BIGINT">
                 <constraints unique="true"/>
@@ -72,9 +73,10 @@
             <column name="dealer_cards" type="VARCHAR(255)"/>
             <column name="player_cards" type="VARCHAR(255)"/>
             <column name="taken_choices" type="VARCHAR(31)"/>
-            <column name="win_multiplier" type="DOUBLE"/>
+            <column name="hand_multiplier" type="DOUBLE"/>
+            <column name="insurance_multiplier" type="DOUBLE"/>
             <column name="insurance" type="BIT(1)"/>
-            <column name="second_dealer_card_ten" type="BIT(1)"/>
+            <column name="dealer_second_card_ten" type="BIT(1)"/>
             <column name="owner_id" type="BIGINT"/>
         </createTable>
     </changeSet>
@@ -142,9 +144,11 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="balance" type="DECIMAL(38, 2)"/>
-            <column name="current_bet" type="DECIMAL(38, 2)"/>
-            <column name="last_bet" type="DECIMAL(38, 2)"/>
             <column name="last_win" type="DECIMAL(38, 2)"/>
+            <column name="last_bet" type="DECIMAL(38, 2)"/>
+            <column name="current_bet" type="DECIMAL(38, 2)"/>
+            <column name="hand_bet" type="DECIMAL(38, 2)"/>
+            <column name="insurance_bet" type="DECIMAL(38, 2)"/>
             <column name="owner_id" type="BIGINT">
                 <constraints unique="true"/>
             </column>

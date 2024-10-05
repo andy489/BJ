@@ -44,13 +44,15 @@ public class GameEntity extends BaseEntity implements Serializable {
 
     private String takenChoices;
 
-    private Double winMultiplier;
-
     private Boolean insurance;
 
-    private Boolean secondDealerCardTen;
+    private Double handMultiplier;
+
+    private Double insuranceMultiplier;
 
     private String errCodeList;
+
+    private Boolean dealerSecondCardTen;
 
     private Boolean finalized;
 
@@ -68,9 +70,10 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setAvailableChoices(properties.get(PROP_IND_AVAILABLE_CHOICES_CARDS))
                 .setTakenChoices(properties.get(PROP_IND_TAKEN_CHOICES))
                 .setErrCodeList(properties.get(PROP_IND_ERR_CODE))
-                .setWinMultiplier(game.getWinMultiplier())
+                .setHandMultiplier(game.getHandMultiplier())
+                .setInsuranceMultiplier(game.getInsuranceMultiplier())
                 .setInsurance(game.getInsurance())
-                .setSecondDealerCardTen(game.getSecondDealerCardTen())
+                .setDealerSecondCardTen(game.getDealerSecondCardTen())
                 .setOwner(owner);
     }
 
@@ -85,9 +88,10 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setAvailableChoices(properties.get(PROP_IND_AVAILABLE_CHOICES_CARDS))
                 .setTakenChoices(properties.get(PROP_IND_TAKEN_CHOICES))
                 .setErrCodeList(properties.get(PROP_IND_ERR_CODE))
-                .setWinMultiplier(game.getWinMultiplier())
+                .setHandMultiplier(game.getHandMultiplier())
+                .setInsuranceMultiplier(game.getInsuranceMultiplier())
                 .setInsurance(game.getInsurance())
-                .setSecondDealerCardTen(game.getSecondDealerCardTen());
+                .setDealerSecondCardTen(game.getDealerSecondCardTen());
     }
 
     private static List<String> extractGameProperties(Game game, ObjectMapper om) {

@@ -32,11 +32,13 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
 
     private String takenChoices;
 
-    private Double winMultiplier;
-
     private Boolean insurance;
 
-    private Boolean secondDealerCardTen;
+    private Double handMultiplier;
+
+    private Double insuranceMultiplier;
+
+    private Boolean dealerSecondCardTen;
 
     @ManyToOne(cascade = {CascadeType.MERGE})
     private UserEntity owner;
@@ -47,9 +49,10 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
                 .setPlayerCards(gameEntity.getPlayerCards())
                 .setDealerCards(gameEntity.getDealerCards())
                 .setTakenChoices(gameEntity.getTakenChoices())
-                .setWinMultiplier(gameEntity.getWinMultiplier())
+                .setHandMultiplier(gameEntity.getHandMultiplier())
+                .setInsuranceMultiplier(gameEntity.getInsuranceMultiplier())
                 .setInsurance(gameEntity.getInsurance())
-                .setSecondDealerCardTen(gameEntity.getSecondDealerCardTen())
+                .setDealerSecondCardTen(gameEntity.getDealerSecondCardTen())
                 .setOwner(gameEntity.getOwner());
     }
 
@@ -70,9 +73,10 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
                 .setDealerCards(dealerCards)
                 .setPlayerCards(playerCards)
                 .setTakenChoices(takenChoices)
-                .setWinMultiplier(game.getWinMultiplier())
+                .setHandMultiplier(game.getHandMultiplier())
+                .setInsuranceMultiplier(game.getInsuranceMultiplier())
                 .setInsurance(game.getInsurance())
-                .setSecondDealerCardTen(game.getSecondDealerCardTen())
+                .setDealerSecondCardTen(game.getDealerSecondCardTen())
                 .setOwner(owner);
     }
 }

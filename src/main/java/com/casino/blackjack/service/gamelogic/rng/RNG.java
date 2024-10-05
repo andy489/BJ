@@ -3,6 +3,7 @@ package com.casino.blackjack.service.gamelogic.rng;
 import org.apache.commons.math3.random.MersenneTwister;
 
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.KING_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.SPADES_SUIT;
 import static java.lang.Math.abs;
 
@@ -24,6 +25,10 @@ public class RNG {
 
     public static Integer randRank() {
         return nextInt() % KING_RANK + 1;
+    }
+
+    public static Integer randRankNotTen() {
+        return nextInt() % NINE_RANK + 1;
     }
 
     public static String generateGameHash() {

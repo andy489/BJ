@@ -31,11 +31,6 @@ public class GameUtil {
 
     public static final int DISPLACEMENT_BASE = 7;
 
-    public static final int SOFT = 0;
-    public static final int HARD = 1;
-
-    public static final int SOFT_PIVOT = 9;
-
     public static final int BJ_CNT = 21;
     public static final int BJ_CARDS_CNT = 2;
 
@@ -54,7 +49,8 @@ public class GameUtil {
     public static final Integer CHOICE_07_EVEN_MONEY_YES = 7;
     public static final Integer CHOICE_08_EVEN_MONEY_NO = 8;
     public static final Integer CHOICE_09_INSURANCE_YES = 9;
-    public static final Integer CHOICE_10_INSURANCE_NO = 10;
+    public static final Integer CHOICE_10_INSURANCE_YES_NOT_ENOUGH_MONEY = 10;
+    public static final Integer CHOICE_11_INSURANCE_NO = 11;
 
     public static final Integer CLUBS_SUIT = 0;
     public static final Integer DIAMONDS_SUIT = 1;
@@ -80,15 +76,16 @@ public class GameUtil {
     public static final Double ZERO_MULTI = 0.0d;
     public static final Double SURRENDER_MULTI = 0.5d;
     public static final Double PUSH_MULTI = 1.0d;
-    public static final Double INSURANCE_MULTIPLIER = 1.5d;
+    public static final Double INSURANCE_MULTIPLIER = 3.0d;
     public static final Double DOUBLE_MULTI = 2.0d;
     public static final Double BJ_MULTI = 2.5d;
 
     public static final String SCORE_SEPARATOR = "/";
 
-    public static final String NO_CURR_GAME_ERR = "NO CURR GAME ERROR";
-    public static final String NO_TAKEN_CHOICES = "NO TAKEN CHOICES YET";
-    public static final String NO_WALLET_FOUND = "NO WALLET FOUND";
+    public static final String NO_CURR_GAME_ERR = "NO CURR GAME ERR";
+    public static final String NO_CURR_WALLET = "NO CURR WALLET ERR";
+    public static final String NO_TAKEN_CHOICES = "NO TAKEN CHOICES YET ERR";
+    public static final String NO_WALLET_FOUND = "NO WALLET FOUND ERR";
 
     public static final Integer PROP_IND_DEALER_CARDS = 0;
     public static final Integer PROP_IND_PLAYER_CARDS = 1;

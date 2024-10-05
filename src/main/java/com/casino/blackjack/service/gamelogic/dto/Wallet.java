@@ -23,24 +23,35 @@ public class Wallet {
 
     private BigDecimal currentBet;
 
+    private BigDecimal handBet;
+
+    private BigDecimal insuranceBet;
+
     public Wallet() {
         balance = BigDecimal.ZERO;
         lastWin = BigDecimal.ZERO;
+        lastBet = BigDecimal.ZERO;
         currentBet = BigDecimal.ZERO;
+        handBet = BigDecimal.ZERO;
+        insuranceBet = BigDecimal.ZERO;
     }
 
     public static Wallet of(WalletEntity walletEntity) {
         return new Wallet()
                 .setBalance(walletEntity.getBalance())
                 .setLastWin(walletEntity.getLastWin())
-                .setCurrentBet(walletEntity.getCurrentBet());
+                .setCurrentBet(walletEntity.getCurrentBet())
+                .setHandBet(walletEntity.getHandBet())
+                .setInsuranceBet(walletEntity.getInsuranceBet());
     }
 
-    public static WalletEntity map(WalletEntity walletEntity, Wallet wallet, ObjectMapper om) {
+    public static WalletEntity map(WalletEntity walletEntity, Wallet wallet) {
         return walletEntity
                 .setBalance(wallet.getBalance())
                 .setLastWin(wallet.getLastWin())
-                .setCurrentBet(wallet.getCurrentBet());
+                .setCurrentBet(wallet.getCurrentBet())
+                .setHandBet(wallet.getHandBet())
+                .setInsuranceBet(wallet.getInsuranceBet());
     }
 
     public Wallet deposit(BigDecimal depositSum) {
@@ -48,16 +59,28 @@ public class Wallet {
         return this;
     }
 
-    public Wallet payBet(Double multiplier) {
-        lastWin = currentBet.multiply(new BigDecimal(multiplier));
+    public Wallet payBet(Double handMultiplier, Double insuranceMultiplier) {
+        lastWin = handBet.multiply(new BigDecimal(handMultiplier))
+                .add(insuranceBet.multiply(new BigDecimal(insuranceMultiplier)));
+
         balance = balance.add(lastWin);
         currentBet = BigDecimal.ZERO;
+        handBet = BigDecimal.ZERO;
+        insuranceBet = BigDecimal.ZERO;
         return this;
     }
 
-    public Wallet placeBet(BigDecimal betValue) {
+    public Wallet placeHandBet(BigDecimal betValue) {
         balance = balance.subtract(betValue);
-        currentBet = betValue;
+        currentBet = currentBet.add(betValue);
+        handBet = betValue;
+        return this;
+    }
+
+    public Wallet placeInsurance(BigDecimal betValue) {
+        balance = balance.subtract(betValue);
+        currentBet = currentBet.add(betValue);
+        insuranceBet = betValue;
         return this;
     }
 }

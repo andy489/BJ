@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,9 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_05_HIT
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_06_DEAL;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_07_EVEN_MONEY_YES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_08_EVEN_MONEY_NO;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_09_INSURANCE_YES;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_10_INSURANCE_YES_NOT_ENOUGH_MONEY;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_11_INSURANCE_NO;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_00_INSUFFICIENT_FUNDS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_01_INVALID_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_02_LOW_BET;
@@ -73,6 +77,56 @@ public class GameService {
             GameEntity currGameEntity = currentGameEntity.get();
             Game game = Game.of(currGameEntity, om, currWalletEntity);
 
+            if (game.getLastChoice().equals(CHOICE_09_INSURANCE_YES)) {
+
+                BigDecimal currBalance = currWalletEntity.getBalance();
+                BigDecimal currentBet = currWalletEntity.getCurrentBet();
+
+                BigDecimal halfBet = currentBet.divide(new BigDecimal(2), new MathContext(3));
+
+                if (halfBet.compareTo(currBalance) > 0) {
+                    game.makeChoice(CHOICE_10_INSURANCE_YES_NOT_ENOUGH_MONEY)
+                            .setInsurance(false)
+                            .setAvailableChoices(List.of(CHOICE_11_INSURANCE_NO))
+                            .setErrCodeList(List.of(ERR_CODE_00_INSUFFICIENT_FUNDS));
+                } else {
+                    Wallet wallet = Wallet.of(currWalletEntity)
+                            .placeInsurance(halfBet);
+
+                    game.setWallet(wallet);
+                    WalletEntity.map(currWalletEntity, wallet);
+
+                    walletRepository.save(currWalletEntity);
+                }
+
+                lastGameRepository.save(GameEntity.map(currGameEntity, game, om));
+            }
+
+            if (game.getLastChoice().equals(CHOICE_10_INSURANCE_YES_NOT_ENOUGH_MONEY)) {
+                BigDecimal currBalance = currWalletEntity.getBalance();
+                BigDecimal currentBet = currWalletEntity.getCurrentBet();
+
+                BigDecimal halfBet = currentBet.divide(new BigDecimal(2), new MathContext(3));
+
+                if (halfBet.compareTo(currBalance) > 0) {
+                   return game;
+                } else {
+                    Wallet wallet = Wallet.of(currWalletEntity);
+
+
+                    game.setWallet(wallet)
+                            .setErrCodeList(List.of())
+                            .setAvailableChoices(List.of(CHOICE_09_INSURANCE_YES, CHOICE_11_INSURANCE_NO));
+
+                    WalletEntity.map(currWalletEntity, wallet);
+
+                    walletRepository.save(currWalletEntity);
+                }
+
+                lastGameRepository.save(GameEntity.map(currGameEntity, game, om));
+                return game;
+            }
+
             if (!game.getErrCodeList().isEmpty()) {
                 Game toReturn = game.setWallet(Wallet.of(currWalletEntity));
                 Game gameClearErr = new Game(toReturn)
@@ -87,7 +141,7 @@ public class GameService {
                 PlayedGameEntity playedGameEntity = PlayedGameEntity.of(currGameEntity);
                 pastGameRepository.save(playedGameEntity);
 
-                currWalletEntity.payBet(playedGameEntity.getWinMultiplier());
+                currWalletEntity.payBet(currGameEntity.getHandMultiplier(), currGameEntity.getInsuranceMultiplier());
 
 //                if (currGameEntity.getInsurance()) {
 //                    if (currGameEntity.getSecondDealerCardTen()) {
@@ -143,8 +197,8 @@ public class GameService {
                 .setHash(RNG.generateGameHash())
                 .deal()
                 .makeChoice(CHOICE_06_DEAL)
-                .calcHand()
-                .setWallet(wallet.placeBet(bet));
+                .calcHand(false)
+                .setWallet(wallet.placeHandBet(bet));
 
         GameEntity gameEntity;
         if (currGameEntity.isEmpty()) {
@@ -168,11 +222,11 @@ public class GameService {
             if (evenChoice) {
                 game = Game.of(currGameEntity, om)
                         .makeChoice(CHOICE_07_EVEN_MONEY_YES)
-                        .calcHand();
+                        .calcHand(false);
             } else {
                 game = Game.of(currGameEntity, om)
                         .makeChoice(CHOICE_08_EVEN_MONEY_NO)
-                        .calcHand();
+                        .calcHand(false);
             }
             currGameEntity = GameEntity.map(currGameEntity, game, om);
             lastGameRepository.save(currGameEntity);
@@ -182,23 +236,23 @@ public class GameService {
         throw new IllegalStateException(NO_CURR_GAME_ERR);
     }
 
-//    public void hit() {
-//        Optional<GameEntity> gameEntity = extractLastGame();
-//
-//        if (gameEntity.isPresent()) {
-//            GameEntity currGameEntity = gameEntity.get();
-//
-//            Game game = Game.of(currGameEntity, om)
-//                    .makeChoice(CHOICE_05_HIT)
-//                    .calcHand();
-//
-//            currGameEntity = GameEntity.map(currGameEntity, game, om);
-//            lastGameRepository.save(currGameEntity);
-//            return;
-//        }
-//
-//        throw new IllegalStateException(NO_CURR_GAME_ERR);
-//    }
+    public void hit() {
+        Optional<GameEntity> gameEntity = extractLastGame();
+
+        if (gameEntity.isPresent()) {
+            GameEntity currGameEntity = gameEntity.get();
+
+            Game game = Game.of(currGameEntity, om)
+                    .makeChoice(CHOICE_05_HIT)
+                    .calcHand(!currGameEntity.getDealerSecondCardTen());
+
+            currGameEntity = GameEntity.map(currGameEntity, game, om);
+            lastGameRepository.save(currGameEntity);
+            return;
+        }
+
+        throw new IllegalStateException(NO_CURR_GAME_ERR);
+    }
 
     public void stand() {
         Optional<GameEntity> gameEntity = extractLastGame();
@@ -208,7 +262,7 @@ public class GameService {
 
             Game game = Game.of(currGameEntity, om)
                     .makeChoice(CHOICE_04_STAND)
-                    .calcHand();
+                    .calcHand(!currGameEntity.getDealerSecondCardTen());
 
             currGameEntity = GameEntity.map(currGameEntity, game, om);
             lastGameRepository.save(currGameEntity);
@@ -226,7 +280,7 @@ public class GameService {
 
             Game game = Game.of(currGameEntity, om)
                     .makeChoice(CHOICE_01_SURRENDER)
-                    .calcHand();
+                    .calcHand(false);
 
             currGameEntity = GameEntity.map(currGameEntity, game, om);
             lastGameRepository.save(currGameEntity);
@@ -236,29 +290,31 @@ public class GameService {
         throw new IllegalStateException(NO_CURR_GAME_ERR);
     }
 
-//    public void insurance(Boolean makeInsurance) {
-//        Optional<GameEntity> gameEntity = extractLastGame();
-//
-//        if (gameEntity.isPresent()) {
-//            GameEntity currGameEntity = gameEntity.get();
-//
-//            Game game;
-//            if (makeInsurance) {
-//                game = Game.of(currGameEntity, om)
-//                        .makeChoice(INSURANCE_YES)
-//                        .calcHand();
-//            } else {
-//                game = Game.of(currGameEntity, om)
-//                        .makeChoice(INSURANCE_NO)
-//                        .calcHand();
-//            }
-//            currGameEntity = GameEntity.map(currGameEntity, game, om);
-//            lastGameRepository.save(currGameEntity);
-//            return;
-//        }
-//
-//        throw new IllegalStateException(NO_CURR_GAME_ERR);
-//    }
+    public void insurance(Boolean insurance) {
+        Optional<GameEntity> gameEntity = extractLastGame();
+
+        if (gameEntity.isPresent()) {
+            GameEntity currGameEntity = gameEntity.get();
+
+            Game game;
+            if (insurance) {
+                game = Game.of(currGameEntity, om)
+                        .makeChoice(CHOICE_09_INSURANCE_YES)
+                        .calcHand(!currGameEntity.getDealerSecondCardTen());
+            } else {
+                game = Game.of(currGameEntity, om)
+                        .makeChoice(CHOICE_11_INSURANCE_NO)
+                        .calcHand(!currGameEntity.getDealerSecondCardTen());
+            }
+
+            currGameEntity = GameEntity.map(currGameEntity, game, om);
+
+            lastGameRepository.save(currGameEntity);
+            return;
+        }
+
+        throw new IllegalStateException(NO_CURR_GAME_ERR);
+    }
 
     // GAME SERVICE HELPER METHODS (COMMONLY USED)
     private Optional<GameEntity> extractLastGame() {
