@@ -18,18 +18,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.casino.blackjack.service.gamelogic.util.Util.CHIP_OPERATIONS;
-import static com.casino.blackjack.service.gamelogic.util.Util.DEAL;
-import static com.casino.blackjack.service.gamelogic.util.Util.ERR_CODE_HIGH_BET;
-import static com.casino.blackjack.service.gamelogic.util.Util.ERR_CODE_INSUFFICIENT_FUNDS;
-import static com.casino.blackjack.service.gamelogic.util.Util.ERR_CODE_INVALID_BET;
-import static com.casino.blackjack.service.gamelogic.util.Util.ERR_CODE_LOW_BET;
-import static com.casino.blackjack.service.gamelogic.util.Util.EVEN_MONEY_NO;
-import static com.casino.blackjack.service.gamelogic.util.Util.EVEN_MONEY_YES;
-import static com.casino.blackjack.service.gamelogic.util.Util.MAX_BET;
-import static com.casino.blackjack.service.gamelogic.util.Util.MIN_BET;
-import static com.casino.blackjack.service.gamelogic.util.Util.NO_CURR_GAME_ERR;
-import static com.casino.blackjack.service.gamelogic.util.Util.NO_WALLET_FOUND;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_00_CHIP_OPERATIONS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_01_SURRENDER;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_04_STAND;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_05_HIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_06_DEAL;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_07_EVEN_MONEY_YES;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_08_EVEN_MONEY_NO;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_00_INSUFFICIENT_FUNDS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_01_INVALID_BET;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_02_LOW_BET;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_03_HIGH_BET;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.MAX_BET;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.MIN_BET;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_CURR_GAME_ERR;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_WALLET_FOUND;
 
 @Service
 public class GameService {
@@ -103,7 +106,7 @@ public class GameService {
             return Game.of(currGameEntity, om, currWalletEntity);
         }
 
-        return new Game().setAvailableChoices(List.of(DEAL, CHIP_OPERATIONS))
+        return new Game().setAvailableChoices(List.of(CHOICE_06_DEAL, CHOICE_00_CHIP_OPERATIONS))
                 .setWallet(Wallet.of(currWalletEntity));
     }
 
@@ -124,7 +127,7 @@ public class GameService {
 
         if (validBet > 0) { // invalid bet
             Game game = new Game().addErr(validBet)
-                    .setAvailableChoices(List.of(DEAL, CHIP_OPERATIONS))
+                    .setAvailableChoices(List.of(CHOICE_06_DEAL, CHOICE_00_CHIP_OPERATIONS))
                     .setWallet(wallet);
 
             if (currGameEntity.isEmpty()) {
@@ -136,11 +139,10 @@ public class GameService {
             return;
         }
 
-        Game game = new Game()
-                .setDealt(true)
+        Game game = new Game().setDealt(true)
                 .setHash(RNG.generateGameHash())
                 .deal()
-                .makeChoice(DEAL)
+                .makeChoice(CHOICE_06_DEAL)
                 .calcHand()
                 .setWallet(wallet.placeBet(bet));
 
@@ -165,11 +167,11 @@ public class GameService {
             Game game;
             if (evenChoice) {
                 game = Game.of(currGameEntity, om)
-                        .makeChoice(EVEN_MONEY_YES)
+                        .makeChoice(CHOICE_07_EVEN_MONEY_YES)
                         .calcHand();
             } else {
                 game = Game.of(currGameEntity, om)
-                        .makeChoice(EVEN_MONEY_NO)
+                        .makeChoice(CHOICE_08_EVEN_MONEY_NO)
                         .calcHand();
             }
             currGameEntity = GameEntity.map(currGameEntity, game, om);
@@ -187,7 +189,7 @@ public class GameService {
 //            GameEntity currGameEntity = gameEntity.get();
 //
 //            Game game = Game.of(currGameEntity, om)
-//                    .makeChoice(HIT)
+//                    .makeChoice(CHOICE_05_HIT)
 //                    .calcHand();
 //
 //            currGameEntity = GameEntity.map(currGameEntity, game, om);
@@ -197,42 +199,42 @@ public class GameService {
 //
 //        throw new IllegalStateException(NO_CURR_GAME_ERR);
 //    }
-//
-//    public void stand() {
-//        Optional<GameEntity> gameEntity = extractLastGame();
-//
-//        if (gameEntity.isPresent()) {
-//            GameEntity currGameEntity = gameEntity.get();
-//
-//            Game game = Game.of(currGameEntity, om)
-//                    .makeChoice(STAND)
-//                    .calcHand();
-//
-//            currGameEntity = GameEntity.map(currGameEntity, game, om);
-//            lastGameRepository.save(currGameEntity);
-//            return;
-//        }
-//
-//        throw new IllegalStateException(NO_CURR_GAME_ERR);
-//    }
-//
-//    public void surrender() {
-//        Optional<GameEntity> gameEntity = extractLastGame();
-//
-//        if (gameEntity.isPresent()) {
-//            GameEntity currGameEntity = gameEntity.get();
-//
-//            Game game = Game.of(currGameEntity, om)
-//                    .makeChoice(SURRENDER)
-//                    .calcHand();
-//
-//            currGameEntity = GameEntity.map(currGameEntity, game, om);
-//            lastGameRepository.save(currGameEntity);
-//            return;
-//        }
-//
-//        throw new IllegalStateException(NO_CURR_GAME_ERR);
-//    }
+
+    public void stand() {
+        Optional<GameEntity> gameEntity = extractLastGame();
+
+        if (gameEntity.isPresent()) {
+            GameEntity currGameEntity = gameEntity.get();
+
+            Game game = Game.of(currGameEntity, om)
+                    .makeChoice(CHOICE_04_STAND)
+                    .calcHand();
+
+            currGameEntity = GameEntity.map(currGameEntity, game, om);
+            lastGameRepository.save(currGameEntity);
+            return;
+        }
+
+        throw new IllegalStateException(NO_CURR_GAME_ERR);
+    }
+
+    public void surrender() {
+        Optional<GameEntity> gameEntity = extractLastGame();
+
+        if (gameEntity.isPresent()) {
+            GameEntity currGameEntity = gameEntity.get();
+
+            Game game = Game.of(currGameEntity, om)
+                    .makeChoice(CHOICE_01_SURRENDER)
+                    .calcHand();
+
+            currGameEntity = GameEntity.map(currGameEntity, game, om);
+            lastGameRepository.save(currGameEntity);
+            return;
+        }
+
+        throw new IllegalStateException(NO_CURR_GAME_ERR);
+    }
 
 //    public void insurance(Boolean makeInsurance) {
 //        Optional<GameEntity> gameEntity = extractLastGame();
@@ -275,19 +277,19 @@ public class GameService {
         try {
             bet = new BigDecimal(betStr);
         } catch (NumberFormatException e) {
-            return ERR_CODE_INVALID_BET;
+            return ERR_CODE_01_INVALID_BET;
         }
 
         if (bet.compareTo(MIN_BET) < 0) {
-            return ERR_CODE_LOW_BET;
+            return ERR_CODE_02_LOW_BET;
         }
 
         if (bet.compareTo(MAX_BET) > 0) {
-            return ERR_CODE_HIGH_BET;
+            return ERR_CODE_03_HIGH_BET;
         }
 
         if (bet.compareTo(wallet.getBalance()) > 0) {
-            return ERR_CODE_INSUFFICIENT_FUNDS;
+            return ERR_CODE_00_INSUFFICIENT_FUNDS;
         }
 
         return 0;

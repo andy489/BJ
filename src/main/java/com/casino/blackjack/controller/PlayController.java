@@ -44,18 +44,18 @@ public class PlayController extends BaseController {
 //        gameService.hit();
 //        return super.redirect("/play");
 //    }
-//
-//    @PostMapping("/stand")
-//    public ModelAndView stand() {
-//        gameService.stand();
-//        return super.redirect("/play");
-//    }
-//
-//    @PostMapping("/surrender")
-//    public ModelAndView surrender() {
-//        gameService.surrender();
-//        return super.redirect("/play");
-//    }
+
+    @PostMapping("/stand")
+    public ModelAndView stand() {
+        gameService.stand();
+        return super.redirect("/play");
+    }
+
+    @PostMapping("/surrender")
+    public ModelAndView surrender() {
+        gameService.surrender();
+        return super.redirect("/play");
+    }
 
 //    @PostMapping("/insurance")
 //    public ModelAndView insurance(@RequestParam Boolean makeInsurance) {

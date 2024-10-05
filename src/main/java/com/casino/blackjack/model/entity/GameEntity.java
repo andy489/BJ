@@ -17,11 +17,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.casino.blackjack.service.gamelogic.util.Util.AVAILABLE_CHOICES_CARDS_PROP_IND;
-import static com.casino.blackjack.service.gamelogic.util.Util.DEALER_CARDS_PROP_IND;
-import static com.casino.blackjack.service.gamelogic.util.Util.ERR_CODE_PROP_IND;
-import static com.casino.blackjack.service.gamelogic.util.Util.PLAYER_CARDS_PROP_IND;
-import static com.casino.blackjack.service.gamelogic.util.Util.TAKEN_CHOICES_PROP_IND;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_AVAILABLE_CHOICES_CARDS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_DEALER_CARDS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_ERR_CODE;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_PLAYER_CARDS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_TAKEN_CHOICES;
 
 @Entity
 @Table(name = "last_games")
@@ -63,11 +63,11 @@ public class GameEntity extends BaseEntity implements Serializable {
         return new GameEntity()
                 .setHash(game.getHash())
                 .setFinalized(game.getFinalized())
-                .setDealerCards(properties.get(DEALER_CARDS_PROP_IND))
-                .setPlayerCards(properties.get(PLAYER_CARDS_PROP_IND))
-                .setAvailableChoices(properties.get(AVAILABLE_CHOICES_CARDS_PROP_IND))
-                .setTakenChoices(properties.get(TAKEN_CHOICES_PROP_IND))
-                .setErrCodeList(properties.get(ERR_CODE_PROP_IND))
+                .setDealerCards(properties.get(PROP_IND_DEALER_CARDS))
+                .setPlayerCards(properties.get(PROP_IND_PLAYER_CARDS))
+                .setAvailableChoices(properties.get(PROP_IND_AVAILABLE_CHOICES_CARDS))
+                .setTakenChoices(properties.get(PROP_IND_TAKEN_CHOICES))
+                .setErrCodeList(properties.get(PROP_IND_ERR_CODE))
                 .setWinMultiplier(game.getWinMultiplier())
                 .setInsurance(game.getInsurance())
                 .setSecondDealerCardTen(game.getSecondDealerCardTen())
@@ -80,11 +80,11 @@ public class GameEntity extends BaseEntity implements Serializable {
         return gameEntity
                 .setHash(game.getHash())
                 .setFinalized(game.getFinalized())
-                .setDealerCards(properties.get(DEALER_CARDS_PROP_IND))
-                .setPlayerCards(properties.get(PLAYER_CARDS_PROP_IND))
-                .setAvailableChoices(properties.get(AVAILABLE_CHOICES_CARDS_PROP_IND))
-                .setTakenChoices(properties.get(TAKEN_CHOICES_PROP_IND))
-                .setErrCodeList(properties.get(ERR_CODE_PROP_IND))
+                .setDealerCards(properties.get(PROP_IND_DEALER_CARDS))
+                .setPlayerCards(properties.get(PROP_IND_PLAYER_CARDS))
+                .setAvailableChoices(properties.get(PROP_IND_AVAILABLE_CHOICES_CARDS))
+                .setTakenChoices(properties.get(PROP_IND_TAKEN_CHOICES))
+                .setErrCodeList(properties.get(PROP_IND_ERR_CODE))
                 .setWinMultiplier(game.getWinMultiplier())
                 .setInsurance(game.getInsurance())
                 .setSecondDealerCardTen(game.getSecondDealerCardTen());

@@ -8,8 +8,8 @@ import lombok.experimental.Accessors;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.casino.blackjack.service.gamelogic.util.Util.KING_RANK;
-import static com.casino.blackjack.service.gamelogic.util.Util.SPADES_SUIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.KING_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.SPADES_SUIT;
 
 @Getter
 @Setter

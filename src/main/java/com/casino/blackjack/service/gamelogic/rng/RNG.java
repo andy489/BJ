@@ -2,8 +2,8 @@ package com.casino.blackjack.service.gamelogic.rng;
 
 import org.apache.commons.math3.random.MersenneTwister;
 
-import static com.casino.blackjack.service.gamelogic.util.Util.KING_RANK;
-import static com.casino.blackjack.service.gamelogic.util.Util.SPADES_SUIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.KING_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.SPADES_SUIT;
 import static java.lang.Math.abs;
 
 public class RNG {

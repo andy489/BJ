@@ -3,6 +3,7 @@ package com.casino.blackjack.service.gamelogic.dto;
 import com.casino.blackjack.model.entity.GameEntity;
 import com.casino.blackjack.model.entity.WalletEntity;
 import com.casino.blackjack.service.gamelogic.rng.RNG;
+import com.casino.blackjack.service.gamelogic.util.GameUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,40 +17,44 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import static com.casino.blackjack.service.gamelogic.rng.RNG.randRank;
 import static com.casino.blackjack.service.gamelogic.rng.RNG.randSuit;
-import static com.casino.blackjack.service.gamelogic.util.Util.ACE_RANK;
-import static com.casino.blackjack.service.gamelogic.util.Util.BJ_CARDS_CNT;
-import static com.casino.blackjack.service.gamelogic.util.Util.BJ_CNT;
-import static com.casino.blackjack.service.gamelogic.util.Util.BJ_DISPLAY_CNT;
-import static com.casino.blackjack.service.gamelogic.util.Util.BJ_MULTI;
-import static com.casino.blackjack.service.gamelogic.util.Util.CHIP_OPERATIONS;
-import static com.casino.blackjack.service.gamelogic.util.Util.CLUBS_SUIT;
-import static com.casino.blackjack.service.gamelogic.util.Util.DEAL;
-import static com.casino.blackjack.service.gamelogic.util.Util.DEALER_THRESHOLD_17;
-import static com.casino.blackjack.service.gamelogic.util.Util.DIAMONDS_SUIT;
-import static com.casino.blackjack.service.gamelogic.util.Util.DISPLACEMENT_BASE;
-import static com.casino.blackjack.service.gamelogic.util.Util.DISPLAY_BUST_CNT;
-import static com.casino.blackjack.service.gamelogic.util.Util.DOUBLE_MULTI;
-import static com.casino.blackjack.service.gamelogic.util.Util.EVEN_MONEY_NO;
-import static com.casino.blackjack.service.gamelogic.util.Util.EVEN_MONEY_YES;
-import static com.casino.blackjack.service.gamelogic.util.Util.HEARTS_SUIT;
-import static com.casino.blackjack.service.gamelogic.util.Util.HIT;
-import static com.casino.blackjack.service.gamelogic.util.Util.KING_RANK;
-import static com.casino.blackjack.service.gamelogic.util.Util.NINE_RANK;
-import static com.casino.blackjack.service.gamelogic.util.Util.NO_ID_STR;
-import static com.casino.blackjack.service.gamelogic.util.Util.NO_TAKEN_CHOICES;
-import static com.casino.blackjack.service.gamelogic.util.Util.ONE_CARD;
-import static com.casino.blackjack.service.gamelogic.util.Util.PUSH_MULTI;
-import static com.casino.blackjack.service.gamelogic.util.Util.SPADES_SUIT;
-import static com.casino.blackjack.service.gamelogic.util.Util.STAND;
-import static com.casino.blackjack.service.gamelogic.util.Util.SURRENDER;
-import static com.casino.blackjack.service.gamelogic.util.Util.SURRENDER_MULTI;
-import static com.casino.blackjack.service.gamelogic.util.Util.TEN_RANK;
-import static com.casino.blackjack.service.gamelogic.util.Util.THREE_RANK;
-import static com.casino.blackjack.service.gamelogic.util.Util.TWO_RANK;
-import static com.casino.blackjack.service.gamelogic.util.Util.ZERO_MULTI;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.ACE_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_CARDS_CNT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_CNT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_DISPLAY_CNT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_MULTI;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICES;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_00_CHIP_OPERATIONS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_01_SURRENDER;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_04_STAND;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_05_HIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_06_DEAL;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_07_EVEN_MONEY_YES;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_08_EVEN_MONEY_NO;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CLUBS_SUIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.DEALER_THRESHOLD_17;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.DIAMONDS_SUIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.DISPLACEMENT_BASE;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.DISPLAY_BUST_CNT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.DOUBLE_MULTI;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERRORS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.FIVE_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.HEARTS_SUIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.KING_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_ID_STR;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_TAKEN_CHOICES;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.ONE_CARD;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PUSH_MULTI;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.SPADES_SUIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.SURRENDER_MULTI;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.TEN_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.THREE_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.TWO_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 
 @Getter
 @Setter
@@ -79,7 +84,8 @@ public class Game {
 
     private List<Integer> errCodeList;
 
-    private Map<Integer, String> errCodeMsgMap;
+    private Map<String, Integer> availableChoicesCodeMap;
+    private Map<String, Integer> errCodeMap;
 
     public Game() {
         hash = NO_ID_STR;
@@ -98,6 +104,9 @@ public class Game {
 
         errCodeList = new ArrayList<>();
 
+        availableChoicesCodeMap = fillAvailableChoicesMap();
+        errCodeMap = fillErrMap();
+
         finalized = false;
     }
 
@@ -114,7 +123,8 @@ public class Game {
         this.finalized = game.finalized;
         this.wallet = game.wallet;
         this.errCodeList = game.errCodeList;
-        this.errCodeMsgMap = game.errCodeMsgMap;
+        this.availableChoicesCodeMap = game.availableChoicesCodeMap;
+        this.errCodeMap = game.errCodeMap;
     }
 
     public static Game of(GameEntity gameEntity, ObjectMapper om, WalletEntity walletEntity) {
@@ -202,7 +212,7 @@ public class Game {
 
         dealerCards.add(Card.of(randSuit(), ACE_RANK));
 
-        playerCards.add(Card.of(randSuit(), ACE_RANK));
+        playerCards.add(Card.of(randSuit(), FIVE_RANK));
         playerCards.add(Card.of(randSuit(), TEN_RANK));
     }
 
@@ -216,6 +226,10 @@ public class Game {
 
     public Integer dealerCardsEven() {
         return dealerCards.size() % 2;
+    }
+
+    public Integer dealerCardsOdd() {
+        return (dealerCards.size() + 1) % 2;
     }
 
     public Integer playerCardsEven() {
@@ -318,53 +332,54 @@ public class Game {
     public Game calcHand() {
 
         if (!dealt || finalized) {
-            return setAvailableChoices(List.of(CHIP_OPERATIONS, DEAL));
+            return setAvailableChoices(List.of(CHOICE_00_CHIP_OPERATIONS, CHOICE_06_DEAL));
         }
 
         // SURRENDER
-        if (getLastTakenChoice().equals(SURRENDER)) {
+        if (getLastTakenChoice().equals(CHOICE_01_SURRENDER)) {
             finalized = true;
             // dealerPlayUntilSoft17();
             dealerPlayOneCard();
             winMultiplier = SURRENDER_MULTI;
-            return setAvailableChoices(List.of(DEAL));
+            return setAvailableChoices(List.of(CHOICE_06_DEAL));
         }
 
         // PLAYER BJ AFTER DEAL
-        if (getLastTakenChoice().equals(DEAL) && checkBJ(playerCards)) {
+        if (getLastTakenChoice().equals(CHOICE_06_DEAL) && checkBJ(playerCards)) {
             if (dealerCannotMakeBJ()) {
+                dealerPlayOneCard();
                 finalized = true;
                 winMultiplier = BJ_MULTI;
-                return setAvailableChoices(List.of(DEAL));
+                return setAvailableChoices(List.of(CHOICE_06_DEAL));
             } else {
-                return setAvailableChoices(List.of(EVEN_MONEY_NO, EVEN_MONEY_YES));
+                return setAvailableChoices(List.of(CHOICE_07_EVEN_MONEY_YES, CHOICE_08_EVEN_MONEY_NO));
             }
         }
 
         // YES OR NO EVEN MONEY
-        if (getLastTakenChoice() >= EVEN_MONEY_YES &&
-                getLastTakenChoice() <= EVEN_MONEY_NO) {
+        if (getLastTakenChoice() >= CHOICE_07_EVEN_MONEY_YES &&
+                getLastTakenChoice() <= CHOICE_08_EVEN_MONEY_NO) {
 
+            dealerPlayOneCard();
             finalized = true;
-            takeOneDealerCardToCheckForBJ();
 
-            if (getLastTakenChoice().equals(EVEN_MONEY_YES)) {
+            if (getLastTakenChoice().equals(CHOICE_07_EVEN_MONEY_YES)) {
                 winMultiplier = DOUBLE_MULTI;
             } else {
                 winMultiplier = checkBJ(dealerCards) ? ZERO_MULTI : BJ_MULTI;
             }
 
-            return this.setAvailableChoices(List.of(DEAL, CHIP_OPERATIONS));
+            return this.setAvailableChoices(List.of(CHOICE_00_CHIP_OPERATIONS, CHOICE_06_DEAL));
         }
 
         // HIT
-        if (getLastTakenChoice().equals(HIT)) {
+        if (getLastTakenChoice().equals(CHOICE_05_HIT)) {
             hit(playerCards);
             Count playerCount = getCount(playerCards);
 
             if (playerCount.getRight().equals(BJ_CNT)) {
-                finalized = true;
                 dealerPlayUntilSoft17();
+                finalized = true;
 
                 if (checkBJ(dealerCards)) {
                     winMultiplier = ZERO_MULTI;
@@ -377,23 +392,23 @@ public class Game {
                     }
                 }
 
-                return setAvailableChoices(List.of(DEAL));
+                return setAvailableChoices(List.of(CHOICE_06_DEAL));
             }
 
             if (playerCount.getLeft() > BJ_CNT) {
                 finalized = true;
                 // dealerPlayUntilSoft17();
                 dealerPlayOneCard();
-                return setAvailableChoices(List.of(DEAL));
+                return setAvailableChoices(List.of(CHOICE_06_DEAL));
             }
 
             if (playerCount.getLeft() < BJ_CNT) {
-                return setAvailableChoices(List.of(STAND, HIT));
+                return setAvailableChoices(List.of(CHOICE_04_STAND, CHOICE_05_HIT));
             }
         }
 
         // STAND
-        if (getLastTakenChoice().equals(STAND)) {
+        if (getLastTakenChoice().equals(CHOICE_04_STAND)) {
             finalized = true;
             dealerPlayUntilSoft17();
 
@@ -419,7 +434,7 @@ public class Game {
                 }
             }
 
-            return setAvailableChoices(List.of(DEAL));
+            return setAvailableChoices(List.of(CHOICE_00_CHIP_OPERATIONS, CHOICE_06_DEAL));
         }
 
         // MAKE OR NOT INSURANCE
@@ -435,10 +450,10 @@ public class Game {
 //            return setAvailableChoices(List.of(DEAL));
 //        }
 
-        this.availableChoices.addAll(List.of(STAND, HIT));
+        this.availableChoices.addAll(List.of(CHOICE_04_STAND, CHOICE_05_HIT));
 
         if (dealerCards.size() == 1 && !dealerCards.get(0).getRank().equals(ACE_RANK)) {
-            this.availableChoices.add(SURRENDER);
+            this.availableChoices.add(CHOICE_01_SURRENDER);
         }
 
         return this;
@@ -451,12 +466,15 @@ public class Game {
 
     private void dealerPlayUntilSoft17() {
 
-        while (getCount(dealerCards).getRight() < DEALER_THRESHOLD_17) {
+        Count count = getCount(dealerCards);
+        while (count.getRight() < DEALER_THRESHOLD_17 || (count.getLeft() < DEALER_THRESHOLD_17 && count.getRight() > BJ_CNT)) {
             hit(dealerCards);
 
-            if (getCount(dealerCards).getLeft() > BJ_CNT) {
+            if (count.getLeft() > BJ_CNT) {
                 break;
             }
+
+            count = getCount(dealerCards);
         }
     }
 
@@ -466,7 +484,7 @@ public class Game {
     }
 
     private boolean checkBJ(List<Card> cards) {
-        Optional<Integer> ace = cards.stream().map(Card::getRank).filter(r -> r == ACE_RANK).findAny();
+        Optional<Integer> ace = cards.stream().map(Card::getRank).filter(r -> r.equals(ACE_RANK)).findAny();
         Optional<Integer> ten = cards.stream().map(Card::getRank).filter(r -> r >= TEN_RANK).findAny();
 
         return cards.size() == BJ_CARDS_CNT && ace.isPresent() && ten.isPresent();
@@ -495,16 +513,35 @@ public class Game {
         return takenChoices.get(takenChoices.size() - 1);
     }
 
-    private void takeOneDealerCardToCheckForBJ() {
-        dealerCards.add(Card.of(RNG.randSuit(), randRank()));
-    }
+    private static int ii = 0;
 
     private void hit(List<Card> cards) {
-        cards.add(Card.of(RNG.randSuit(), randRank()));
+//        cards.add(Card.of(RNG.randSuit(), randRank()));
+        if (ii >= 2) {
+            cards.add(Card.of(RNG.randSuit(), randRank()));
+        }
+
+        if (ii == 1) {
+            cards.add(Card.of(RNG.randSuit(), NINE_RANK));
+            ii++;
+        }
+
+        if (ii == 0) {
+            cards.add(Card.of(RNG.randSuit(), TWO_RANK));
+            ii++;
+        }
     }
 
     public Game addErr(Integer errCode) {
         this.errCodeList.add(errCode);
         return this;
+    }
+
+    private Map<String, Integer> fillAvailableChoicesMap() {
+        return CHOICES;
+    }
+
+    private Map<String, Integer> fillErrMap() {
+        return ERRORS;
     }
 }

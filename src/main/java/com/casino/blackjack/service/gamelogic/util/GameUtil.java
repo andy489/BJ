@@ -1,10 +1,34 @@
 package com.casino.blackjack.service.gamelogic.util;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
-public class Util {
+public class GameUtil {
+
+    public static final Map<String, Integer> CHOICES;
+    public static final Map<String, Integer> ERRORS;
+
+    static {
+        CHOICES = new TreeMap<>();
+        ERRORS = new TreeMap<>();
+
+        Field[] declaredFields = GameUtil.class.getDeclaredFields();
+
+        int i = 0, j = 0;
+        for (Field field : declaredFields) {
+            if (field.getName().startsWith("CHOICE_")) {
+                CHOICES.put(field.getName(), i++);
+            }
+
+            if (field.getName().startsWith("ERR_CODE_")) {
+                ERRORS.put(field.getName(), j++);
+            }
+        }
+    }
+
     public static final int DISPLACEMENT_BASE = 7;
 
     public static final int SOFT = 0;
@@ -20,17 +44,17 @@ public class Util {
 
     public static final int ONE_CARD = 1;
 
-    public static final Integer CHIP_OPERATIONS = -1;
-    public static final Integer SURRENDER = 0;
-    public static final Integer SPLIT = 1;
-    public static final Integer DOUBLE_DOWN = 2;
-    public static final Integer STAND = 3;
-    public static final Integer HIT = 4;
-    public static final Integer DEAL = 5;
-    public static final Integer EVEN_MONEY_YES = 6;
-    public static final Integer EVEN_MONEY_NO = 7;
-    public static final Integer INSURANCE_YES = 8;
-    public static final Integer INSURANCE_NO = 9;
+    public static final Integer CHOICE_00_CHIP_OPERATIONS = 0;
+    public static final Integer CHOICE_01_SURRENDER = 1;
+    public static final Integer CHOICE_02_SPLIT = 2;
+    public static final Integer CHOICE_03_DOUBLE_DOWN = 3;
+    public static final Integer CHOICE_04_STAND = 4;
+    public static final Integer CHOICE_05_HIT = 5;
+    public static final Integer CHOICE_06_DEAL = 6;
+    public static final Integer CHOICE_07_EVEN_MONEY_YES = 7;
+    public static final Integer CHOICE_08_EVEN_MONEY_NO = 8;
+    public static final Integer CHOICE_09_INSURANCE_YES = 9;
+    public static final Integer CHOICE_10_INSURANCE_NO = 10;
 
     public static final Integer CLUBS_SUIT = 0;
     public static final Integer DIAMONDS_SUIT = 1;
@@ -66,21 +90,21 @@ public class Util {
     public static final String NO_TAKEN_CHOICES = "NO TAKEN CHOICES YET";
     public static final String NO_WALLET_FOUND = "NO WALLET FOUND";
 
-    public static final Integer DEALER_CARDS_PROP_IND = 0;
-    public static final Integer PLAYER_CARDS_PROP_IND = 1;
-    public static final Integer AVAILABLE_CHOICES_CARDS_PROP_IND = 2;
-    public static final Integer TAKEN_CHOICES_PROP_IND = 3;
-    public static final Integer ERR_CODE_PROP_IND = 4;
+    public static final Integer PROP_IND_DEALER_CARDS = 0;
+    public static final Integer PROP_IND_PLAYER_CARDS = 1;
+    public static final Integer PROP_IND_AVAILABLE_CHOICES_CARDS = 2;
+    public static final Integer PROP_IND_TAKEN_CHOICES = 3;
+    public static final Integer PROP_IND_ERR_CODE = 4;
 
     public static final Integer DEALER_THRESHOLD_17 = 17;
 
     public static final BigDecimal MIN_BET = new BigDecimal("10.00");
     public static final BigDecimal MAX_BET = new BigDecimal("1000.00");
 
-    public static final Integer ERR_CODE_INSUFFICIENT_FUNDS = 1;
-    public static final Integer ERR_CODE_INVALID_BET = 2;
-    public static final Integer ERR_CODE_LOW_BET = 3;
-    public static final Integer ERR_CODE_HIGH_BET = 4;
+    public static final Integer ERR_CODE_00_INSUFFICIENT_FUNDS = 0;
+    public static final Integer ERR_CODE_01_INVALID_BET = 1;
+    public static final Integer ERR_CODE_02_LOW_BET = 2;
+    public static final Integer ERR_CODE_03_HIGH_BET = 3;
 
     public static final String ERR_MSG_INSUFFICIENT_FUNDS = "INSUFFICIENT FUNDS! " +
             "А deposit is required in order to place bet.";
@@ -92,10 +116,11 @@ public class Util {
             "Bet less than {MIN_BET} or exceeding {MAX_BET} is not allowed.";
 
     public static final Map<Integer, String> ERROR_MAP = new HashMap<>();
+
     static {
-        ERROR_MAP.put(ERR_CODE_INSUFFICIENT_FUNDS, ERR_MSG_INSUFFICIENT_FUNDS);
-        ERROR_MAP.put(ERR_CODE_INVALID_BET, ERR_MSG_INVALID_BET);
-        ERROR_MAP.put(ERR_CODE_LOW_BET, ERR_MSG_LOW_BET);
-        ERROR_MAP.put(ERR_CODE_HIGH_BET, ERR_MSG_HIGH_BET);
+        ERROR_MAP.put(ERR_CODE_00_INSUFFICIENT_FUNDS, ERR_MSG_INSUFFICIENT_FUNDS);
+        ERROR_MAP.put(ERR_CODE_01_INVALID_BET, ERR_MSG_INVALID_BET);
+        ERROR_MAP.put(ERR_CODE_02_LOW_BET, ERR_MSG_LOW_BET);
+        ERROR_MAP.put(ERR_CODE_03_HIGH_BET, ERR_MSG_HIGH_BET);
     }
 }
