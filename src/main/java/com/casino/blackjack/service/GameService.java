@@ -224,103 +224,71 @@ public class GameService {
         walletRepository.save(walletEntity);
     }
 
-    public void even(Boolean evenChoice) {
-        Optional<GameEntity> gameEntity = extractLastGame();
-
-        if (gameEntity.isPresent()) {
-            GameEntity currGameEntity = gameEntity.get();
-
-            Game game;
-            if (evenChoice) {
-                game = Game.of(currGameEntity, om)
-                        .makeChoice(CHOICE_07_EVEN_MONEY_YES)
-                        .calcHand(false);
-            } else {
-                game = Game.of(currGameEntity, om)
-                        .makeChoice(CHOICE_08_EVEN_MONEY_NO)
-                        .calcHand(false);
-            }
-            currGameEntity = GameEntity.map(currGameEntity, game, om);
-            lastGameRepository.save(currGameEntity);
-            return;
-        }
-
-        throw new IllegalStateException(NO_CURR_GAME_ERR);
-    }
-
-    public void hit() {
-        Optional<GameEntity> gameEntity = extractLastGame();
-
-        if (gameEntity.isPresent()) {
-            GameEntity currGameEntity = gameEntity.get();
-
-            Game game = Game.of(currGameEntity, om)
-                    .makeChoice(CHOICE_05_HIT)
-                    .calcHand(!currGameEntity.getDealerSecondCardTen());
-
-            currGameEntity = GameEntity.map(currGameEntity, game, om);
-            lastGameRepository.save(currGameEntity);
-            return;
-        }
-
-        throw new IllegalStateException(NO_CURR_GAME_ERR);
+    public void surrender() {
+        choiceNoOption(CHOICE_01_SURRENDER, false);
     }
 
     public void stand() {
-        Optional<GameEntity> gameEntity = extractLastGame();
-
-        if (gameEntity.isPresent()) {
-            GameEntity currGameEntity = gameEntity.get();
-
-            Game game = Game.of(currGameEntity, om)
-                    .makeChoice(CHOICE_04_STAND)
-                    .calcHand(!currGameEntity.getDealerSecondCardTen());
-
-            currGameEntity = GameEntity.map(currGameEntity, game, om);
-            lastGameRepository.save(currGameEntity);
-            return;
-        }
-
-        throw new IllegalStateException(NO_CURR_GAME_ERR);
+        choiceNoOption(CHOICE_04_STAND, true);
     }
 
-    public void surrender() {
-        Optional<GameEntity> gameEntity = extractLastGame();
-
-        if (gameEntity.isPresent()) {
-            GameEntity currGameEntity = gameEntity.get();
-
-            Game game = Game.of(currGameEntity, om)
-                    .makeChoice(CHOICE_01_SURRENDER)
-                    .calcHand(false);
-
-            currGameEntity = GameEntity.map(currGameEntity, game, om);
-            lastGameRepository.save(currGameEntity);
-            return;
-        }
-
-        throw new IllegalStateException(NO_CURR_GAME_ERR);
+    public void hit() {
+        choiceNoOption(CHOICE_05_HIT, true);
     }
 
     public void insurance(Boolean insurance) {
+        choiceOption(insurance, List.of(CHOICE_09_INSURANCE_YES, CHOICE_11_INSURANCE_NO), true);
+    }
+
+    public void even(Boolean evenChoice) {
+        choiceOption(evenChoice, List.of(CHOICE_07_EVEN_MONEY_YES, CHOICE_08_EVEN_MONEY_NO), false);
+    }
+
+    private void choiceNoOption(Integer makeChoice, Boolean calcHand) {
         Optional<GameEntity> gameEntity = extractLastGame();
 
         if (gameEntity.isPresent()) {
             GameEntity currGameEntity = gameEntity.get();
 
-            Game game;
-            if (insurance) {
-                game = Game.of(currGameEntity, om)
-                        .makeChoice(CHOICE_09_INSURANCE_YES)
-                        .calcHand(!currGameEntity.getDealerSecondCardTen());
-            } else {
-                game = Game.of(currGameEntity, om)
-                        .makeChoice(CHOICE_11_INSURANCE_NO)
-                        .calcHand(!currGameEntity.getDealerSecondCardTen());
+            boolean dealerAceAndFirstHitTen = false;
+            if (calcHand) {
+                dealerAceAndFirstHitTen = !currGameEntity.getDealerSecondCardTen();
             }
 
-            currGameEntity = GameEntity.map(currGameEntity, game, om);
+            Game game = Game.of(currGameEntity, om)
+                    .makeChoice(makeChoice)
+                    .calcHand(dealerAceAndFirstHitTen);
 
+            currGameEntity = GameEntity.map(currGameEntity, game, om);
+            lastGameRepository.save(currGameEntity);
+            return;
+        }
+
+        throw new IllegalStateException(NO_CURR_GAME_ERR);
+    }
+
+    private void choiceOption(Boolean yesChoice, List<Integer> options, Boolean calcHand) {
+        Optional<GameEntity> gameEntity = extractLastGame();
+
+        if (gameEntity.isPresent()) {
+            GameEntity currGameEntity = gameEntity.get();
+
+            boolean dealerAceAndFirstHitTen = false;
+            if (calcHand) {
+                dealerAceAndFirstHitTen = !currGameEntity.getDealerSecondCardTen();
+            }
+
+            Game game;
+            if (yesChoice) {
+                game = Game.of(currGameEntity, om)
+                        .makeChoice(options.get(0))
+                        .calcHand(dealerAceAndFirstHitTen);
+            } else {
+                game = Game.of(currGameEntity, om)
+                        .makeChoice(options.get(1))
+                        .calcHand(dealerAceAndFirstHitTen);
+            }
+            currGameEntity = GameEntity.map(currGameEntity, game, om);
             lastGameRepository.save(currGameEntity);
             return;
         }
