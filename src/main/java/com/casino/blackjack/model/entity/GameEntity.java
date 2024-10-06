@@ -14,6 +14,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,8 @@ public class GameEntity extends BaseEntity implements Serializable {
 
     private Boolean finalized;
 
+    private LocalDateTime dealtTime;
+
     @OneToOne
     private UserEntity owner;
 
@@ -74,6 +77,7 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setInsuranceMultiplier(game.getInsuranceMultiplier())
                 .setInsurance(game.getInsurance())
                 .setDealerSecondCardTen(game.getDealerSecondCardTen())
+                .setDealtTime(game.getDealtTime())
                 .setOwner(owner);
     }
 
@@ -91,7 +95,8 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setHandMultiplier(game.getHandMultiplier())
                 .setInsuranceMultiplier(game.getInsuranceMultiplier())
                 .setInsurance(game.getInsurance())
-                .setDealerSecondCardTen(game.getDealerSecondCardTen());
+                .setDealerSecondCardTen(game.getDealerSecondCardTen())
+                .setDealtTime(game.getDealtTime());
     }
 
     private static List<String> extractGameProperties(Game game, ObjectMapper om) {

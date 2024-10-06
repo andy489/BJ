@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "played_games")
@@ -40,6 +41,10 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
 
     private Boolean dealerSecondCardTen;
 
+    private LocalDateTime dealtTime;
+
+    private LocalDateTime finalizedTime;
+
     @ManyToOne(cascade = {CascadeType.MERGE})
     private UserEntity owner;
 
@@ -53,6 +58,7 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
                 .setInsuranceMultiplier(gameEntity.getInsuranceMultiplier())
                 .setInsurance(gameEntity.getInsurance())
                 .setDealerSecondCardTen(gameEntity.getDealerSecondCardTen())
+                .setDealtTime(gameEntity.getDealtTime())
                 .setOwner(gameEntity.getOwner());
     }
 
@@ -77,6 +83,7 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
                 .setInsuranceMultiplier(game.getInsuranceMultiplier())
                 .setInsurance(game.getInsurance())
                 .setDealerSecondCardTen(game.getDealerSecondCardTen())
+                .setDealtTime(game.getDealtTime())
                 .setOwner(owner);
     }
 }

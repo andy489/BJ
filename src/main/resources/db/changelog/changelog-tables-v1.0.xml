@@ -59,6 +59,7 @@
             <column name="insurance" type="BIT(1)"/>
             <column name="dealer_second_card_ten" type="BIT(1)"/>
             <column name="err_code_list" type="VARCHAR(63)"/>
+            <column name="dealt_time" type="TIMESTAMP"/>
             <column name="owner_id" type="BIGINT">
                 <constraints unique="true"/>
             </column>
@@ -77,6 +78,8 @@
             <column name="insurance_multiplier" type="DOUBLE"/>
             <column name="insurance" type="BIT(1)"/>
             <column name="dealer_second_card_ten" type="BIT(1)"/>
+            <column name="dealt_time" type="TIMESTAMP"/>
+            <column name="finalized_time" type="TIMESTAMP"/>
             <column name="owner_id" type="BIGINT"/>
         </createTable>
     </changeSet>

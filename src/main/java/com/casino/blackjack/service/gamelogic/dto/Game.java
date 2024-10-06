@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,6 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.DISPLACEMENT_
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DISPLAY_BUST_CNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DOUBLE_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERRORS;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.FIVE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.HEARTS_SUIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.INSURANCE_MULTIPLIER;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.KING_RANK;
@@ -79,6 +79,8 @@ public class Game {
     private Double insuranceMultiplier;
 
     private Boolean dealerSecondCardTen;
+
+    private LocalDateTime dealtTime;
 
     private Boolean finalized;
 
@@ -126,6 +128,7 @@ public class Game {
         this.insurance = game.insurance;
         this.dealerSecondCardTen = game.dealerSecondCardTen;
         this.finalized = game.finalized;
+        this.dealtTime = game.dealtTime;
         this.wallet = game.wallet;
         this.errCodeList = game.errCodeList;
         this.availableChoicesCodeMap = game.availableChoicesCodeMap;
@@ -175,6 +178,7 @@ public class Game {
                 .setAvailableChoices(availableChoices)
                 .setTakenChoices(takenChoices)
                 .setInsurance(gameEntity.getInsurance())
+                .setDealtTime(gameEntity.getDealtTime())
                 .setHandMultiplier(gameEntity.getHandMultiplier())
                 .setInsuranceMultiplier(gameEntity.getInsuranceMultiplier())
                 .setErrCodeList(errCodeList)
@@ -254,6 +258,10 @@ public class Game {
     }
 
     public Integer getLastChoice() {
+        if (takenChoices.isEmpty()) {
+            return -1;
+        }
+
         return takenChoices.get(takenChoices.size() - 1);
     }
 

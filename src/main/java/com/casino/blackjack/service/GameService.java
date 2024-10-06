@@ -10,11 +10,13 @@ import com.casino.blackjack.service.auth.UserService;
 import com.casino.blackjack.service.gamelogic.dto.Game;
 import com.casino.blackjack.service.gamelogic.dto.Wallet;
 import com.casino.blackjack.service.gamelogic.rng.RNG;
+import com.casino.blackjack.util.LocalDateTimeProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,15 +49,18 @@ public class GameService {
 
     private final UserService userService;
 
+    private final LocalDateTimeProvider localDateTimeProvider;
+
     private final ObjectMapper om;
 
     public GameService(LastGameRepository lastGameRepository, PastGameRepository pastGameRepository,
-                       WalletRepository walletRepository, UserService userService, ObjectMapper om) {
+                       WalletRepository walletRepository, UserService userService, LocalDateTimeProvider localDateTimeProvider, ObjectMapper om) {
 
         this.lastGameRepository = lastGameRepository;
         this.pastGameRepository = pastGameRepository;
         this.walletRepository = walletRepository;
         this.userService = userService;
+        this.localDateTimeProvider = localDateTimeProvider;
         this.om = om;
     }
 
@@ -138,18 +143,12 @@ public class GameService {
 
             if (currGameEntity.getFinalized()) {
                 lastGameRepository.delete(currGameEntity);
-                PlayedGameEntity playedGameEntity = PlayedGameEntity.of(currGameEntity);
+                PlayedGameEntity playedGameEntity = PlayedGameEntity.of(currGameEntity)
+                        .setFinalizedTime(localDateTimeProvider.getNow());
+
                 pastGameRepository.save(playedGameEntity);
 
                 currWalletEntity.payBet(currGameEntity.getHandMultiplier(), currGameEntity.getInsuranceMultiplier());
-
-//                if (currGameEntity.getInsurance()) {
-//                    if (currGameEntity.getSecondDealerCardTen()) {
-//                        currWalletEntity.payBet(INSURANCE_MULTIPLIER);
-//                    } else {
-//                        currWalletEntity.payBet(currGameEntity.getWinMultiplier());
-//                    }
-//                }
 
                 walletRepository.save(currWalletEntity);
 
@@ -196,6 +195,7 @@ public class GameService {
         Game game = new Game().setDealt(true)
                 .setHash(RNG.generateGameHash())
                 .deal()
+                .setDealtTime(localDateTimeProvider.getNow())
                 .makeChoice(CHOICE_06_DEAL)
                 .calcHand(false)
                 .setWallet(wallet.placeHandBet(bet));

@@ -11,4 +11,8 @@ public class LocalDateTimeProvider {
 
         return LocalDateTime.now().minusMinutes(minutes);
     }
+
+    public LocalDateTime getNow() {
+        return LocalDateTime.now();
+    }
 }
