@@ -1,5 +1,6 @@
 package com.casino.blackjack.service;
 
+import com.casino.blackjack.model.entity.BetHistoryEntity;
 import com.casino.blackjack.model.entity.GameEntity;
 import com.casino.blackjack.model.entity.PlayedGameEntity;
 import com.casino.blackjack.model.entity.WalletEntity;
@@ -48,18 +49,20 @@ public class GameService {
     private final WalletRepository walletRepository;
 
     private final UserService userService;
+    private final BetHistoryService betHistoryService;
 
     private final LocalDateTimeProvider localDateTimeProvider;
 
     private final ObjectMapper om;
 
     public GameService(LastGameRepository lastGameRepository, PastGameRepository pastGameRepository,
-                       WalletRepository walletRepository, UserService userService, LocalDateTimeProvider localDateTimeProvider, ObjectMapper om) {
+                       WalletRepository walletRepository, UserService userService, BetHistoryService betHistoryService, LocalDateTimeProvider localDateTimeProvider, ObjectMapper om) {
 
         this.lastGameRepository = lastGameRepository;
         this.pastGameRepository = pastGameRepository;
         this.walletRepository = walletRepository;
         this.userService = userService;
+        this.betHistoryService = betHistoryService;
         this.localDateTimeProvider = localDateTimeProvider;
         this.om = om;
     }
@@ -148,9 +151,18 @@ public class GameService {
 
                 pastGameRepository.save(playedGameEntity);
 
-                currWalletEntity.payBet(currGameEntity.getHandMultiplier(), currGameEntity.getInsuranceMultiplier());
+                BigDecimal totalBetAmount = currWalletEntity.payBet(currGameEntity.getHandMultiplier(),
+                        currGameEntity.getInsuranceMultiplier());
 
                 walletRepository.save(currWalletEntity);
+
+                BetHistoryEntity betHistoryEntity = new BetHistoryEntity()
+                        .setTotalBetAmount(totalBetAmount)
+                        .setReturnAmount(currWalletEntity.getLastWin())
+                        .setPlayedGame(playedGameEntity)
+                        .setUser(playedGameEntity.getOwner());
+
+                betHistoryService.save(betHistoryEntity);
 
                 return Game.of(currGameEntity, om)
                         .setWallet(Wallet.of(currWalletEntity));

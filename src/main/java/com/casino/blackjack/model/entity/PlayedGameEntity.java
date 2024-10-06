@@ -4,6 +4,7 @@ import com.casino.blackjack.service.gamelogic.dto.Game;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -25,6 +26,7 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @Column(nullable = false, unique = true)
     private String hash;
 
     private String playerCards;

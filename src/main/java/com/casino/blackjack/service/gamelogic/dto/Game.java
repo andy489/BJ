@@ -28,6 +28,8 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_00_CHIP_OPERATIONS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_01_SURRENDER;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_02_SPLIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_03_DOUBLE_DOWN;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_04_STAND;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_05_HIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_06_DEAL;
@@ -365,7 +367,7 @@ public class Game {
             finalized = true;
             dealerPlayOneCard();
             handMultiplier = SURRENDER_MULTI;
-            return setAvailableChoices(List.of(CHOICE_06_DEAL));
+            return setAvailableChoices(List.of(CHOICE_00_CHIP_OPERATIONS, CHOICE_06_DEAL));
         }
 
         // PLAYER BJ AFTER DEAL
@@ -483,9 +485,13 @@ public class Game {
                 dealerCards.remove(dealerCards.size() - 1);
                 dealerSecondCardTen = false;
 
+                availableChoices.addAll(List.of(CHOICE_04_STAND, CHOICE_05_HIT, CHOICE_03_DOUBLE_DOWN));
 
-                // todo add split if pair and double choices
-                return setAvailableChoices(List.of(CHOICE_04_STAND, CHOICE_05_HIT));
+                if (checkBJ(playerCards)) {
+                    availableChoices.add(CHOICE_02_SPLIT);
+                }
+
+                return this;
             }
         }
 
@@ -498,10 +504,11 @@ public class Game {
             }
         }
 
-        // todo if 1 dealer has one card: add double
-        // todo if pair add split
+        availableChoices.addAll(List.of(CHOICE_04_STAND, CHOICE_05_HIT, CHOICE_03_DOUBLE_DOWN));
 
-        availableChoices.addAll(List.of(CHOICE_04_STAND, CHOICE_05_HIT));
+        if (checkBJ(playerCards)) {
+            availableChoices.add(CHOICE_02_SPLIT);
+        }
 
         return this;
     }

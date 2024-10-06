@@ -66,14 +66,18 @@ public class WalletEntity extends BaseEntity {
         return balance;
     }
 
-    public void payBet(Double handMultiplier, Double insuranceMultiplier) {
+    // returns total bet amount
+    public BigDecimal payBet(Double handMultiplier, Double insuranceMultiplier) {
         lastWin = handBet.multiply(new BigDecimal(handMultiplier))
                 .add(insuranceBet.multiply(new BigDecimal(insuranceMultiplier)));
 
         balance = balance.add(lastWin);
+        BigDecimal toReturn = new BigDecimal(String.valueOf(currentBet));
         currentBet = BigDecimal.ZERO;
         handBet = BigDecimal.ZERO;
         insuranceBet = BigDecimal.ZERO;
+
+        return toReturn;
     }
 
     public void placeHandBet(BigDecimal betValue) {
