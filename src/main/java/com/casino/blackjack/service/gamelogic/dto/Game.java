@@ -189,12 +189,7 @@ public class Game {
 
     public Game deal() {
         dealt = true;
-//        dealBJForPlayerAndNoChanceForBJForDealer();
-//        dealBJForPlayerAndPotentialBJForBJForDealer();
         dealRandom();
-
-//        dealForSurrender();
-
         return this;
     }
 
@@ -506,7 +501,7 @@ public class Game {
 
         availableChoices.addAll(List.of(CHOICE_04_STAND, CHOICE_05_HIT, CHOICE_03_DOUBLE_DOWN));
 
-        if (checkBJ(playerCards)) {
+        if (checkPair(playerCards)) {
             availableChoices.add(CHOICE_02_SPLIT);
         }
 
