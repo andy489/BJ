@@ -28,7 +28,7 @@
             <div class="row dealer-cards">
                 <div class="dealer-cards-box">
                     <div class="col-12 play-card-wrapper" th:if="${game.dealerCards.size == 1}"
-                    th:with="card=${game.dealerCards.get(0)}">
+                         th:with="card=${game.dealerCards.get(0)}">
                         <img th:src="@{'./../images/playing_card/' + ${card.rank} + '-' + ${card.suit} +'.png'}"
                              alt="" class="play-card"
                              th:classappend="'d-' + *{dealerCardsOdd} + '-6'"/>
@@ -142,20 +142,27 @@
     <!--  EO:CHOICE MODAL: INSURANCE  -->
 
     <!--  ERR: MODAL  -->
-    <div class="err-modal-wrapper row" th:classappend="${#lists.isEmpty(game.errCodeList) ? 'd-none' : ''}">
+    <div class="err-modal-wrapper row" th:classappend="${(#lists.isEmpty(game.errCodeList) ? 'd-none' : '') +
+            (#lists.contains(game.errCodeList, game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS')) ?
+            'err-modal-wrapper-dep-link' : '')}">
         <div class="modal-title col-12" th:each="errCode : ${game.errCodeList}"
              th:text="#{err.code.__${errCode}__(#{min.bet},#{max.bet})}">
             Error Message
         </div>
         <div class="choice-box">
-            <button type="button" class="btn btn-err btn-err-ok">
-                <i class="fa-solid fa-check fa-2xl"></i>
+            <button type="button" class="btn btn-err btn-err-ok"
+                    th:classappend="${#lists.contains(game.errCodeList,
+                    game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS')) ? 'btn-err-smaller' : ''}">
+                <i class="fa-solid fa-check fa-xl" th:if="${#lists.contains(game.errCodeList,
+                    game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS'))}"></i>
+                <i class="fa-solid fa-check fa-2xl" th:unless="${#lists.contains(game.errCodeList,
+                    game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS'))}"></i>
             </button>
         </div>
-        <div class="choice-box">
+        <div class="choice-box choice-deposit-link"
+             th:classappend="${#lists.contains(game.errCodeList,
+               game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS')) ? '' : 'd-none'}">
             <a class="go-to-link btn btn-outline-success"
-               th:classappend="${#lists.contains(game.errCodeList,
-               game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS')) ? '' : 'd-none'}"
                th:href="@{/credit-card/deposit}"
                th:with="go_to_deposit=#{link.deposit}"
                th:text="${#strings.toUpperCase(go_to_deposit)}">

@@ -226,6 +226,11 @@ body {
     box-shadow: 0.15em 0.15em var(--dark-gray);
 }
 
+.btn-err-smaller{
+    width: 3.3em;
+    height: 3.3em;
+}
+
 .btn-decision:hover, .btn-err:hover {
     filter: brightness(150%);
 }

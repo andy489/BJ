@@ -42,6 +42,7 @@
     text-align: center;
     align-content: center;
 }
+
 /* EO: choice modal pop-up */
 
 /*#dimmer {*/
@@ -67,7 +68,7 @@
     justify-content: space-around;
     background-color: rgba(0, 0, 0, 0.4);
     width: 20em;
-    height: 11em;
+    height: 10.5em;
     z-index: 2;
     margin: auto;
     box-shadow: 0 0 0.5rem rgb(246, 246, 246);
@@ -75,6 +76,10 @@
     border: var(--dark-gray) solid 0.15em;
 
     color: whitesmoke;
+}
+
+.err-modal-wrapper-dep-link{
+    height: 11.2em;
 }
 
 .go-to-link{

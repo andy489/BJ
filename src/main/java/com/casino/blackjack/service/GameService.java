@@ -117,7 +117,7 @@ public class GameService {
                 BigDecimal halfBet = currentBet.divide(new BigDecimal(2), new MathContext(3));
 
                 if (halfBet.compareTo(currBalance) > 0) {
-                   return game;
+                    return game;
                 } else {
                     Wallet wallet = Wallet.of(currWalletEntity);
 
@@ -190,7 +190,7 @@ public class GameService {
         int validBet = validateBet(betStr, wallet);
         BigDecimal bet = new BigDecimal(betStr);
 
-        if (validBet > 0) { // invalid bet
+        if (validBet >= 0) { // invalid bet
             Game game = new Game().addErr(validBet)
                     .setAvailableChoices(List.of(CHOICE_06_DEAL, CHOICE_00_CHIP_OPERATIONS))
                     .setWallet(wallet);
@@ -349,6 +349,10 @@ public class GameService {
         }
 
         if (bet.compareTo(MIN_BET) < 0) {
+            if (wallet.getBalance().compareTo(MIN_BET) < 0) {
+                return ERR_CODE_00_INSUFFICIENT_FUNDS;
+            }
+
             return ERR_CODE_02_LOW_BET;
         }
 
@@ -360,7 +364,7 @@ public class GameService {
             return ERR_CODE_00_INSUFFICIENT_FUNDS;
         }
 
-        return 0;
+        return -1;
     }
     // EO:GAME SERVICE HELPER METHODS (COMMONLY USED)
 }

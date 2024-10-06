@@ -19,11 +19,11 @@ public class WalletEntity extends BaseEntity {
 
     private BigDecimal balance;
 
-    private BigDecimal lastWin;
+    private BigDecimal currentBet;
 
     private BigDecimal lastBet;
 
-    private BigDecimal currentBet;
+    private BigDecimal lastWin;
 
     private BigDecimal handBet;
 
