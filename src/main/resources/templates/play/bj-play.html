@@ -52,16 +52,32 @@
 
             <div class="row player-cards">
                 <div class="player-cards-box">
-                    <div class="col-12 play-card-wrapper">
-                        <img th:each="c, i : *{playerCards}"
+                    <div class="col-12 play-card-wrapper" th:unless="${doubleDown}">
+                        <img th:each="c, iStat : *{playerCards}"
                              th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
                              alt="" class="play-card"
-                             th:classappend="'d-' + *{playerCardsEven} + '-' + ${game.dPlayerCards + i.index}"/>
+                             th:classappend="'d-' + *{playerCardsEven} + '-' + ${game.dPlayerCards + iStat.index}"/>
                     </div>
+
+                    <div class="col-12 play-card-wrapper" th:if="${doubleDown}">
+                        <img th:unless="${iStat.index == iStat.size - 1}"
+                             th:each="c, iStat : *{playerCards}"
+                             th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
+                             alt="" class="play-card"
+                             th:classappend="'d-' + *{playerCardsEven - 1} + '-' + ${game.dPlayerCards + iStat.index}"/>
+                    </div>
+
+
                     <div class="score-box">
                         <div class="curr-result-user" th:text="#{game.player} + ':'">Player</div>
                         <div class="small-deli"></div>
                         <div class="curr-result-box" th:text="*{playerScore()}">100/200</div>
+                    </div>
+
+                    <div class="col-12 play-card-wrapper" th:if="${doubleDown}"
+                         th:with="dd=${game.playerCards[__${#lists.size(game.playerCards) - 1}__]}">
+                        <img th:src="@{'./../images/playing_card/' + ${dd.rank} + '-' + ${dd.suit} +'.png'}"
+                             alt="" class="play-card double-down-card"/>
                     </div>
                 </div>
             </div>
@@ -71,7 +87,7 @@
     <!--  CHOICE MODAL: EVEN MONEY -->
     <div class="choice-modal-wrapper row"
          th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_07_EVEN_MONEY_YES')) ? '' : 'd-none'}">
+         game.availableChoicesCodeMap.get('CHOICE_EVEN_MONEY_YES')) ? '' : 'd-none'}">
         <div class="modal-title col-12"
              th:with="even=#{dec.even.money}"
              th:text="${#strings.toUpperCase(even)} + '?'">
@@ -107,14 +123,15 @@
     <!--  CHOICE MODAL: INSURANCE  -->
     <div class="choice-modal-wrapper row"
          th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_11_INSURANCE_NO')) ? '' : 'd-none'}">
+         game.availableChoicesCodeMap.get('CHOICE_INSURANCE_NO')) ? '' : 'd-none'}">
         <div class="modal-title col-12"
              th:with="insurance=#{dec.insurance}"
              th:text="${#strings.toUpperCase(insurance)} + '?'">
             INSURANCE?
         </div>
-        <div class="col-6 choice-box" th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_09_INSURANCE_YES')) ? '' : 'd-none'}">
+        <div class="col-2"></div>
+        <div class="col-4 choice-box" th:classappend="${#lists.contains(game.availableChoices,
+         game.availableChoicesCodeMap.get('CHOICE_INSURANCE_YES')) ? '' : 'd-none'}">
             <form th:action="@{/play/insurance}"
                   th:method="post">
                 <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-yes"></button>
@@ -126,7 +143,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-6 choice-box">
+        <div class="col-4 choice-box">
             <form th:action="@{/play/insurance}"
                   th:method="post">
                 <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-no"></button>
@@ -138,39 +155,55 @@
                 </div>
             </form>
         </div>
+        <div class="col-2"></div>
     </div>
     <!--  EO:CHOICE MODAL: INSURANCE  -->
 
-    <!--  ERR: MODAL  -->
+    <!--  MODAL ERROR  -->
     <div class="err-modal-wrapper row" th:classappend="${(#lists.isEmpty(game.errCodeList) ? 'd-none' : '') +
-            (#lists.contains(game.errCodeList, game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS')) ?
+            (#lists.contains(game.errCodeList, game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ?
             'err-modal-wrapper-dep-link' : '')}">
         <div class="modal-title col-12" th:each="errCode : ${game.errCodeList}"
              th:text="#{err.code.__${errCode}__(#{min.bet},#{max.bet})}">
             Error Message
         </div>
         <div class="choice-box">
-            <button type="button" class="btn btn-err btn-err-ok"
-                    th:classappend="${#lists.contains(game.errCodeList,
-                    game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS')) ? 'btn-err-smaller' : ''}">
-                <i class="fa-solid fa-check fa-xl" th:if="${#lists.contains(game.errCodeList,
-                    game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS'))}"></i>
-                <i class="fa-solid fa-check fa-2xl" th:unless="${#lists.contains(game.errCodeList,
-                    game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS'))}"></i>
-            </button>
+            <form th:action="@{/play/accept}"
+                  th:method="post">
+                <input type="hidden" name="depositRedirect" value="false">
+                <button type="submit" class="btn btn-err btn-err-ok"
+                        th:classappend="${#lists.contains(game.errCodeList,
+                    game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ? 'btn-err-smaller' : ''}">
+                    <i class="fa-solid fa-check fa-xl" th:if="${#lists.contains(game.errCodeList,
+                    game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS'))}"></i>
+                    <i class="fa-solid fa-check fa-2xl" th:unless="${#lists.contains(game.errCodeList,
+                    game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS'))}"></i>
+                </button>
+            </form>
         </div>
-        <div class="choice-box choice-deposit-link"
+        <div class="choice-box"
              th:classappend="${#lists.contains(game.errCodeList,
-               game.errCodeMap.get('ERR_CODE_00_INSUFFICIENT_FUNDS')) ? '' : 'd-none'}">
-            <a class="go-to-link btn btn-outline-success"
-               th:href="@{/credit-card/deposit}"
-               th:with="go_to_deposit=#{link.deposit}"
-               th:text="${#strings.toUpperCase(go_to_deposit)}">
-                GO TO DEPOSIT
-            </a>
+               game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ? '' : 'd-none'}">
+            <form th:action="@{/play/accept}"
+                  th:method="post">
+                <input type="hidden" name="depositRedirect" value="true">
+                <button type="submit" class="go-to-link btn btn-outline-success"
+                        th:with="go_to_deposit=#{link.deposit}"
+                        th:text="${#strings.toUpperCase(go_to_deposit)}">
+                </button>
+            </form>
+
+
+
+<!--            <a class="go-to-link btn btn-outline-success"-->
+<!--               th:href="@{/credit-card/deposit}"-->
+<!--               th:with="go_to_deposit=#{link.deposit}"-->
+<!--               th:text="${#strings.toUpperCase(go_to_deposit)}">-->
+<!--                GO TO DEPOSIT-->
+<!--            </a>-->
         </div>
     </div>
-    <!--  EO:ERR: MODAL  -->
+    <!--  EO: MODAL ERROR -->
 
     <!--  DECISION  -->
     <div class="row decision-box-wrapper">
@@ -180,7 +213,7 @@
                       th:method="post">
                     <button type="submit" class="btn btn-decision btn-surrender"
                             th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_01_SURRENDER')) ? '' : 'disabled'}">
+                            game.availableChoicesCodeMap.get('CHOICE_SURRENDER')) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd" th:text="#{dec.surrender}">
                         Surrender
@@ -191,7 +224,7 @@
                 <form action="">
                     <button type="submit" class="btn btn-decision btn-split"
                             th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_02_SPLIT')) ? '' : 'disabled'}">
+                            game.availableChoicesCodeMap.get('CHOICE_SPLIT')) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd" th:text="#{dec.split}">
                         Split
@@ -199,12 +232,15 @@
                 </form>
             </div>
             <div class="col-1 decision dec-dou">
-                <form action="">
+                <form th:action="@{/play/double-down}"
+                      th:method="post">
+                    <input type="hidden" name="doubleDown" value="true">
                     <button type="submit" class="btn btn-decision btn-double"
                             th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_03_DOUBLE_DOWN')) ? '' : 'disabled'}">
+                            game.availableChoicesCodeMap.get('CHOICE_DOUBLE_DOWN')) ? '' : 'disabled'}">
                     </button>
-                    <div class="btn-cmd" th:text="#{dec.double}">Double
+                    <div class="btn-cmd" th:text="#{dec.double}">
+                        Double
                     </div>
                 </form>
             </div>
@@ -213,7 +249,7 @@
                       th:method="post">
                     <button type="submit" class="btn btn-decision btn-stand"
                             th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_04_STAND')) ? '' : 'disabled'}">
+                            game.availableChoicesCodeMap.get('CHOICE_STAND')) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd" th:text="#{dec.stand}">
                         Stand
@@ -225,7 +261,7 @@
                       th:method="post">
                     <button type="submit" class="btn btn-decision btn-hit"
                             th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_05_HIT')) ? '' : 'disabled'}">
+                            game.availableChoicesCodeMap.get('CHOICE_HIT')) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd" th:text="#{dec.hit}">
                         Hit
@@ -238,7 +274,7 @@
                     <input class="curr-bet-value" type="hidden" name="betStr" value="0.00">
                     <button type="submit" class="btn btn-decision btn-deal"
                             th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_06_DEAL')) ? '' : 'disabled'}">
+                            game.availableChoicesCodeMap.get('CHOICE_DEAL')) ? '' : 'disabled'}">
                     </button>
                     <div class="btn-cmd" th:text="#{dec.deal}">
                         Deal
@@ -252,7 +288,7 @@
     <!--  BET CHIP  -->
     <div class="row chip-box-wrapper"
          th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_00_CHIP_OPERATIONS')) ? '' : 'd-none'}">
+         game.availableChoicesCodeMap.get('CHOICE_CHIP_OPERATIONS')) ? '' : 'd-none'}">
         <div class="row inner-chip-box-wrapper justify-content-center">
             <div class="col-1 chip">
                 <form action="">

@@ -65,13 +65,14 @@
             </column>
             <column name="available_choices" type="VARCHAR(255)"/>
             <column name="dealer_cards" type="VARCHAR(255)"/>
-            <column name="dealer_second_card_ten" type="BIT(1)"/>
+            <column name="dealer_second_card" type="VARCHAR(63)"/>
             <column name="dealt_time" type="datetime"/>
             <column name="err_code_list" type="VARCHAR(255)"/>
             <column name="finalized" type="BIT(1)"/>
             <column name="hand_multiplier" type="DOUBLE"/>
             <column name="hash" type="VARCHAR(255)"/>
             <column name="insurance" type="BIT(1)"/>
+            <column name="double_down" type="BIT(1)"/>
             <column name="insurance_multiplier" type="DOUBLE"/>
             <column name="player_cards" type="VARCHAR(255)"/>
             <column name="taken_choices" type="VARCHAR(255)"/>
@@ -86,7 +87,6 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="dealer_cards" type="VARCHAR(255)"/>
-            <column name="dealer_second_card_ten" type="BIT(1)"/>
             <column name="dealt_time" type="datetime"/>
             <column name="finalized_time" type="datetime"/>
             <column name="hand_multiplier" type="DOUBLE"/>
@@ -94,6 +94,7 @@
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="insurance" type="BIT(1)"/>
+            <column name="double_down" type="BIT(1)"/>
             <column name="insurance_multiplier" type="DOUBLE"/>
             <column name="player_cards" type="VARCHAR(255)"/>
             <column name="taken_choices" type="VARCHAR(255)"/>

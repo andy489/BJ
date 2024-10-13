@@ -1,6 +1,7 @@
 package com.casino.blackjack.controller;
 
 import com.casino.blackjack.service.GameService;
+import com.casino.blackjack.service.gamelogic.dto.Game;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,8 @@ public class PlayController extends BaseController {
 
     @GetMapping
     public ModelAndView getTable(ModelAndView mav) {
-        mav.addObject("game", gameService.getTable());
+        Game table = gameService.getTable();
+        mav.addObject("game", table);
         return super.view("play/bj-play", mav);
     }
 
@@ -58,6 +60,23 @@ public class PlayController extends BaseController {
     @PostMapping("/insurance")
     public ModelAndView insurance(@RequestParam Boolean insurance) {
         gameService.insurance(insurance);
+        return super.redirect("/play");
+    }
+
+    @PostMapping("/double-down")
+    public ModelAndView doubleDown(@RequestParam Boolean doubleDown) {
+        gameService.doubleDown(doubleDown);
+        return super.redirect("/play");
+    }
+
+    @PostMapping("/accept")
+    public ModelAndView accept(@RequestParam Boolean depositRedirect) {
+        gameService.accept();
+
+        if(depositRedirect) {
+            return super.redirect("/credit-card/deposit");
+        }
+
         return super.redirect("/play");
     }
 }

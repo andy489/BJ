@@ -16,4 +16,9 @@ import lombok.experimental.Accessors;
 public class Card {
     private Integer suit;
     private Integer rank;
+
+    public Card (Card card) {
+         this.rank = card.getRank();
+         this.suit = card.getSuit();
+    }
 }

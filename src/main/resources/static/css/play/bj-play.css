@@ -226,7 +226,7 @@ body {
     box-shadow: 0.15em 0.15em var(--dark-gray);
 }
 
-.btn-err-smaller{
+.btn-err-smaller {
     width: 3.3em;
     height: 3.3em;
 }
@@ -440,4 +440,10 @@ body {
 
 .low-bet {
     color: indianred;
+}
+
+.double-down-card {
+    transform: rotate(90deg);
+    position: relative;
+    top: -12.1em;
 }

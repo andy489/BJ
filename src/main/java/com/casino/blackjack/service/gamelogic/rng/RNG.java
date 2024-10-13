@@ -1,10 +1,14 @@
 package com.casino.blackjack.service.gamelogic.rng;
 
+import com.casino.blackjack.service.gamelogic.dto.Card;
 import org.apache.commons.math3.random.MersenneTwister;
 
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.FOUR_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.KING_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.SPADES_SUIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.TEN_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.THREE_RANK;
 import static java.lang.Math.abs;
 
 public class RNG {
@@ -31,6 +35,10 @@ public class RNG {
         return nextInt() % NINE_RANK + 1;
     }
 
+    public static Integer randRankTen() {
+        return TEN_RANK + nextInt() % FOUR_RANK;
+    }
+
     public static String generateGameHash() {
 
         StringBuilder hash = new StringBuilder();
@@ -42,5 +50,9 @@ public class RNG {
         }
 
         return hash.toString();
+    }
+
+    public static Card randCard(){
+        return Card.of(randSuit(), randRank());
     }
 }

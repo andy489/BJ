@@ -37,11 +37,11 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
 
     private Boolean insurance;
 
+    private Boolean doubleDown;
+
     private Double handMultiplier;
 
     private Double insuranceMultiplier;
-
-    private Boolean dealerSecondCardTen;
 
     private LocalDateTime dealtTime;
 
@@ -59,19 +59,20 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
                 .setHandMultiplier(gameEntity.getHandMultiplier())
                 .setInsuranceMultiplier(gameEntity.getInsuranceMultiplier())
                 .setInsurance(gameEntity.getInsurance())
-                .setDealerSecondCardTen(gameEntity.getDealerSecondCardTen())
+                .setDoubleDown(gameEntity.getDoubleDown())
                 .setDealtTime(gameEntity.getDealtTime())
                 .setOwner(gameEntity.getOwner());
     }
 
     public static PlayedGameEntity of(Game game, ObjectMapper om, UserEntity owner) {
 
-        String dealerCards, playerCards, takenChoices;
+        String dealerCards, playerCards, takenChoices, dealerSecondCard;
 
         try {
             dealerCards = om.writeValueAsString(game.getDealerCards());
             playerCards = om.writeValueAsString(game.getPlayerCards());
             takenChoices = om.writeValueAsString(game.getTakenChoices());
+            dealerSecondCard = om.writeValueAsString(game.getDealerSecondCard());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -84,7 +85,7 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
                 .setHandMultiplier(game.getHandMultiplier())
                 .setInsuranceMultiplier(game.getInsuranceMultiplier())
                 .setInsurance(game.getInsurance())
-                .setDealerSecondCardTen(game.getDealerSecondCardTen())
+                .setDoubleDown(game.getDoubleDown())
                 .setDealtTime(game.getDealtTime())
                 .setOwner(owner);
     }

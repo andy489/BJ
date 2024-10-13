@@ -20,6 +20,7 @@ import java.util.List;
 
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_AVAILABLE_CHOICES_CARDS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_DEALER_CARDS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_DEALER_SECOND_CARD;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_ERR_CODE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_PLAYER_CARDS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PROP_IND_TAKEN_CHOICES;
@@ -47,13 +48,15 @@ public class GameEntity extends BaseEntity implements Serializable {
 
     private Boolean insurance;
 
+    private Boolean doubleDown;
+
     private Double handMultiplier;
 
     private Double insuranceMultiplier;
 
     private String errCodeList;
 
-    private Boolean dealerSecondCardTen;
+    private String dealerSecondCard;
 
     private Boolean finalized;
 
@@ -76,7 +79,8 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setHandMultiplier(game.getHandMultiplier())
                 .setInsuranceMultiplier(game.getInsuranceMultiplier())
                 .setInsurance(game.getInsurance())
-                .setDealerSecondCardTen(game.getDealerSecondCardTen())
+                .setDoubleDown(game.getDoubleDown())
+                .setDealerSecondCard(properties.get(PROP_IND_DEALER_SECOND_CARD))
                 .setDealtTime(game.getDealtTime())
                 .setOwner(owner);
     }
@@ -95,7 +99,8 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setHandMultiplier(game.getHandMultiplier())
                 .setInsuranceMultiplier(game.getInsuranceMultiplier())
                 .setInsurance(game.getInsurance())
-                .setDealerSecondCardTen(game.getDealerSecondCardTen())
+                .setDoubleDown(game.getDoubleDown())
+                .setDealerSecondCard(properties.get(PROP_IND_DEALER_SECOND_CARD))
                 .setDealtTime(game.getDealtTime());
     }
 
@@ -108,6 +113,7 @@ public class GameEntity extends BaseEntity implements Serializable {
             properties.add(om.writeValueAsString(game.getAvailableChoices()));
             properties.add(om.writeValueAsString(game.getTakenChoices()));
             properties.add(om.writeValueAsString(game.getErrCodeList()));
+            properties.add(om.writeValueAsString(game.getDealerSecondCard()));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
