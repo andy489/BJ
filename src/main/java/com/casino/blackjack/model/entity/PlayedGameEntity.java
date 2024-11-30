@@ -72,7 +72,6 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
             dealerCards = om.writeValueAsString(game.getDealerCards());
             playerCards = om.writeValueAsString(game.getPlayerCards());
             takenChoices = om.writeValueAsString(game.getTakenChoices());
-            dealerSecondCard = om.writeValueAsString(game.getDealerSecondCard());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

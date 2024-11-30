@@ -23,6 +23,7 @@ public class PlayController extends BaseController {
     @GetMapping
     public ModelAndView getTable(ModelAndView mav) {
         Game table = gameService.getTable();
+        table.setDealerSecondCard(null);
         mav.addObject("game", table);
         return super.view("play/bj-play", mav);
     }
@@ -64,8 +65,14 @@ public class PlayController extends BaseController {
     }
 
     @PostMapping("/double-down")
-    public ModelAndView doubleDown(@RequestParam Boolean doubleDown) {
-        gameService.doubleDown(doubleDown);
+    public ModelAndView doubleDown() {
+        gameService.doubleDown();
+        return super.redirect("/play");
+    }
+
+    @PostMapping("/dd-confirm")
+    public ModelAndView doubleDownConfirm(@RequestParam Boolean confirm) {
+        gameService.ddConfirm(confirm);
         return super.redirect("/play");
     }
 

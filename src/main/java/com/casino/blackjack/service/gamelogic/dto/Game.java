@@ -6,6 +6,7 @@ import com.casino.blackjack.service.gamelogic.rng.RNG;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,6 +30,8 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_DISPLAY_CN
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN_NO;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN_YES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SURRENDER;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN;
@@ -47,14 +50,17 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERRORS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.FIVE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.INITIAL_DEALT_CARD_COUNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.INSURANCE_MULTIPLIER;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_ID_STR;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_TAKEN_CHOICES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ONE_CARD;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PUSH_MULTI;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.SIX_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.SEVEN_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.SURRENDER_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.TEN_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.THREE_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.TWO_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 
 @Getter
@@ -199,17 +205,15 @@ public class Game {
     }
 
     private void dealRandom() {
-        dealerCards.add(Card.of(randSuit(), randRank()));
-        dealerCards.add(Card.of(randSuit(), randRank()));
+//        dealerCards.add(Card.of(randSuit(), randRank()));
+//        dealerCards.add(Card.of(randSuit(), randRank()));
+//        playerCards.add(Card.of(randSuit(), randRank()));
+//        playerCards.add(Card.of(randSuit(), randRank()));
 
-        playerCards.add(Card.of(randSuit(), randRank()));
-        playerCards.add(Card.of(randSuit(), randRank()));
-
-//        dealerCards.add(Card.of(randSuit(), ACE_RANK));
-//        dealerCards.add(Card.of(randSuit(), FIVE_RANK));
-//
-//        playerCards.add(Card.of(randSuit(), SIX_RANK));
-//        playerCards.add(Card.of(randSuit(), FIVE_RANK));
+        dealerCards.add(Card.of(randSuit(), FIVE_RANK));
+        dealerCards.add(Card.of(randSuit(), FIVE_RANK));
+        playerCards.add(Card.of(randSuit(), THREE_RANK));
+        playerCards.add(Card.of(randSuit(), NINE));
     }
 
     private void hit(List<Card> cards) {
@@ -357,7 +361,29 @@ public class Game {
     public Game calcHand() {
 
         if (!dealt || finalized) {
+            if (getLastChoice().equals(CHOICE_DOUBLE_DOWN)) {
+                doubleDown = true;
+                playerDouble();
+
+                if (playerBust()) {
+                    dealerPlayOneCard();
+                } else {
+                    dealerPlayUntilSoft17();
+                }
+            }
+
             return setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
+        }
+
+        // DOUBLE DOWN CONFIRM
+        if (getLastTakenChoice().equals(CHOICE_DOUBLE_DOWN_YES)) {
+            finalized = true;
+            doubleDown = true;
+            playerDouble();
+            dealerPlayOneCard();
+            return this;
+        } else if (getLastTakenChoice().equals(CHOICE_DOUBLE_DOWN_NO)) {
+            finalized = false;
         }
 
         // DOUBLE DOWN
@@ -466,15 +492,17 @@ public class Game {
         }
 
         // MAKE OR NOT INSURANCE
-        if (getLastTakenChoice() >= CHOICE_INSURANCE_YES && getLastTakenChoice() <= CHOICE_INSURANCE_NO) {
+        if (Objects.equals(getLastTakenChoice(), CHOICE_INSURANCE_YES) ||
+                Objects.equals(getLastTakenChoice(), CHOICE_INSURANCE_NO)) {
 
             if (getLastTakenChoice().equals(CHOICE_INSURANCE_YES)) {
                 insurance = true;
             }
 
-            if (checkBJ(dealerCards)) {
+            if (checkBJDealerHiddenCard()) {
                 finalized = true;
                 handMultiplier = ZERO_MULTI;
+                dealerCards.add(dealerSecondCard);
 
                 if (insurance) {
                     insuranceMultiplier = INSURANCE_MULTIPLIER;
@@ -484,7 +512,7 @@ public class Game {
             } else {
                 setAvailableChoices(List.of(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN));
 
-                if (checkBJ(playerCards)) {
+                if (checkPair(playerCards)) {
                     availableChoices.add(CHOICE_SPLIT);
                 }
 
@@ -510,9 +538,23 @@ public class Game {
         return this;
     }
 
+    private boolean playerBust() {
+        Count count = getCount(playerCards);
+        return count.getLeft().equals(count.getRight()) && count.getRight().compareTo(BJ_CNT) > 0;
+    }
+
     // helper game methods
     private void dealerPlayOneCard() {
-        hit(dealerCards);
+        if(dealerSecondCard !=null){
+            dealerCards.add(dealerSecondCard);
+            dealerSecondCard = null;
+        } else {
+            hit(dealerCards);
+        }
+    }
+
+    private void playerDouble() {
+        hit(playerCards);
     }
 
     private void dealerPlayUntilSoft17() {
@@ -544,6 +586,10 @@ public class Game {
 
     private boolean checkBJ(List<Card> cards) {
         return checkBJInner(cards);
+    }
+
+    private boolean checkBJDealerHiddenCard() {
+        return dealerCards.get(0).getRank().equals(ACE_RANK) && dealerSecondCard.getRank() >= TEN_RANK;
     }
 
     private boolean checkBJDealerCardsAfterDeal() {
@@ -601,6 +647,11 @@ public class Game {
         return this;
     }
 
+    public Game removeAvailableChoice(Integer availableChoice) {
+        availableChoices.remove(availableChoice);
+        return this;
+    }
+
     public Boolean checkTen(Card card) {
         return card.getRank() >= TEN_RANK;
     }
@@ -616,6 +667,6 @@ public class Game {
     }
 
     public void clearErrors() {
-        this.errCodeList.clear();
+        this.errCodeList = new ArrayList<>();
     }
 }

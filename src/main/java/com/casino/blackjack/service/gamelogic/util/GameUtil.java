@@ -2,7 +2,6 @@ package com.casino.blackjack.service.gamelogic.util;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,17 +44,17 @@ public class GameUtil {
     public static final Integer CHOICE_SPLIT = 2;
     public static final Integer CHOICE_DOUBLE_DOWN = 3;
     public static final Integer CHOICE_DOUBLE_DOWN_NOT_ENOUGH_MONEY = 4;
-    public static final Integer CHOICE_DOUBLE_DOWN_YES = 5;
-    public static final Integer CHOICE_DOUBLE_DOWN_NO = 6;
-    public static final Integer CHOICE_STAND = 7;
-    public static final Integer CHOICE_HIT = 8;
-    public static final Integer CHOICE_DEAL = 9;
-    public static final Integer CHOICE_EVEN_MONEY_YES = 10;
-    public static final Integer CHOICE_EVEN_MONEY_NO = 11;
-    public static final Integer CHOICE_INSURANCE_YES = 12;
-    public static final Integer CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY = 13;
-    public static final Integer CHOICE_INSURANCE_NO = 14;
-
+    public static final Integer CHOICE_DOUBLE_NOT_BASIC_STRATEGY = 5;
+    public static final Integer CHOICE_DOUBLE_DOWN_YES = 6;
+    public static final Integer CHOICE_DOUBLE_DOWN_NO = 7;
+    public static final Integer CHOICE_STAND = 8;
+    public static final Integer CHOICE_HIT = 9;
+    public static final Integer CHOICE_DEAL = 10;
+    public static final Integer CHOICE_EVEN_MONEY_YES = 11;
+    public static final Integer CHOICE_EVEN_MONEY_NO = 12;
+    public static final Integer CHOICE_INSURANCE_YES = 13;
+    public static final Integer CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY = 14;
+    public static final Integer CHOICE_INSURANCE_NO = 15;
 
     public static final Integer CLUBS_SUIT = 0;
     public static final Integer DIAMONDS_SUIT = 1;
@@ -117,6 +116,10 @@ public class GameUtil {
             "Bet less than {MIN_BET} or exceeding {MAX BET} is not allowed.";
     public static final String ERR_MSG_HIGH_BET = "HIGH BET! " +
             "Bet less than {MIN_BET} or exceeding {MAX_BET} is not allowed.";
+
+    public static final Integer ELEVEN = 11;
+    public static final Integer TEN = 10;
+    public static final Integer NINE = 9;
 
     public static final Map<Integer, String> ERROR_MAP = new LinkedHashMap<>();
 

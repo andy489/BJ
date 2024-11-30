@@ -27,6 +27,8 @@ public class WalletEntity extends BaseEntity {
 
     private BigDecimal handBet;
 
+    private BigDecimal doubleBet;
+
     private BigDecimal insuranceBet;
 
     @OneToOne
@@ -38,6 +40,7 @@ public class WalletEntity extends BaseEntity {
         lastBet = BigDecimal.ZERO;
         currentBet = BigDecimal.ZERO;
         handBet = BigDecimal.ZERO;
+        doubleBet = BigDecimal.ZERO;
         insuranceBet = BigDecimal.ZERO;
     }
 
@@ -48,6 +51,7 @@ public class WalletEntity extends BaseEntity {
                 .setLastWin(wallet.getLastBet())
                 .setCurrentBet(wallet.getCurrentBet())
                 .setHandBet(wallet.getHandBet())
+                .setDoubleBet(wallet.getDoubleBet())
                 .setInsuranceBet(wallet.getInsuranceBet());
     }
 
@@ -57,6 +61,7 @@ public class WalletEntity extends BaseEntity {
                 .setLastBet(wallet.getLastBet())
                 .setCurrentBet(wallet.getCurrentBet())
                 .setHandBet(wallet.getHandBet())
+                .setDoubleBet(wallet.getDoubleBet())
                 .setInsuranceBet(wallet.getInsuranceBet());
     }
 
@@ -75,6 +80,7 @@ public class WalletEntity extends BaseEntity {
         BigDecimal toReturn = new BigDecimal(String.valueOf(currentBet));
         currentBet = BigDecimal.ZERO;
         handBet = BigDecimal.ZERO;
+        doubleBet = BigDecimal.ZERO;
         insuranceBet = BigDecimal.ZERO;
 
         return toReturn;

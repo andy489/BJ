@@ -27,6 +27,7 @@
             <column name="total_bet_amount" type="DECIMAL(38, 2)">
                 <constraints nullable="false"/>
             </column>
+            <column name="double_down" type="BIT(1)"/>
             <column name="game_hash" type="VARCHAR(255)">
                 <constraints unique="true"/>
             </column>
@@ -167,6 +168,7 @@
             <column name="balance" type="DECIMAL(38, 2)"/>
             <column name="current_bet" type="DECIMAL(38, 2)"/>
             <column name="hand_bet" type="DECIMAL(38, 2)"/>
+            <column name="double_bet" type="DECIMAL(38, 2)"/>
             <column name="insurance_bet" type="DECIMAL(38, 2)"/>
             <column name="last_bet" type="DECIMAL(38, 2)"/>
             <column name="last_win" type="DECIMAL(38, 2)"/>

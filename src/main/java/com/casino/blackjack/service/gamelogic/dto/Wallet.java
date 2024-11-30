@@ -25,6 +25,8 @@ public class Wallet {
 
     private BigDecimal handBet;
 
+    private BigDecimal doubleBet;
+
     private BigDecimal insuranceBet;
 
     public Wallet() {
@@ -33,6 +35,7 @@ public class Wallet {
         lastBet = BigDecimal.ZERO;
         currentBet = BigDecimal.ZERO;
         handBet = BigDecimal.ZERO;
+        doubleBet = BigDecimal.ZERO;
         insuranceBet = BigDecimal.ZERO;
     }
 
@@ -42,6 +45,7 @@ public class Wallet {
                 .setLastWin(walletEntity.getLastWin())
                 .setCurrentBet(walletEntity.getCurrentBet())
                 .setHandBet(walletEntity.getHandBet())
+                .setDoubleBet(walletEntity.getDoubleBet())
                 .setInsuranceBet(walletEntity.getInsuranceBet());
     }
 
@@ -51,6 +55,7 @@ public class Wallet {
                 .setLastWin(wallet.getLastWin())
                 .setCurrentBet(wallet.getCurrentBet())
                 .setHandBet(wallet.getHandBet())
+                .setDoubleBet(wallet.getDoubleBet())
                 .setInsuranceBet(wallet.getInsuranceBet());
     }
 
@@ -82,5 +87,15 @@ public class Wallet {
         currentBet = currentBet.add(betValue);
         insuranceBet = betValue;
         return this;
+    }
+
+    public boolean canDouble() {
+        return balance.compareTo(currentBet) < 0;
+    }
+
+    public void doubleBet(){
+        balance = balance.subtract(currentBet);
+        currentBet = currentBet.add(currentBet);
+        doubleBet = handBet;
     }
 }

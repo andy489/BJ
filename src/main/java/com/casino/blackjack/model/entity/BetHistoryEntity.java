@@ -31,6 +31,9 @@ public class BetHistoryEntity extends BaseEntity implements Serializable {
     private BigDecimal totalBetAmount;
 
     @Column(nullable = false)
+    private Boolean doubleDown;
+
+    @Column(nullable = false)
     private BigDecimal returnAmount;
 
     @ManyToOne(cascade = {CascadeType.MERGE})
@@ -45,6 +48,7 @@ public class BetHistoryEntity extends BaseEntity implements Serializable {
 
         return new BetHistoryEntity()
                 .setTotalBetAmount(BigDecimal.ZERO)
+                .setDoubleDown(false)
                 .setReturnAmount(BigDecimal.ZERO)
                 .setUser(user)
                 .setPlayedGame(playedGame);
