@@ -43,6 +43,7 @@ public class Wallet {
         return new Wallet()
                 .setBalance(walletEntity.getBalance())
                 .setLastWin(walletEntity.getLastWin())
+                .setLastBet(walletEntity.getLastBet())
                 .setCurrentBet(walletEntity.getCurrentBet())
                 .setHandBet(walletEntity.getHandBet())
                 .setDoubleBet(walletEntity.getDoubleBet())
@@ -77,7 +78,7 @@ public class Wallet {
 
     public Wallet placeHandBet(BigDecimal betValue) {
         balance = balance.subtract(betValue);
-        currentBet = currentBet.add(betValue);
+        currentBet = betValue;
         handBet = betValue;
         return this;
     }

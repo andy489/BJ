@@ -55,6 +55,9 @@ public class GameUtil {
     public static final Integer CHOICE_INSURANCE_YES = 13;
     public static final Integer CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY = 14;
     public static final Integer CHOICE_INSURANCE_NO = 15;
+    public static final Integer CHOICE_REPEAT_LAST_BET = 16;
+    public static final Integer CHOICE_REPEAT_LAST_BET_AGAIN = 17;
+    public static final Integer CHOICE_CLEAR_LAST_BET = 18;
 
     public static final Integer CLUBS_SUIT = 0;
     public static final Integer DIAMONDS_SUIT = 1;
@@ -107,6 +110,8 @@ public class GameUtil {
     public static final Integer ERR_CODE_INVALID_BET = 1;
     public static final Integer ERR_CODE_LOW_BET = 2;
     public static final Integer ERR_CODE_HIGH_BET = 3;
+    public static final Integer NO_LAST_BET = 4;
+    public static final Integer CANNOT_REPEAT_LAST_BET = 5;
 
     public static final String ERR_MSG_INSUFFICIENT_FUNDS = "INSUFFICIENT FUNDS! " +
             "А deposit is required in order to place bet.";

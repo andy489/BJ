@@ -74,6 +74,7 @@ public class WalletEntity extends BaseEntity {
     // returns total bet amount
     public BigDecimal payBet(Double handMultiplier, Double insuranceMultiplier) {
         lastWin = handBet.multiply(new BigDecimal(handMultiplier))
+                .add(doubleBet.multiply(new BigDecimal(handMultiplier)))
                 .add(insuranceBet.multiply(new BigDecimal(insuranceMultiplier)));
 
         balance = balance.add(lastWin);
@@ -90,6 +91,17 @@ public class WalletEntity extends BaseEntity {
         balance = balance.subtract(betValue);
         handBet = betValue;
         currentBet = currentBet.add(betValue);
+    }
+
+    public Boolean placeHandBetSecure(BigDecimal betValue) {
+        if(balance.compareTo(betValue) < 0) {
+            balance = balance.subtract(betValue);
+            handBet = betValue;
+            currentBet = currentBet.add(betValue);
+            return true;
+        }
+
+        return false;
     }
 
     public void placeInsuranceBet(BigDecimal betValue) {

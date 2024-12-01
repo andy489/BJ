@@ -40,6 +40,10 @@ $(document).ready(function () {
     $('.btn-chip-double').click(function () {
         calcChip(null, true)
     })
+
+    $('.btn-chip-double').click(function () {
+        calcChip(null, true)
+    })
 })
 
 function calcChip(chipValue, doubleChip) {

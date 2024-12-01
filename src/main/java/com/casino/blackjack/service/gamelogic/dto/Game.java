@@ -48,8 +48,10 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.DISPLAY_BUST_
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DOUBLE_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERRORS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.FIVE_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.FOUR_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.INITIAL_DEALT_CARD_COUNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.INSURANCE_MULTIPLIER;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.JAKE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_ID_STR;
@@ -154,7 +156,8 @@ public class Game {
                 .setLastBet(walletEntity.getLastBet())
                 .setCurrentBet(walletEntity.getCurrentBet())
                 .setHandBet(walletEntity.getHandBet())
-                .setInsuranceBet(walletEntity.getInsuranceBet());
+                .setInsuranceBet(walletEntity.getInsuranceBet())
+                .setDoubleBet(walletEntity.getDoubleBet());
 
         return game.setWallet(wallet);
     }
@@ -190,6 +193,7 @@ public class Game {
                 .setAvailableChoices(availableChoices)
                 .setTakenChoices(takenChoices)
                 .setInsurance(gameEntity.getInsurance())
+                .setDoubleDown(gameEntity.getDoubleDown())
                 .setDealerSecondCard(dealerSecondCard)
                 .setDealtTime(gameEntity.getDealtTime())
                 .setHandMultiplier(gameEntity.getHandMultiplier())
@@ -205,15 +209,28 @@ public class Game {
     }
 
     private void dealRandom() {
-//        dealerCards.add(Card.of(randSuit(), randRank()));
-//        dealerCards.add(Card.of(randSuit(), randRank()));
-//        playerCards.add(Card.of(randSuit(), randRank()));
-//        playerCards.add(Card.of(randSuit(), randRank()));
+        dealerCards.add(Card.of(randSuit(), randRank()));
+        dealerCards.add(Card.of(randSuit(), randRank()));
+        playerCards.add(Card.of(randSuit(), randRank()));
+        playerCards.add(Card.of(randSuit(), randRank()));
 
-        dealerCards.add(Card.of(randSuit(), FIVE_RANK));
-        dealerCards.add(Card.of(randSuit(), FIVE_RANK));
-        playerCards.add(Card.of(randSuit(), THREE_RANK));
-        playerCards.add(Card.of(randSuit(), NINE));
+//        dealerCards.add(Card.of(randSuit(), FOUR_RANK));
+//        dealerCards.add(Card.of(randSuit(), ACE_RANK));
+//        playerCards.add(Card.of(randSuit(), NINE_RANK));
+//        playerCards.add(Card.of(randSuit(), JAKE_RANK));
+    }
+
+//    private static int a = 0;
+    private void dealerHit() {
+//        if (a == 0) {
+//            dealerCards.add(Card.of(randSuit(), ACE_RANK));
+//            a++;
+//        } else if (a == 1) {
+//            dealerCards.add(Card.of(randSuit(), THREE_RANK));
+//            a++;
+//        } else
+            dealerCards.add(RNG.randCard());
+
     }
 
     private void hit(List<Card> cards) {
@@ -380,8 +397,27 @@ public class Game {
             finalized = true;
             doubleDown = true;
             playerDouble();
-            dealerPlayOneCard();
-            return this;
+
+            Boolean bustPlayer = checkBust(playerCards);
+
+            if (bustPlayer) {
+                dealerPlayOneCard();
+                handMultiplier = ZERO_MULTI;
+            } else {
+                dealerPlayUntilSoft17();
+
+                Integer win = checkWin(dealerCards, playerCards);
+
+                if (win < 0) {
+                    handMultiplier = ZERO_MULTI;
+                } else if (win == 0) {
+                    handMultiplier = PUSH_MULTI;
+                } else {
+                    handMultiplier = DOUBLE_MULTI;
+                }
+            }
+
+            return setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
         } else if (getLastTakenChoice().equals(CHOICE_DOUBLE_DOWN_NO)) {
             finalized = false;
         }
@@ -545,7 +581,7 @@ public class Game {
 
     // helper game methods
     private void dealerPlayOneCard() {
-        if(dealerSecondCard !=null){
+        if (dealerSecondCard != null) {
             dealerCards.add(dealerSecondCard);
             dealerSecondCard = null;
         } else {
@@ -568,7 +604,7 @@ public class Game {
                 dealerCards.add(dealerSecondCard);
                 dealerSecondCard = null;
             } else {
-                dealerCards.add(RNG.randCard());
+                dealerHit();
             }
 
             if (count.getLeft() > BJ_CNT) {
@@ -668,5 +704,40 @@ public class Game {
 
     public void clearErrors() {
         this.errCodeList = new ArrayList<>();
+    }
+
+    public Boolean checkBust(List<Card> cards) {
+        Count count = getCount(cards);
+
+        return count.getLeft() > BJ_CNT;
+    }
+
+    private Integer checkWin(List<Card> left, List<Card> right) {
+        Boolean bustLeft = checkBust(left);
+        Boolean bustRight = checkBust(right);
+
+        if (bustLeft && bustRight) {
+            return 0;
+        } else {
+            if (bustLeft) {
+                return 1;
+            }
+
+            if (bustRight) {
+                return -1;
+            }
+        }
+
+        Count leftCount = getCount(left);
+        Count rightCount = getCount(right);
+
+        int leftMax = Math.max(leftCount.getLeft(), (leftCount.getRight() > BJ_CNT ? -1 : leftCount.getRight()));
+        int rightMax = Math.max(rightCount.getLeft(), (rightCount.getRight() > BJ_CNT ? -1 : rightCount.getRight()));
+
+        if (leftMax == rightMax) {
+            return 0;
+        } else {
+            return leftMax < rightMax ? 1 : -1;
+        }
     }
 }

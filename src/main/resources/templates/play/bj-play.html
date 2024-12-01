@@ -53,14 +53,14 @@
 
             <div class="row player-cards">
                 <div class="player-cards-box">
-                    <div class="col-12 play-card-wrapper" th:unless="${doubleDown}">
+                    <div class="col-12 play-card-wrapper" th:unless="*{doubleDown}">
                         <img th:each="c, iStat : *{playerCards}"
                              th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
                              alt="" class="play-card"
                              th:classappend="'d-' + *{playerCardsEven} + '-' + ${game.dPlayerCards + iStat.index}"/>
                     </div>
 
-                    <div class="col-12 play-card-wrapper" th:if="${doubleDown}">
+                    <div class="col-12 play-card-wrapper" th:if="*{doubleDown}">
                         <img th:unless="${iStat.index == iStat.size - 1}"
                              th:each="c, iStat : *{playerCards}"
                              th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
@@ -75,7 +75,7 @@
                         <div class="curr-result-box" th:text="*{playerScore()}">100/200</div>
                     </div>
 
-                    <div class="col-12 play-card-wrapper" th:if="${doubleDown}"
+                    <div class="col-12 play-card-wrapper" th:if="*{doubleDown}"
                          th:with="dd=${game.playerCards[__${#lists.size(game.playerCards) - 1}__]}">
                         <img th:src="@{'./../images/playing_card/' + ${dd.rank} + '-' + ${dd.suit} +'.png'}"
                              alt="" class="play-card double-down-card"/>
@@ -204,7 +204,7 @@
             (#lists.contains(game.errCodeList, game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ?
             'err-modal-wrapper-dep-link' : '')}">
         <div class="modal-title col-12" th:each="errCode : ${game.errCodeList}"
-             th:text="#{err.code.__${errCode}__(#{min.bet},#{max.bet})}">
+             th:text="#{err.code.__${errCode}__(#{min.bet},#{max.bet})} + '.'">
             Error Message
         </div>
         <div class="choice-box">
@@ -309,7 +309,7 @@
             <div class="col-1 decision dec-dea">
                 <form th:action="@{/play/deal}"
                       th:method="post">
-                    <input class="curr-bet-value" type="hidden" name="betStr" value="0.00">
+                    <input class="curr-bet-value" type="hidden" name="betStr" th:value="${game.wallet.lastBet} > 0 ? ${game.wallet.lastBet} : 0.00">
                     <button type="submit" class="btn btn-decision btn-deal"
                             th:classappend="${#lists.contains(game.availableChoices,
                             game.availableChoicesCodeMap.get('CHOICE_DEAL')) ? '' : 'disabled'}">
@@ -371,8 +371,9 @@
                 </form>
             </div>
             <div class="col-1 bet-action">
-                <form action="">
-                    <button type="button" class="btn btn-bet">
+                <form th:action="@{/play/repeat-last-bet}"
+                      th:method="post">
+                    <button type="submit" class="btn btn-bet">
                         <i class="fas fa-redo-alt fa-2x"></i>
                     </button>
                     <span th:text="#{bet.repeat}">Repeat</span>
@@ -387,7 +388,8 @@
                 </form>
             </div>
             <div class="col-1 bet-action">
-                <form action="">
+                <form th:action="@{/play/clear-bet}"
+                      th:method="post">
                     <button type="submit" class="btn btn-bet">
                         <i class="fas fa-window-close fa-2x"></i>
                     </button>

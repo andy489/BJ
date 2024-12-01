@@ -22,8 +22,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CLEAR_LAST_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN_YES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_NOT_BASIC_STRATEGY;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_REPEAT_LAST_BET;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_REPEAT_LAST_BET_AGAIN;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SURRENDER;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN_NOT_ENOUGH_MONEY;
@@ -43,6 +46,7 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_HIGH
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.MAX_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.MIN_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_CURR_GAME_ERR;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_LAST_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_WALLET_FOUND;
 
 @Service
@@ -98,7 +102,7 @@ public class GameService {
                     .divide(BigDecimal.valueOf(2), new MathContext(3));
 
             // CONFIRM DOUBLE DOWN (WHEN NOT BASIC STRATEGY CHOICE)
-            if(game.getLastChoice().equals(CHOICE_DOUBLE_DOWN_YES)){
+            if (game.getLastChoice().equals(CHOICE_DOUBLE_DOWN_YES)) {
                 Wallet wallet = Wallet.of(currWalletEntity);
                 wallet.doubleBet();
             }
@@ -140,6 +144,7 @@ public class GameService {
                                     .calcHand();
 
                             wallet.doubleBet();
+                            // wallet.setLastBet(wallet.getHandBet());
                         } else {
                             game.makeChoice(CHOICE_DOUBLE_NOT_BASIC_STRATEGY)
                                     .setAvailableChoices(List.of(CHOICE_DOUBLE_DOWN_YES, CHOICE_DOUBLE_DOWN_NO))
@@ -156,6 +161,26 @@ public class GameService {
                 }
 
                 lastGameRepository.save(GameEntity.map(currGameEntity, game, om));
+            }
+
+            if (game.getLastChoice().equals(CHOICE_DOUBLE_DOWN_YES) ||
+                    game.getLastChoice().equals(CHOICE_DOUBLE_DOWN_NO)) {
+
+                Wallet wallet = Wallet.of(currWalletEntity);
+                if (game.getLastChoice().equals(CHOICE_DOUBLE_DOWN_YES)) {
+                    game.setDoubleDown(true);
+
+                    wallet.doubleBet();
+                    wallet.setLastBet(wallet.getHandBet());
+
+                    game.setWallet(wallet);
+                    WalletEntity.map(currWalletEntity, wallet);
+
+                    walletRepository.save(currWalletEntity);
+                } else {
+                    game.removeAvailableChoice(CHOICE_DOUBLE_DOWN_NO);
+                    game.removeAvailableChoice(CHOICE_DOUBLE_DOWN_YES);
+                }
             }
 
             if (game.getLastChoice().equals(CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY) ||
@@ -179,6 +204,59 @@ public class GameService {
                 return game;
             }
 
+            if (game.getLastChoice().equals(CHOICE_REPEAT_LAST_BET)) {
+                Optional<WalletEntity> we = extractWallet();
+
+                if (we.isEmpty()) {
+                    throw new IllegalStateException("Empty wallet");
+                }
+
+                WalletEntity walletEntity = we.get();
+                BigDecimal lastBet = walletEntity.getLastBet();
+
+                if (lastBet.compareTo(BigDecimal.ZERO) == 0) {
+                    return game.addErr(NO_LAST_BET);
+                }
+
+                if (walletEntity.getBalance().compareTo(lastBet) < 0) {
+                    return game.addErr(ERR_CODE_INSUFFICIENT_FUNDS);
+                }
+
+                Wallet wallet = Wallet.of(walletEntity);
+                wallet.placeHandBet(lastBet);
+
+                WalletEntity.map(currWalletEntity, wallet);
+                walletRepository.save(currWalletEntity);
+
+                return game.setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL))
+                        .setWallet(wallet);
+            }
+
+            if (game.getLastChoice().equals(CHOICE_REPEAT_LAST_BET_AGAIN)) {
+                return game;
+            }
+
+            if (game.getLastChoice().equals(CHOICE_CLEAR_LAST_BET)) {
+                Optional<WalletEntity> we = extractWallet();
+
+                if (we.isEmpty()) {
+                    throw new IllegalStateException("Empty wallet");
+                }
+
+                WalletEntity walletEntity = we.get();
+                BigDecimal lastBet = walletEntity.getLastBet();
+
+                Wallet wallet = Wallet.of(walletEntity);
+                wallet.setLastBet(BigDecimal.ZERO);
+                wallet.deposit(lastBet);
+                wallet.setCurrentBet(BigDecimal.ZERO);
+
+                WalletEntity.map(currWalletEntity, wallet);
+                walletRepository.save(currWalletEntity);
+
+                return game.setWallet(wallet);
+            }
+
             if (!game.getErrCodeList().isEmpty()) {
                 Game toReturn = game.setWallet(Wallet.of(currWalletEntity));
                 Game gameClearErr = new Game(toReturn)
@@ -195,8 +273,10 @@ public class GameService {
 
                 pastGameRepository.save(playedGameEntity);
 
-                BigDecimal totalBetAmount = currWalletEntity.payBet(currGameEntity.getHandMultiplier(),
-                        currGameEntity.getInsuranceMultiplier());
+                BigDecimal totalBetAmount = currWalletEntity.payBet(game.getHandMultiplier(),
+                        game.getInsuranceMultiplier());
+
+                // currWalletEntity.setLastBet(currWalletEntity.getCurrentBet());
 
                 walletRepository.save(currWalletEntity);
 
@@ -204,11 +284,13 @@ public class GameService {
                         .setTotalBetAmount(totalBetAmount)
                         .setReturnAmount(currWalletEntity.getLastWin())
                         .setPlayedGame(playedGameEntity)
+                        .setDoubleDown(game.getDoubleDown())
                         .setUser(playedGameEntity.getOwner());
 
-                if(game.getDoubleDown()){
-                    betHistoryEntity.setDoubleDown(true);
-                }
+//                if (game.getDoubleDown()) {
+//                    betHistoryEntity.setDoubleDown(true);
+//                    currGameEntity.setDoubleDown(true);
+//                }
 
                 betHistoryService.save(betHistoryEntity);
 
@@ -223,6 +305,54 @@ public class GameService {
         return new Game()
                 .setAvailableChoices(List.of(CHOICE_DEAL, CHOICE_CHIP_OPERATIONS))
                 .setWallet(Wallet.of(currWalletEntity));
+    }
+
+    public void repeatLastBet() {
+        Optional<GameEntity> currGameEntity = extractLastGame();
+
+        Game game = new Game();
+        if (currGameEntity.isPresent()) {
+            Game temp = Game.of(currGameEntity.get(), om);
+            if (temp.getTakenChoices().contains(CHOICE_REPEAT_LAST_BET)) {
+                game.setTakenChoices(temp.getTakenChoices())
+                        .makeChoice(CHOICE_REPEAT_LAST_BET_AGAIN)
+                        .setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
+            } else {
+                game = new Game()
+                        .makeChoice(CHOICE_REPEAT_LAST_BET)
+                        .setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
+            }
+        } else {
+            game = new Game()
+                    .makeChoice(CHOICE_REPEAT_LAST_BET)
+                    .setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
+        }
+
+        GameEntity gameEntity;
+        if (currGameEntity.isEmpty()) {
+            gameEntity = GameEntity.of(game, om, userService.getCurrentLoggedUser());
+        } else {
+            gameEntity = GameEntity.map(currGameEntity.get(), game, om);
+        }
+
+        lastGameRepository.save(gameEntity);
+    }
+
+    public void clearBet() {
+        Optional<GameEntity> currGameEntity = extractLastGame();
+
+        Game game = new Game()
+                .makeChoice(CHOICE_CLEAR_LAST_BET)
+                .setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
+
+        GameEntity gameEntity;
+        if (currGameEntity.isEmpty()) {
+            gameEntity = GameEntity.of(game, om, userService.getCurrentLoggedUser());
+        } else {
+            gameEntity = GameEntity.map(currGameEntity.get(), game, om);
+        }
+
+        lastGameRepository.save(gameEntity);
     }
 
     public void deal(String betStr) {
@@ -254,6 +384,8 @@ public class GameService {
             return;
         }
 
+        wallet.setLastBet(bet);
+
         Game game = new Game().setDealt(true)
                 .setHash(RNG.generateGameHash())
                 .deal()
@@ -275,7 +407,7 @@ public class GameService {
         }
 
         lastGameRepository.save(gameEntity);
-        WalletEntity.map(walletEntity, game.getWallet());
+        WalletEntity.map(walletEntity, wallet);
         walletRepository.save(walletEntity);
     }
 
@@ -361,9 +493,13 @@ public class GameService {
 
             Game game = Game.of(currGameEntity, om);
 
-//            if(game.getLastChoice().equals(CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY)){
-//                game.removeAvailableChoice(CHOICE_DOUBLE_DOWN);
-//            }
+            if (game.getLastChoice().equals(CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY)) {
+                game.removeAvailableChoice(CHOICE_DOUBLE_DOWN);
+            }
+
+            if (game.getLastChoice().equals(CHOICE_REPEAT_LAST_BET)) {
+                game.removeLastChoice();
+            }
 
             game.clearErrors();
 

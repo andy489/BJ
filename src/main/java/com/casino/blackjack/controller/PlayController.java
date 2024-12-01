@@ -76,6 +76,18 @@ public class PlayController extends BaseController {
         return super.redirect("/play");
     }
 
+    @PostMapping("/repeat-last-bet")
+    public ModelAndView repeatLastBet() {
+        gameService.repeatLastBet();
+        return super.redirect("/play");
+    }
+
+    @PostMapping("/clear-bet")
+    public ModelAndView clearBet() {
+        gameService.clearBet();
+        return super.redirect("/play");
+    }
+
     @PostMapping("/accept")
     public ModelAndView accept(@RequestParam Boolean depositRedirect) {
         gameService.accept();
