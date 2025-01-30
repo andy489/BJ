@@ -3,7 +3,7 @@
 ```sh
 cd {path-to-ptoj}/BJ
 open -a docker
-docker-compose up -d
+docker compose up -d
 ```
 
 ```bash
