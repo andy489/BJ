@@ -1,7 +1,7 @@
 # Blackjack
 
 ```sh
-cd {path-to-ptoj}/BJ
+cd /path/to/BJ
 open -a docker
 docker compose up -d
 ```
