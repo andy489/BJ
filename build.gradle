@@ -41,10 +41,6 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     compileOnly 'org.projectlombok:lombok'
-
-    compileOnly "io.netty:netty-resolver-dns-native-macos:4.1.72.Final:osx-aarch_64"
-
-
 }
 
 tasks.named('test') {

@@ -27,7 +27,6 @@ public class CreditCardService {
         this.creditCardRepository = creditCardRepository;
     }
 
-
     @Transactional
     public Optional<CreditCardEntity> registerNewCreditCard(CreditCardDTO creditCardDTO, Long currentUserId) {
 
