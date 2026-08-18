@@ -28,6 +28,16 @@ public class PlayController extends BaseController {
         return super.view("play/bj-play", mav);
     }
 
+    @GetMapping("/baccarat")
+    public ModelAndView getBaccaratDemo(ModelAndView mav) {
+        return super.view("play/coming-soon", mav);
+    }
+
+    @GetMapping("/poker")
+    public ModelAndView getPokerDemo(ModelAndView mav) {
+        return super.view("play/coming-soon", mav);
+    }
+
     @PostMapping("/deal")
     public ModelAndView deal(@RequestParam(required = false) String betStr) {
         gameService.deal(betStr);

@@ -67,7 +67,11 @@ public class WalletEntity extends BaseEntity {
 
     public BigDecimal deposit(BigDecimal depositSum) {
         balance = balance.add(depositSum);
+        return balance;
+    }
 
+    public BigDecimal cashOut(BigDecimal amount) {
+        balance = balance.subtract(amount);
         return balance;
     }
 

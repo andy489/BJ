@@ -1,5 +1,70 @@
-.lang-opt:hover {
+.lang-switcher {
+    position: relative;
+}
+
+.lang-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    min-width: 38px;
+    padding: 0 0.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+    color: whitesmoke;
     cursor: pointer;
-    background-color: whitesmoke;
-    color:indianred;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    white-space: nowrap;
+    text-transform: uppercase;
+    transition: background .15s, border-color .15s, color .15s;
+}
+
+.lang-toggle-btn:hover,
+.lang-toggle-btn.open {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: var(--primary);
+    color: white;
+}
+
+.lang-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    background: rgba(30, 30, 30, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 9999;
+    min-width: 80px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.lang-dropdown.open {
+    display: block;
+}
+
+.lang-opt {
+    display: block;
+    width: 100%;
+    padding: 9px 16px;
+    background: none;
+    border: none;
+    color: lightgrey;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: .06em;
+    text-align: left;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    white-space: nowrap;
+}
+
+.lang-opt:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
 }

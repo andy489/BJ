@@ -50,4 +50,25 @@ public class WalletService {
         walletEntity.deposit(new BigDecimal(depositSumFormatted));
         walletRepository.save(walletEntity);
     }
+
+    public boolean cashOut(String cashOutSum, Long ownerId) {
+        String formatted = cashOutSum.replaceAll(",", "");
+        BigDecimal amount = new BigDecimal(formatted);
+
+        Optional<WalletEntity> walletOpt = walletRepository.getReferenceByOwnerId(ownerId);
+        if (walletOpt.isEmpty()) return false;
+
+        WalletEntity wallet = walletOpt.get();
+        if (wallet.getBalance().compareTo(amount) < 0) return false;
+
+        wallet.cashOut(amount);
+        walletRepository.save(wallet);
+        return true;
+    }
+
+    public BigDecimal getBalance(Long ownerId) {
+        return walletRepository.getReferenceByOwnerId(ownerId)
+                .map(WalletEntity::getBalance)
+                .orElse(BigDecimal.ZERO);
+    }
 }

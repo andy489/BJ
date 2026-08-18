@@ -1,97 +1,93 @@
-/* choice modal pop-up */
-.choice-modal-wrapper {
-    position: relative;
+:root {
+    --dark-gray: #4e555b;
+    --btn-circle: #036c2e;
+    --electric: #ffd347;
+    --electric-glow: rgba(255, 211, 71, 0.6);
+}
+
+/* ── Overlay — blurs the page behind any modal ─────── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+/* ── Shared modal base ───────────────────────────────── */
+.choice-modal-wrapper,
+.err-modal-wrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     align-items: center;
     justify-content: space-around;
-    background-color: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     width: 18em;
+    z-index: 201;
+    margin: 0;
+    border-radius: 12px;
+}
+
+/* ── Choice / confirmation modals ───────────────────── */
+.choice-modal-wrapper {
     height: 8em;
-    z-index: 2;
-    box-shadow: 0 0 0.5rem rgb(246, 246, 246);
-    border-radius: 0.3em;
-    border: var(--dark-gray) solid 0.15em;
+    box-shadow: 0 0 0 1.5px rgba(255, 211, 71, 0.3), 0 8px 24px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255, 211, 71, 0.22);
     color: whitesmoke;
-    margin: auto auto 0.5em;
 }
 
 .modal-title {
     text-align: center;
     font-weight: bolder;
+    color: var(--electric);
+    text-shadow: 0 0 10px var(--electric-glow);
+    font-size: 1rem;
+    letter-spacing: 0.04em;
 }
 
-.btn-sec-dec-yes {
-    background-image: url('../../images/decision/even-yes.png');
-}
+.btn-sec-dec-yes { background-image: url('../../images/decision/even-yes.png'); }
+.btn-sec-dec-no  { background-image: url('../../images/decision/even-no.png'); }
 
-.btn-sec-dec-no {
-    background-image: url('../../images/decision/even-no.png');
-}
-
-.btn-err-ok {
-    background: var(--btn-circle);
-}
-
-.check-icon {
-    font-size: 2.8em;
-    position: absolute;
-    color: black;
-}
+.btn-err-ok { background: var(--btn-circle); }
 
 .choice-box {
     text-align: center;
     align-content: center;
 }
 
-/* EO: choice modal pop-up */
-
-/*#dimmer {*/
-/*    display: inline-block;*/
-
-/*    width: 100%;*/
-/*    height: 100%;*/
-
-/*    z-index: 1;*/
-
-/*    position: fixed;*/
-/*    left: 0;*/
-/*    top: 0;*/
-
-/*    background-color: rgba(0, 0, 0, 0.8);*/
-/*    opacity: 0.4;*/
-/*}*/
-
-/* err modal */
+/* ── Error modal ─────────────────────────────────────── */
 .err-modal-wrapper {
-    position: relative;
-    align-items: center;
-    justify-content: space-around;
-    background-color: rgba(0, 0, 0, 0.4);
-    width: 18em;
     height: 10.5em;
-    z-index: 2;
-    margin: auto;
-    box-shadow: 0 0 0.5rem rgb(246, 246, 246);
-    border-radius: 0.3em;
-    border: var(--dark-gray) solid 0.15em;
-
-    color: whitesmoke;
+    box-shadow: 0 0 0 1.5px rgba(255, 67, 80, 0.35), 0 8px 24px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255, 67, 80, 0.22);
+    color: #ff8a8a;
 }
 
-.err-modal-wrapper-dep-link {
-    height: 11.2em;
-}
+.err-modal-wrapper-dep-link { height: 11.2em; }
 
 .go-to-link {
     font-weight: bolder;
-    border: whitesmoke 0.15em solid;
+    border: 1px solid rgba(255, 255, 255, 0.35);
     background-color: var(--btn-circle);
     color: whitesmoke;
+    font-size: 0.75rem;
 }
 
 .go-to-link:hover {
-    border: whitesmoke 0.15em solid;
+    border: 1px solid var(--electric);
     transform: scale(0.94);
-    filter: brightness(125%);
+    filter: brightness(130%);
+    color: var(--electric);
 }
-
-/* EO:err modal */

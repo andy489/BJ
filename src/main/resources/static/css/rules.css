@@ -1,48 +1,173 @@
 :root {
-    --primary: #639c9c;
-    --shadow: 0 1px 5px rgba(104, 104, 104, 0.8);
-    --weather-box-border-color: #4e555b;
+    --electric: #ffd347;
+    --electric-glow: rgba(255, 211, 71, 0.6);
+    --glass-bg: rgba(0, 0, 0, 0.52);
+    --glass-border: rgba(255, 211, 71, 0.22);
+    --card-radius: 18px;
 }
 
 .body-rules {
-    background-image: url('../images/background/04-bj-table.png');
-    background-position: center;
+    background: no-repeat center/cover url('../images/background/04-bj-table.png');
     background-attachment: fixed;
-    background-size: cover;
-    margin-bottom: 5rem;
+    min-height: 100vh;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 16px;
 }
 
-.container-rules {
-    background-color: rgba(0, 0, 0, 0.8); /* Black w/opacity/see-through */
-    font-weight: bold;
-    font-size: larger;
-    border: 4px solid var(--weather-box-border-color);
-    border-radius: 0.5em;
-    padding: 1em 1em 0.5em 1em;
+.rules-wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 50px 20px 80px;
 }
 
-.tab {
-    color: var(--primary);
+/* Glass panel */
+.rules-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 211, 71, 0.06);
+    padding: 36px 40px;
 }
 
-a.nav-tab.active {
-    background-color: lightgrey !important;
+@media (max-width: 576px) {
+    .rules-panel {
+        padding: 24px 18px;
+    }
 }
 
-.tab-content {
-    color: whitesmoke;
+/* Page title */
+.rules-title {
+    color: var(--electric);
+    text-shadow: 0 0 18px var(--electric-glow);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
 }
 
-.content-header {
-    font-size: xx-large;
+.rules-subtitle {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.9rem;
+    margin-bottom: 28px;
 }
 
-.ref-bj-link {
-    color: var(--primary);
-    text-decoration: none;
+/* Tabs */
+.rules-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1.5px solid rgba(255, 211, 71, 0.18);
+    margin-bottom: 28px;
+}
+
+.rules-tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -1.5px;
+    padding: 8px 20px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     cursor: pointer;
+    transition: color .2s, border-color .2s;
 }
 
-.ref-bj-link:hover {
-    color: whitesmoke;
+.rules-tab-btn:hover {
+    color: rgba(255, 211, 71, 0.75);
+}
+
+.rules-tab-btn.active {
+    color: var(--electric);
+    border-bottom-color: var(--electric);
+    text-shadow: 0 0 10px var(--electric-glow);
+}
+
+/* Section heading inside tab */
+.rules-section-title {
+    color: var(--electric);
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 0.03em;
+}
+
+/* Rule paragraphs */
+.rules-body p {
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.75;
+    margin-bottom: 18px;
+}
+
+/* Quick-reference cards */
+.rules-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.rule-card {
+    flex: 1 1 180px;
+    background: rgba(255, 211, 71, 0.06);
+    border: 1px solid rgba(255, 211, 71, 0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+
+.rule-card__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--electric);
+    margin-bottom: 4px;
+}
+
+.rule-card__value {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.45;
+}
+
+/* Wikipedia reference */
+.rules-ref {
+    margin-top: 24px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.rules-ref a {
+    color: var(--electric);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.rules-ref a:hover {
+    text-shadow: 0 0 8px var(--electric-glow);
+}
+
+/* Coming-soon badge next to section title */
+.coming-soon-badge {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: rgba(255, 211, 71, 0.55);
+    letter-spacing: 0.12em;
+    vertical-align: middle;
+    margin-left: 10px;
+    border: 1px solid rgba(255, 211, 71, 0.25);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+/* Hidden tab pane */
+.rules-pane {
+    display: none;
+}
+
+.rules-pane.active {
+    display: block;
 }

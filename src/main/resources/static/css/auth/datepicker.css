@@ -5,7 +5,8 @@
  *//*! normalize.css v3.0.1 | MIT License | git.io/normalize */
 
 :root {
-    --electric: #03e9f4;
+    --electric: #ffd347;
+    --electric-glow: rgba(255, 211, 71, 0.6);
     --white: #fff;
     --bg-datepicker: #484F4FFF;
 }

@@ -2,6 +2,7 @@ package com.casino.blackjack.controller;
 
 import com.casino.blackjack.model.dto.CreditCardDTO;
 import com.casino.blackjack.model.dto.DepositDTO;
+import com.casino.blackjack.model.dto.CashOutDTO;
 import com.casino.blackjack.model.entity.CreditCardEntity;
 import com.casino.blackjack.model.user.CustomUserDetails;
 import com.casino.blackjack.model.view.CreditCardsManageView;
@@ -45,6 +46,11 @@ public class CreditCardController extends BaseController {
     @ModelAttribute(name = "depositDTO")
     public DepositDTO initDepositDTO() {
         return new DepositDTO();
+    }
+
+    @ModelAttribute(name = "cashOutDTO")
+    public CashOutDTO initCashOutDTO() {
+        return new CashOutDTO();
     }
 
     @ModelAttribute(name = "creditCardDTO")
@@ -142,6 +148,40 @@ public class CreditCardController extends BaseController {
         redirectAttributes.addFlashAttribute("modalSucDep", true);
 
         return super.redirect("/credit-card/deposit");
+    }
+
+    @GetMapping("/cash-out")
+    public ModelAndView getCashOutForm(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            ModelAndView mav) {
+
+        mav.addObject("balance", walletService.getBalance(currentUser.getId()));
+        return super.view("credit_card/cash-out-form", mav);
+    }
+
+    @PostMapping("/cash-out")
+    public ModelAndView postCashOut(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @Valid @ModelAttribute(name = "cashOutDTO") CashOutDTO cashOutDTO,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("cashOutDTO", cashOutDTO);
+            redirectAttributes.addFlashAttribute(BINDING_RESULT_PATH + "cashOutDTO", bindingResult);
+            return super.redirect("/credit-card/cash-out");
+        }
+
+        boolean success = walletService.cashOut(cashOutDTO.getCashOutSum(), currentUser.getId());
+
+        if (!success) {
+            redirectAttributes.addFlashAttribute("cashOutDTO", cashOutDTO);
+            redirectAttributes.addFlashAttribute("insufficient_balance", true);
+            return super.redirect("/credit-card/cash-out");
+        }
+
+        redirectAttributes.addFlashAttribute("modalSucCashOut", true);
+        return super.redirect("/credit-card/cash-out");
     }
 
     @GetMapping("/manage")

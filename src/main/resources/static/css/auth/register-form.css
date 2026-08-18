@@ -1,5 +1,6 @@
 :root {
-    --electric: #03e9f4;
+    --electric: #ffd347;
+    --electric-glow: rgba(255, 211, 71, 0.6);
     --white: #fff;
 }
 
@@ -7,7 +8,7 @@ html {
     height: 100%;
 }
 
-.auth-box div{
+.auth-box div {
     text-align: center;
     color: whitesmoke;
     font-size: xx-large;
@@ -17,27 +18,26 @@ html {
 }
 
 .body-auth {
-    background-image: url('./../../images/background/01-auth.jpg');
+    background-image: url('./../../images/background/01-auth.png');
     background-position: center;
     background-attachment: fixed;
     background-size: cover;
     margin-bottom: 5rem;
-    font-family: sans-serif
+    font-family: sans-serif;
 }
 
 .auth-box {
-    /*position: absolute;*/
     position: relative;
     margin: auto;
-    /*top: 50%;*/
-    /*left: 50%;*/
     width: 500px;
     padding: 40px;
-    /*transform: translate(-50%, -50%);*/
-    background: rgba(0, 0, 0, .5);
+    background: rgba(0, 0, 0, 0.52);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     box-sizing: border-box;
-    box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
-    border-radius: 10px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 211, 71, 0.12);
+    border-radius: 18px;
+    border: 1.5px solid rgba(255, 211, 71, 0.22);
 }
 
 .auth-box h2 {
@@ -45,6 +45,15 @@ html {
     padding: 0;
     color: var(--white);
     text-align: center;
+}
+
+.register-form-title {
+    color: var(--electric) !important;
+    text-shadow: 0 0 18px var(--electric-glow), 0 2px 8px rgba(0,0,0,0.6);
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em;
+    margin-bottom: 1rem !important;
 }
 
 .auth-box .user-box {
@@ -58,9 +67,14 @@ html {
     color: var(--white);
     margin-bottom: 20px;
     border: none;
-    border-bottom: 1px solid var(--white);
+    border-bottom: 1px solid rgba(255,255,255,0.35);
     outline: none;
     background: transparent;
+    transition: border-color .3s;
+}
+
+.auth-box .user-box input:focus {
+    border-bottom-color: var(--electric);
 }
 
 .auth-box .user-box label {
@@ -69,7 +83,7 @@ html {
     left: 0;
     padding: 20px 0 15px;
     font-size: 19px;
-    color: var(--white);
+    color: rgba(255,255,255,0.55);
     pointer-events: none;
     transition: .5s;
 }
@@ -82,6 +96,7 @@ html {
     font-size: 12px;
 }
 
+/* Animated border button — keep effect, gold colour */
 .auth-box form button {
     position: relative;
     display: inline-block;
@@ -94,17 +109,17 @@ html {
     overflow: hidden;
     transition: .5s;
     margin-top: 30px;
-    letter-spacing: 4px
+    letter-spacing: 4px;
 }
 
 .auth-box button:hover {
     background: var(--electric);
-    color: var(--white);
+    color: #1a1100;
     border-radius: 5px;
     box-shadow: 0 0 5px var(--electric),
-    0 0 25px var(--electric),
-    0 0 50px var(--electric),
-    0 0 100px var(--electric);
+                0 0 25px var(--electric),
+                0 0 50px var(--electric),
+                0 0 100px var(--electric-glow);
 }
 
 .auth-box button span {
@@ -122,12 +137,8 @@ html {
 }
 
 @keyframes btn-anim1 {
-    0% {
-        left: -100%;
-    }
-    50%, 100% {
-        left: 100%;
-    }
+    0%       { left: -100%; }
+    50%, 100%{ left: 100%; }
 }
 
 .auth-box button span:nth-child(2) {
@@ -137,16 +148,12 @@ html {
     height: 100%;
     background: linear-gradient(180deg, transparent, var(--electric));
     animation: btn-anim2 1s linear infinite;
-    animation-delay: .25s
+    animation-delay: .25s;
 }
 
 @keyframes btn-anim2 {
-    0% {
-        top: -100%;
-    }
-    50%, 100% {
-        top: 100%;
-    }
+    0%       { top: -100%; }
+    50%, 100%{ top: 100%; }
 }
 
 .auth-box button span:nth-child(3) {
@@ -156,16 +163,12 @@ html {
     height: 2px;
     background: linear-gradient(270deg, transparent, var(--electric));
     animation: btn-anim3 1s linear infinite;
-    animation-delay: .5s
+    animation-delay: .5s;
 }
 
 @keyframes btn-anim3 {
-    0% {
-        right: -100%;
-    }
-    50%, 100% {
-        right: 100%;
-    }
+    0%       { right: -100%; }
+    50%, 100%{ right: 100%; }
 }
 
 .auth-box button span:nth-child(4) {
@@ -175,16 +178,12 @@ html {
     height: 100%;
     background: linear-gradient(360deg, transparent, var(--electric));
     animation: btn-anim4 1s linear infinite;
-    animation-delay: .75s
+    animation-delay: .75s;
 }
 
 @keyframes btn-anim4 {
-    0% {
-        bottom: -100%;
-    }
-    50%, 100% {
-        bottom: 100%;
-    }
+    0%       { bottom: -100%; }
+    50%, 100%{ bottom: 100%; }
 }
 
 button {
@@ -213,12 +212,17 @@ button {
     width: 100%;
     padding: 10px 0;
     font-size: 16px;
-    color: #333;
+    color: var(--white);
     margin-bottom: 30px;
     border: none;
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
     outline: none;
     background: transparent;
+    transition: border-color .3s;
+}
+
+.user-box input:focus {
+    border-bottom-color: var(--electric);
 }
 
 .material-icon {
@@ -226,20 +230,93 @@ button {
     color: var(--electric);
     right: 0;
     top: 16px;
+    opacity: 0.7;
+    transition: opacity .2s;
 }
 
 .material-icon:hover {
     background: var(--electric);
-    color: var(--white);
+    color: #1a1100;
     border-radius: 5px;
     box-shadow: 0 0 5px var(--electric);
     cursor: pointer;
+    opacity: 1;
 }
 
 input {
     margin: 0 !important;
 }
 
-.recaptcha div div{
+.recaptcha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.recaptcha button {
+    width: auto;
+    min-width: 160px;
+    max-width: 100%;
+}
+
+/* Hide the floating reCAPTCHA badge — disclosure text shown inline instead */
+.grecaptcha-badge {
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.recaptcha-disclosure {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-align: center;
+    line-height: 1.4;
+}
+
+.recaptcha-disclosure a {
+    color: rgba(255, 211, 71, 0.55);
+    text-decoration: none;
+}
+
+.recaptcha-disclosure a:hover {
+    color: var(--electric);
+    text-decoration: underline;
+}
+
+.recaptcha div div {
     color: #6a1a21;
+}
+
+@media (max-width: 540px) {
+    .auth-box {
+        width: 95vw;
+        padding: 28px 18px;
+    }
+
+    .recaptcha button {
+        width: 100%;
+    }
+}
+
+/* Gender select */
+#gender-select {
+    background: rgba(0, 0, 0, 0.4);
+    color: rgba(255,255,255,0.75);
+    border: 1px solid rgba(255, 211, 71, 0.25);
+    border-radius: 6px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
+    transition: border-color .3s;
+}
+
+#gender-select:focus {
+    border-color: var(--electric);
+    box-shadow: 0 0 6px var(--electric-glow);
+}
+
+#gender-select option {
+    background: #1a1a1a;
+    color: whitesmoke;
 }

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.cash.out.title}">Cash Out</title>
+    <link th:href="@{/css/credit_card/cloudflare-ajax-mayer-reset.css}" rel="stylesheet">
+    <link th:href="@{/css/credit_card/credit-card.css}" rel="stylesheet">
+    <th:block th:insert="~{fragment/common::head}"></th:block>
+</head>
+<body>
+
+<header th:replace="~{fragment/common::navbar}"></header>
+
+<div class="wrapper" id="app">
+    <div id="cash-out-form" class="card-form col-6 mt-5">
+
+        <!-- Success modal -->
+        <div class="successful-modal m-auto mb-3 rounded-3 animated fade-out"
+             th:if="${modalSucCashOut}">
+            <div class="p-4">
+                <h4 class="text-center m-auto fs-3" th:text="#{modal.successful.cashout}">Cash out successful</h4>
+            </div>
+        </div>
+
+        <div class="card-form__inner_deposit">
+            <form th:action="@{/credit-card/cash-out}"
+                  th:method="post"
+                  th:object="${cashOutDTO}">
+
+                <div class="card-input fw-bolder fw-bolder fs-3"
+                     th:text="#{cc.cashout.title}">
+                    Cash Out
+                </div>
+
+                <div class="card-input"
+                     th:text="#{cc.cashout.hint}">
+                    Withdraw funds to your registered payment method
+                </div>
+
+                <!-- Current balance display -->
+                <div class="card-input balance-display">
+                    <span th:text="#{cc.cashout.balance}">Available balance:</span>
+                    <span class="balance-amount"
+                          th:text="${#numbers.formatDecimal(balance, 1, 2)} + ' €'">0.00 €</span>
+                </div>
+
+                <p th:if="${insufficient_balance}"
+                   class="errors alert alert-danger p-1"
+                   th:text="#{constraint.cashout.insufficient}">
+                    Insufficient balance
+                </p>
+
+                <div class="card-input">
+                    <label for="cash-out-sum" th:text="#{cc.cashout.amount}">Amount</label>
+                    <input type="text" pattern="[0-9.,]+" required data-type="number"
+                           th:field="*{cashOutSum}"
+                           th:errorclass="'is-invalid'"
+                           id="cash-out-sum"
+                           class="card-input__input"
+                           th:placeholder="#{cc.dep.form.dep-sum.placeholder.min} + ' 10.00 ' +
+                           #{cc.dep.form.currency.type} + ' ' + #{cc.dep.form.dep-sum.placeholder.max} +
+                           ' 10,000.00 ' + #{cc.dep.form.currency.type}"/>
+                    <span class="invalid-feedback alert alert-danger fs-6 p-1">
+                        <span th:if="${#fields.errors('cashOutSum').size() > 0}"
+                              th:text="${#fields.errors('cashOutSum').get(0)}">
+                        </span>
+                    </span>
+                </div>
+
+                <button class="card-form__button" th:text="#{cc.cashout.btn}">
+                    Cash Out
+                </button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery/jquery.js}"></script>
+<script inline="javascript">
+    document.querySelector('#cash-out-sum').addEventListener('input', function (e) {
+        const parts = e.target.value.split('.');
+        const value = parts[0].replace(/\D/g, '');
+        const decimal = parts[1];
+        let newValue = new Intl.NumberFormat('en-EN').format(value);
+        if (!isNaN(decimal)) newValue = `${newValue}.${decimal}`;
+        e.target.value = value === '' && newValue === '0' ? '' : newValue;
+    });
+</script>
+
+</body>
+</html>

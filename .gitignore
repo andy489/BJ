@@ -45,6 +45,12 @@ out/
 ### Mac OS
 .DS_Store
 
+### IDE & Tooling ###
+.*/
+/*.png
+/*.jpeg
+/*.jpg
+
 ### Environment Files ###
 # Ignore .env files at all directory levels
 .env

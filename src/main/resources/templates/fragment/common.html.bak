@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="head">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap5.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/fragment/header.css}"/>
+    <!--https://developers.google.com/fonts/docs/material_symbols-->
+    <!--https://fonts.google.com/icons-->
+    <link rel="stylesheet" th:href="@{https://use.fontawesome.com/releases/v6.5.1/css/all.css}">
+    <link rel="stylesheet" th:href="@{/css/locale/locale.css}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+
+    <script defer th:src="@{/js/bootstrap/bootstrap5.js}"></script>
+    <script th:src="@{/js/toggle/toggle-request-param.js}"></script>
+</head>
+
+<body>
+
+<header th:fragment="navbar" class="container-header p-0 mb-5">
+
+    <div class="container-header-left">
+        <a class="nav-link active mb-0" th:href="@{/}">
+            <span class="nav-icon align-middle">
+                <i class="fa-solid fa-martini-glass-citrus"></i>
+            </span>
+            <span class="nav-func align-middle" th:text="#{nav.lobby}">Lobby</span>
+        </a>
+
+        <a class="nav-link active mb-0" th:href="@{/credit-card/deposit}">
+            <span class="nav-icon align-middle">
+                <i class="fa-regular fa-credit-card"></i>
+            </span>
+            <span class="nav-func align-middle"
+                  th:text="#{nav.deposit}">Deposit</span>
+        </a>
+
+        <a class="nav-link active mb-0" th:href="@{/}">
+            <span class="nav-icon align-middle">
+                <i class="fa-solid fa-sack-dollar"></i>
+            </span>
+            <span class="nav-func align-middle"
+                  th:text="#{nav.cash.out}">Cash out</span>
+        </a>
+
+        <a class="nav-link active mb-0" th:href="@{/rules}">
+            <span class="nav-icon align-middle">
+                <i class="fa-solid fa-dice"></i>
+            </span>
+            <span class="nav-func align-middle"
+                  th:text="#{nav.rules}">Rules</span>
+        </a>
+
+        <a class="nav-link active mb-0" th:href="@{/play}">
+            <span class="nav-icon align-middle">
+                <i class="fa-solid fa-play"></i>
+            </span>
+            <span class="nav-func align-middle"
+                  th:text="#{nav.play}">Play</span>
+        </a>
+    </div>
+
+    <div class="container-header-right d-flex align-items-center">
+
+        <div class="lang-switcher me-3">
+            <button class="lang-toggle-btn"
+                    type="button"
+                    id="langToggleBtn"
+                    th:text="#{nav.locale}">
+                EN
+            </button>
+            <div class="lang-dropdown" id="langDropdown">
+                <button class="lang-opt"
+                        th:each="l : ${T(com.casino.blackjack.model.enumerated.LocaleEnum).values()}"
+                        th:text="${l.getDisplayName()}"
+                        th:attrappend="localeBaseId=${l.getBaseLocaleId()}"
+                        th:onclick="|goto('lang', this.getAttribute('localeBaseId'))|">
+                </button>
+            </div>
+        </div>
+        <div sec:authorize="isAuthenticated()"
+             class="d-flex align-items-center logout-container">
+            <div class="d-inline-block login-greeter fs-5">
+                <th:block th:if="${#authentication.getPrincipal().getGender().toString()} == 'FEMALE'"
+                          th:text="#{nav.greeter.female}">Welcome,
+                </th:block>
+                <th:block th:unless="${#authentication.getPrincipal().getGender().toString()} == 'FEMALE'"
+                          th:text="#{nav.greeter.male}">Welcome,
+                </th:block>
+
+                <th:block sec:authentication="name">{name}</th:block>
+                !
+            </div>
+            <form th:action="@{/auth/logout}"
+                  th:method="post"
+                  class="d-inline-block btn-logout">
+                <button class="btn-logout btn btn-link nav-link align-middle active"
+                        type="submit"
+                        th:text="#{nav.logout}">Logout
+                </button>
+            </form>
+        </div>
+
+        <div sec:authorize="!isAuthenticated()">
+            <a class="nav-link active align-middle"
+               th:href="@{/auth/login}"
+               th:text="#{nav.login}">Login</a>
+
+            <a class="nav-link active align-middle"
+               th:href="@{/auth/register}"
+               th:text="#{nav.register}">Register</a>
+        </div>
+    </div>
+</header>
+
+<footer th:fragment="footer" class="container-footer text-center col-12">
+
+    <div class="mb-2">
+        <p class="mb-1" th:text="#{footer.bj.history}">
+            Blackjack has captivated casino-goers since the early 20th century.
+        </p>
+        <p class="mb-1">
+            <span th:text="#{footer.bj.rules}">Rules vary between casinos.</span>
+            <span th:text="#{footer.bj.learn.more}">Brush up on</span>
+            <a th:href="@{/rules}" class="text-link" th:text="#{footer.bj.rules.link}">the rules</a>
+            <span th:text="#{footer.bj.current.rules}">of this game before you play.</span>
+        </p>
+    </div>
+
+    <div class="mb-1">
+
+        <a class="icon-link text-white m-3" th:target="_blank" th:href="@{https://github.com/andy489}">
+            <i class="fab fa-github footer-icon"></i>
+        </a>
+
+        <a class="icon-link text-white m-3" th:target="_blank" th:href="@{https://www.linkedin.com/in/andy489}">
+            <i class="fab fa-linkedin footer-icon"></i>
+        </a>
+
+        <a class="icon-link text-white m-3" th:target="_blank" th:href="@{https://www.instagram.com/andyy4489}">
+            <i class="fab fa-instagram footer-icon"></i>
+        </a>
+
+    </div>
+
+    <div class="text-center">
+        <span>© <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2024</span></span>
+        <span th:text="#{footer.bj.proj}">Blackjack — Spring Boot Project</span>
+    </div>
+
+    <link rel="stylesheet" th:href="@{/css/fragment/footer.css}"/>
+</footer>
+
+</body>
+
+</html>

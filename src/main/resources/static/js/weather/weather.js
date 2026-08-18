@@ -13,8 +13,6 @@ const weatherImagesPath = '/images/weather/'
 fetch('http://api.openweathermap.org/data/2.5/weather?q=sofia&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
     .then(data => data.json())
     .then(info => {
-        // console.log(info)
-
         // Formula Kelvin to Celsius 299K - 273.15 = 25.85°C
         boxTempA.innerText = Math.round(info.main.temp + KELVIN_ZERO)
         boxImgA.src = weatherImagesPath + info.weather[0].icon + '.png'
@@ -24,8 +22,6 @@ fetch('http://api.openweathermap.org/data/2.5/weather?q=sofia&appid=8dd1b8c6c706
 fetch('http://api.openweathermap.org/data/2.5/weather?q=lasvegas&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
     .then(data => data.json())
     .then(info => {
-        // console.log(info)
-
         // Formula Kelvin to Celsius 299K - 273.15 = 25.85°C
         boxTempB.innerText = Math.round(info.main.temp + KELVIN_ZERO)
         boxImgB.src = weatherImagesPath + info.weather[0].icon + '.png'

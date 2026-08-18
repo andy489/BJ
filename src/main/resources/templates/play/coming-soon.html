@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <th:block th:insert="~{fragment/common::head}"></th:block>
+    <title th:text="#{nav.play}">Play</title>
+    <style>
+        :root {
+            --electric: #ffd347;
+            --electric-glow: rgba(255, 211, 71, 0.6);
+        }
+        body {
+            background: no-repeat center/cover url('/images/background/04-bj-table.png');
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        .cs-wrapper {
+            min-height: calc(100vh - 120px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .cs-panel {
+            max-width: 560px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.58);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 211, 71, 0.22);
+            border-radius: 18px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.65);
+            padding: 52px 44px;
+            text-align: center;
+        }
+        @media (max-width: 540px) {
+            .cs-panel { padding: 36px 24px; }
+        }
+        .cs-icon {
+            font-size: 3.6rem;
+            margin-bottom: 18px;
+            filter: drop-shadow(0 0 14px var(--electric-glow));
+        }
+        .cs-title {
+            color: var(--electric);
+            text-shadow: 0 0 18px var(--electric-glow);
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            margin-bottom: 12px;
+            font-family: "Source Sans Pro", sans-serif;
+        }
+        .cs-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: rgba(255, 211, 71, 0.65);
+            border: 1px solid rgba(255, 211, 71, 0.3);
+            border-radius: 4px;
+            padding: 3px 9px;
+            margin-bottom: 20px;
+            font-family: "Source Sans Pro", sans-serif;
+        }
+        .cs-desc {
+            color: rgba(255, 255, 255, 0.62);
+            font-size: 1rem;
+            line-height: 1.7;
+            font-family: "Source Sans Pro", sans-serif;
+            margin-bottom: 32px;
+        }
+        .cs-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cs-btn {
+            display: inline-block;
+            padding: 10px 26px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: background .25s, color .25s, box-shadow .25s;
+            font-family: "Source Sans Pro", sans-serif;
+        }
+        .cs-btn-primary {
+            background: var(--electric);
+            color: #1a1100;
+            border: none;
+        }
+        .cs-btn-primary:hover {
+            box-shadow: 0 0 5px var(--electric), 0 0 20px rgba(255,211,71,0.4);
+            color: #1a1100;
+        }
+        .cs-btn-secondary {
+            background: transparent;
+            color: var(--electric);
+            border: 1.5px solid rgba(255, 211, 71, 0.4);
+        }
+        .cs-btn-secondary:hover {
+            background: rgba(255, 211, 71, 0.1);
+            color: var(--electric);
+            border-color: var(--electric);
+        }
+        .cs-game-name {
+            color: var(--electric);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+<header th:replace="~{fragment/common::navbar}"></header>
+
+<div class="cs-wrapper">
+    <div class="cs-panel">
+
+        <!-- Derive game name from URL path -->
+        <div class="cs-icon">🃏</div>
+
+        <div class="cs-title" th:text="#{play.coming.soon.title}">Coming Soon</div>
+        <div class="cs-badge" th:text="#{rules.coming.soon}">COMING SOON</div>
+
+        <p class="cs-desc" th:text="#{play.coming.soon.desc}">
+            This game is currently under development. Our team is working hard to bring you an
+            amazing experience. In the meantime, try your hand at Blackjack!
+        </p>
+
+        <div class="cs-actions">
+            <a th:href="@{/play}" class="cs-btn cs-btn-primary" th:text="#{play.coming.soon.play.bj}">
+                Play Blackjack
+            </a>
+            <a th:href="@{/rules}" class="cs-btn cs-btn-secondary" th:text="#{play.coming.soon.rules}">
+                View Rules
+            </a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

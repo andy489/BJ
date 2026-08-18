@@ -27,3 +27,26 @@ function replaceQueryParam(requestParamKey, requestParamValue) {
 function getCurrentURL() {
     return window.location.href
 }
+
+function initLangToggle() {
+    const btn = document.getElementById('langToggleBtn');
+    const dropdown = document.getElementById('langDropdown');
+    if (!btn || !dropdown) return;
+
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const open = dropdown.classList.toggle('open');
+        btn.classList.toggle('open', open);
+    });
+
+    document.addEventListener('click', function () {
+        dropdown.classList.remove('open');
+        btn.classList.remove('open');
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLangToggle);
+} else {
+    initLangToggle();
+}

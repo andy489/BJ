@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <th:block th:insert="~{fragment/common::head}"></th:block>
@@ -9,132 +9,230 @@
 
 <header th:replace="~{fragment/common::navbar}"></header>
 
-<div class="col-10 m-auto">
-    <div class="m-4 container-rules">
-        <ul class="nav nav-tabs" id="myTab">
-            <li class="nav-item">
-                <a href="#game-1" class="nav-link nav-tab active" data-bs-toggle="tab">
-                    <span class="tab" th:text="#{bj}">Blackjack</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#game-2" class="nav-link nav-tab" data-bs-toggle="tab">
-                    <span class="tab" th:text="#{rules.ng}">New Game</span>
-                </a>
-            </li>
-        </ul>
-        <div class="tab-content">
+<div class="rules-wrapper">
+    <div class="rules-panel">
 
-            <div class="tab-pane fade show active" id="game-1">
-                <div class="mt-3 mb-3">
-                    <span class=" content-header" th:text="#{bj}">Blackjack</span>
-                </div>
+        <div class="rules-title" th:text="#{page.rules.title}">Game Rules</div>
+        <div class="rules-subtitle" th:text="#{rules.subtitle}">Know the game before you play</div>
 
-                <p th:text="#{rules.bj.p1}">
-                    Blackjack, or 21, is one of the most popular card games played in our casino. It is easy to learn
-                    and exciting to play. We provide Two Deck Blackjack where the cards are dealt from a box called the
-                    “shoe.”
-                </p>
-
-                <p th:text="#{rules.bj.p2}">
-                    In Blackjack, you play only against the dealer. Players receive all cards face up and the dealer’s
-                    first card is face up and the second is face down. The object of the game is to get closer to 21
-                    than the dealer without going over 21. If a hand goes over 21, it is called a “bust” or “break” and
-                    the wager is lost. In 21, Jacks, Queens, Kings and 10s count as 10. An Ace may be played as a one or
-                    an 11. All other cards are played at face value.
-                </p>
-
-                <p th:text="#{rules.bj.p3}">
-                    When you receive your first two cards, you may either “stand” or “hit.” When you “stand” it means
-                    you feel you are close enough to 21 and no longer wish any additional cards and indicated by waving
-                    off with your hand. If you wish to receive another card or “hit,” tap or scratch the table behind
-                    your wager with your finger. In either situation, you will never touch the cards, everything is
-                    communicated using hand signals. You may draw as many cards as you want until you are close to 21 or
-                    until you “bust”. In our online case all hand signals are represented as buttons.
-                </p>
-
-                <p th:text="#{rules.bj.p4}">
-                    If you are closer to 21 than the dealer, you win and are paid an amount equal to your original
-                    wager. If your hand is less than the dealer’s, you lose. If the dealer’s hand “busts” or “breaks”,
-                    you win as well. Ties are a standoff or “push” and your bet remains on the table.
-                </p>
-
-                <p th:text="#{rules.bj.p5}">
-                    If your initial two cards total 21, any Ace with a 10, Jack, Queen, or King, you have a Blackjack.
-                    Blackjack is paid 3 to 2 if the dealer does not have one as well, then is push.
-                </p>
-
-                <div class="mt-3 mb-3">
-                    <span class="fs-5" th:text="#{rules.bj.ref} + ': '">
-                        For more information visit:
-                    </span>
-                    <a href="https://en.wikipedia.org/wiki/Blackjack" target="_blank"
-                       class="ref-bj-link fs-4">wikipedia</a>
-                </div>
-
-            </div>
-
-            <div class="tab-pane fade" id="game-2">
-                <div class="mt-3 mb-3">
-                    <span class=" content-header" th:text="#{rules.ng}">New Game</span>
-                </div>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pharetra augue a metus scelerisque
-                    hendrerit. Donec quis erat sit amet neque condimentum imperdiet non in dolor. Sed mauris arcu,
-                    luctus vel leo in, tincidunt egestas risus. Aliquam elementum risus id dolor suscipit ornare. Etiam
-                    et ligula nec ex pulvinar convallis eu a nunc. Proin consectetur mi vitae nisi gravida, eget aliquam
-                    dolor varius. Integer nulla erat, condimentum non porttitor sed, finibus vel diam. Nulla nec nibh a
-                    metus dapibus varius non quis lacus. Praesent pulvinar tincidunt odio venenatis aliquet. Quisque ut
-                    urna vel arcu lacinia tristique. Fusce gravida diam vel sem mattis molestie. Vivamus ultrices
-                    ultrices euismod.
-                </p>
-
-                <p>
-                    Sed vulputate leo vitae sem consectetur pharetra. Vestibulum commodo libero ac erat scelerisque, nec
-                    auctor dui tempor. Maecenas tortor est, tincidunt et ultricies quis, posuere sit amet diam.
-                    Phasellus eu hendrerit eros, ac tincidunt ante. Donec consectetur ante et efficitur aliquam. Duis at
-                    elit eu sapien luctus varius. Nulla dignissim semper ligula et gravida. Cras vitae turpis finibus,
-                    dapibus ex eu, consectetur nunc. Cras ut nulla id purus blandit feugiat. Proin sit amet porta nisl.
-                    Donec interdum accumsan mi, non dictum massa commodo vel. Duis id facilisis quam. Duis blandit nisi
-                    risus, vel feugiat felis posuere ac. Etiam lorem sapien, egestas ac tellus ut, vulputate imperdiet
-                    nulla.
-                </p>
-
-                <p>
-                    Pellentesque at velit a nibh venenatis lobortis. Vivamus est leo, fermentum scelerisque eleifend et,
-                    vestibulum quis libero. Integer tristique, velit eu blandit luctus, sapien massa lobortis nisi, a
-                    aliquet ante diam eget tortor. Curabitur urna nunc, condimentum nec eleifend nec, vestibulum vel
-                    felis. In aliquam sapien eget vehicula porttitor. Sed vel gravida massa. Suspendisse sapien quam,
-                    tempor vitae felis vitae, dapibus rutrum velit. Sed placerat felis orci, sed iaculis justo viverra
-                    vitae. Donec tincidunt rhoncus sodales. Curabitur feugiat diam tellus, sit amet posuere enim euismod
-                    id. Vestibulum efficitur sodales nisi vitae aliquam. Phasellus sed vulputate risus.
-                </p>
-
-                <p>
-                    Quisque mattis gravida luctus. Phasellus libero magna, scelerisque at blandit ut, venenatis sit amet
-                    odio. Nulla facilisi. Duis tellus mauris, sagittis at elementum vitae, aliquet in tortor. Proin
-                    euismod, ex vel consequat sollicitudin, ipsum ligula commodo nibh, bibendum condimentum nibh nulla
-                    et massa. Nullam non magna non enim euismod facilisis ut nec felis. Maecenas id nisi a nisi
-                    efficitur elementum. Maecenas vitae pulvinar diam, vel congue lectus. Donec dapibus urna at
-                    efficitur suscipit. Etiam leo ligula, lacinia quis purus vel, lobortis venenatis velit. In
-                    ullamcorper, augue vel porta cursus, diam felis congue ex, euismod rutrum ligula nulla id felis.
-                    Aenean in dui libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in sapien
-                    luctus, imperdiet diam quis, pharetra nulla.
-                </p>
-
-                <p>
-                    Sed fringilla interdum leo non pellentesque. Mauris accumsan ante eget urna imperdiet, vitae
-                    tincidunt turpis maximus. Vestibulum quam eros, condimentum eu dapibus id, egestas sed felis. Morbi
-                    posuere ante sed sollicitudin porttitor. Maecenas tristique tincidunt leo, sit amet pellentesque
-                    metus euismod id. Praesent auctor feugiat orci. Aliquam in scelerisque quam. Vestibulum a justo
-                    varius, malesuada ipsum et, sollicitudin turpis.
-                </p>
-
-            </div>
-
+        <!-- Tabs -->
+        <div class="rules-tabs">
+            <button class="rules-tab-btn active" data-tab="tab-bj"       th:text="#{bj}">Blackjack</button>
+            <button class="rules-tab-btn"         data-tab="tab-baccarat" th:text="#{rules.baccarat}">Baccarat</button>
+            <button class="rules-tab-btn"         data-tab="tab-poker"    th:text="#{rules.poker}">Texas Hold'em</button>
         </div>
+
+        <!-- ═══════════════════════════════════════════════════
+             BLACKJACK TAB
+        ════════════════════════════════════════════════════ -->
+        <div id="tab-bj" class="rules-pane active rules-body">
+
+            <div class="rules-section-title" th:text="#{bj}">Blackjack</div>
+
+            <div class="rules-cards">
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.bj.ref.decks}">Decks</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.ref.decks.val}">2-deck shoe</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.bj.ref.bj.pays}">Blackjack pays</div>
+                    <div class="rule-card__value">3 : 2</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.bj.ref.ace}">Ace value</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.ref.ace.val}">1 or 11</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.bj.ref.face}">Face cards</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.ref.face.val}">J, Q, K, 10 → 10</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.bj.ref.bust}">Bust</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.ref.bust.val}">Hand over 21 — wager lost</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.bj.ref.push}">Push</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.ref.push.val}">Tie — bet returned</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.bj.ref.min.bet}">Min bet</div>
+                    <div class="rule-card__value" th:text="#{min.bet}">$10.00</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.bj.ref.max.bet}">Max bet</div>
+                    <div class="rule-card__value" th:text="#{max.bet}">$1,000.00</div>
+                </div>
+            </div>
+
+            <p th:text="#{rules.bj.p1}"></p>
+            <p th:text="#{rules.bj.p2}"></p>
+            <p th:text="#{rules.bj.p3}"></p>
+            <p th:text="#{rules.bj.p4}"></p>
+            <p th:text="#{rules.bj.p5}"></p>
+
+            <div class="rules-section-title" style="margin-top:28px" th:text="#{rules.bj.actions.title}">Player Actions</div>
+            <div class="rules-cards">
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{dec.hit}">Hit</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.action.hit.val}">Draw one more card</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{dec.stand}">Stand</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.action.stand.val}">Keep your current hand</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{dec.double.down}">Double Down</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.action.double.val}">Double the bet, receive exactly one more card</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{dec.split}">Split</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.action.split.val}">Split a pair into two separate hands, each with a new bet</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{dec.surrender}">Surrender</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.action.surrender.val}">Fold and recover half your bet</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{dec.insurance}">Insurance</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.action.insurance.val}">Side bet offered when dealer shows an Ace — pays 2:1</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{dec.even.money}">Even Money</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.action.even.money.val}">Instant 1:1 payout when you hold Blackjack and dealer shows Ace</div>
+                </div>
+            </div>
+
+            <div class="rules-section-title" style="margin-top:28px" th:text="#{rules.bj.betting.title}">Betting Panel</div>
+            <div class="rules-cards">
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{bet.repeat}">Repeat</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.bet.repeat.val}">Re-place your last wager exactly</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{bet.double}">Double</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.bet.double.val}">Double your last wager before dealing</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{bet.clear}">Clear</div>
+                    <div class="rule-card__value" th:text="#{rules.bj.bet.clear.val}">Remove chips from the betting circle</div>
+                </div>
+            </div>
+
+            <div class="rules-ref">
+                <span th:text="#{rules.bj.ref}">For more information visit</span>
+                <a href="https://en.wikipedia.org/wiki/Blackjack" target="_blank">Wikipedia</a>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════
+             BACCARAT TAB
+        ════════════════════════════════════════════════════ -->
+        <div id="tab-baccarat" class="rules-pane rules-body">
+
+            <div class="rules-section-title">
+                <span th:text="#{rules.baccarat}">Baccarat</span>
+                <span class="coming-soon-badge" th:text="#{rules.coming.soon}">COMING SOON</span>
+            </div>
+
+            <div class="rules-cards">
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.bj.ref.decks}">Decks</div>
+                    <div class="rule-card__value" th:text="#{rules.baccarat.ref.decks.val}">6 or 8-deck shoe</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.baccarat.ref.banker.pays}">Banker pays</div>
+                    <div class="rule-card__value" th:text="#{rules.baccarat.ref.banker.pays.val}">1 : 1 (5 % commission)</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.baccarat.ref.player.pays}">Player pays</div>
+                    <div class="rule-card__value" th:text="#{rules.baccarat.ref.player.pays.val}">1 : 1</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.baccarat.ref.tie.pays}">Tie pays</div>
+                    <div class="rule-card__value" th:text="#{rules.baccarat.ref.tie.pays.val}">8 : 1</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.baccarat.ref.natural}">Natural</div>
+                    <div class="rule-card__value" th:text="#{rules.baccarat.ref.natural.val}">8 or 9 on first two cards — no further draw</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.baccarat.ref.card.values}">Card values</div>
+                    <div class="rule-card__value" th:text="#{rules.baccarat.ref.card.values.val}">Ace = 1 · 2–9 = face · 10/J/Q/K = 0</div>
+                </div>
+            </div>
+
+            <p th:text="#{rules.baccarat.p1}"></p>
+            <p th:text="#{rules.baccarat.p2}"></p>
+            <p th:text="#{rules.baccarat.p3}"></p>
+            <p th:text="#{rules.baccarat.p4}"></p>
+
+            <div class="rules-ref">
+                <span th:text="#{rules.ref}">For more information visit</span>
+                <a href="https://en.wikipedia.org/wiki/Baccarat" target="_blank">Wikipedia</a>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════
+             TEXAS HOLD'EM TAB
+        ════════════════════════════════════════════════════ -->
+        <div id="tab-poker" class="rules-pane rules-body">
+
+            <div class="rules-section-title">
+                <span th:text="#{rules.poker}">Texas Hold'em</span>
+                <span class="coming-soon-badge" th:text="#{rules.coming.soon}">COMING SOON</span>
+            </div>
+
+            <div class="rules-cards">
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.poker.ref.players}">Players</div>
+                    <div class="rule-card__value" th:text="#{rules.poker.ref.players.val}">2 – 10 per table</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.poker.ref.hand.cards}">Hand cards</div>
+                    <div class="rule-card__value" th:text="#{rules.poker.ref.hand.cards.val}">2 hole cards per player</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.poker.ref.community}">Community cards</div>
+                    <div class="rule-card__value" th:text="#{rules.poker.ref.community.val}">5 shared (Flop · Turn · River)</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.poker.ref.best.hand}">Best hand</div>
+                    <div class="rule-card__value" th:text="#{rules.poker.ref.best.hand.val}">Royal Flush → High Card</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.poker.ref.blinds}">Blinds</div>
+                    <div class="rule-card__value" th:text="#{rules.poker.ref.blinds.val}">Small blind + Big blind before deal</div>
+                </div>
+                <div class="rule-card">
+                    <div class="rule-card__label" th:text="#{rules.poker.ref.showdown}">Showdown</div>
+                    <div class="rule-card__value" th:text="#{rules.poker.ref.showdown.val}">Best 5-card hand from 7 wins the pot</div>
+                </div>
+            </div>
+
+            <p th:text="#{rules.poker.p1}"></p>
+            <p th:text="#{rules.poker.p2}"></p>
+            <p th:text="#{rules.poker.p3}"></p>
+            <p th:text="#{rules.poker.p4}"></p>
+
+            <div class="rules-ref">
+                <span th:text="#{rules.ref}">For more information visit</span>
+                <a href="https://en.wikipedia.org/wiki/Texas_hold_%27em" target="_blank">Wikipedia</a>
+            </div>
+        </div>
+
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.rules-tab-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.rules-tab-btn').forEach(function (b) { b.classList.remove('active'); });
+            document.querySelectorAll('.rules-pane').forEach(function (p) { p.classList.remove('active'); });
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+    });
+</script>
 
 </body>
 </html>

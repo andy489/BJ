@@ -2,7 +2,8 @@ package com.casino.blackjack.service.gamelogic.dto;
 
 import com.casino.blackjack.model.entity.GameEntity;
 import com.casino.blackjack.model.entity.WalletEntity;
-import com.casino.blackjack.service.gamelogic.rng.RNG;
+import com.casino.blackjack.service.gamelogic.rng.CardSource;
+import com.casino.blackjack.service.gamelogic.rng.RngCardSource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,10 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.casino.blackjack.service.gamelogic.rng.RNG.randRank;
-import static com.casino.blackjack.service.gamelogic.rng.RNG.randRankNotTen;
-import static com.casino.blackjack.service.gamelogic.rng.RNG.randRankTen;
-import static com.casino.blackjack.service.gamelogic.rng.RNG.randSuit;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ACE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_CARDS_CNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_CNT;
@@ -30,39 +27,32 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_DISPLAY_CN
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN_NO;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN_YES;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SURRENDER;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_HIT;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_EVEN_MONEY_YES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_EVEN_MONEY_NO;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURANCE_YES;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_EVEN_MONEY_YES;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_HIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURANCE_NO;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURANCE_YES;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SURRENDER;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DEALER_THRESHOLD_17;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DISPLACEMENT_BASE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DISPLAY_BUST_CNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DOUBLE_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERRORS;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.FIVE_RANK;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.FOUR_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.INITIAL_DEALT_CARD_COUNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.INSURANCE_MULTIPLIER;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.JAKE_RANK;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_ID_STR;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_TAKEN_CHOICES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ONE_CARD;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PUSH_MULTI;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.SEVEN_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.SURRENDER_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.TEN_RANK;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.THREE_RANK;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.TWO_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 
 @Getter
@@ -70,6 +60,9 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 @Accessors(chain = true)
 @ToString
 public class Game {
+
+    @ToString.Exclude
+    private transient CardSource cardSource = new RngCardSource();
 
     private String hash;
 
@@ -127,6 +120,7 @@ public class Game {
     }
 
     public Game(Game game) {
+        this.cardSource = game.cardSource;
         this.hash = game.hash;
         this.dealt = game.dealt;
         this.dealerCards = game.dealerCards;
@@ -209,40 +203,18 @@ public class Game {
     }
 
     private void dealRandom() {
-        dealerCards.add(Card.of(randSuit(), randRank()));
-        dealerCards.add(Card.of(randSuit(), randRank()));
-        playerCards.add(Card.of(randSuit(), randRank()));
-        playerCards.add(Card.of(randSuit(), randRank()));
-
-//        dealerCards.add(Card.of(randSuit(), FOUR_RANK));
-//        dealerCards.add(Card.of(randSuit(), ACE_RANK));
-//        playerCards.add(Card.of(randSuit(), NINE_RANK));
-//        playerCards.add(Card.of(randSuit(), JAKE_RANK));
+        dealerCards.add(cardSource.next());
+        dealerCards.add(cardSource.next());
+        playerCards.add(cardSource.next());
+        playerCards.add(cardSource.next());
     }
 
-//    private static int a = 0;
     private void dealerHit() {
-//        if (a == 0) {
-//            dealerCards.add(Card.of(randSuit(), ACE_RANK));
-//            a++;
-//        } else if (a == 1) {
-//            dealerCards.add(Card.of(randSuit(), THREE_RANK));
-//            a++;
-//        } else
-            dealerCards.add(RNG.randCard());
-
+        dealerCards.add(cardSource.next());
     }
 
     private void hit(List<Card> cards) {
-        cards.add(Card.of(RNG.randSuit(), randRank()));
-    }
-
-    private void hitNoTen(List<Card> cards) {
-        cards.add(Card.of(RNG.randSuit(), randRankNotTen()));
-    }
-
-    private void hitTen(List<Card> cards) {
-        cards.add(Card.of(RNG.randSuit(), randRankTen()));
+        cards.add(cardSource.next());
     }
 
     public Integer dealerCardsCount() {
@@ -314,6 +286,15 @@ public class Game {
         return getScore(playerCards);
     }
 
+    public Integer playerHardScore() {
+        return getCount(playerCards).getLeft();
+    }
+
+    public Boolean playerIsSoft() {
+        Count c = getCount(playerCards);
+        return !c.getLeft().equals(c.getRight()) && c.getRight() <= BJ_CNT;
+    }
+
     public String getScore(List<Card> cards) {
         if (checkBJ(cards)) {
             return BJ_DISPLAY_CNT;
@@ -380,7 +361,7 @@ public class Game {
         if (!dealt || finalized) {
             if (getLastChoice().equals(CHOICE_DOUBLE_DOWN)) {
                 doubleDown = true;
-                playerDouble();
+                playerHit();
 
                 if (playerBust()) {
                     dealerPlayOneCard();
@@ -396,7 +377,7 @@ public class Game {
         if (getLastTakenChoice().equals(CHOICE_DOUBLE_DOWN_YES)) {
             finalized = true;
             doubleDown = true;
-            playerDouble();
+            playerHit();
 
             Boolean bustPlayer = checkBust(playerCards);
 
@@ -580,7 +561,7 @@ public class Game {
     }
 
     // helper game methods
-    private void dealerPlayOneCard() {
+    public void dealerPlayOneCard() {
         if (dealerSecondCard != null) {
             dealerCards.add(dealerSecondCard);
             dealerSecondCard = null;
@@ -589,7 +570,7 @@ public class Game {
         }
     }
 
-    private void playerDouble() {
+    public void playerHit() {
         hit(playerCards);
     }
 
@@ -613,6 +594,35 @@ public class Game {
 
             count = getCount(dealerCards);
         }
+    }
+
+    /** Exposed for use by game-state processors. */
+    public void dealerPlayUntilSoft17Public() {
+        dealerPlayUntilSoft17();
+    }
+
+    public boolean checkBJCards(List<Card> cards) {
+        return checkBJ(cards);
+    }
+
+    public boolean isDealerHiddenCardBJ() {
+        return checkBJDealerHiddenCard();
+    }
+
+    public boolean isPair() {
+        return checkPair(playerCards);
+    }
+
+    public boolean dealerFirstCardCannotMakeBJ() {
+        return dealerCannotMakeBJ();
+    }
+
+    public Integer compareHands(List<Card> dealer, List<Card> player) {
+        return checkWin(dealer, player);
+    }
+
+    public Integer getLastTakenChoicePublic() {
+        return getLastTakenChoice();
     }
 
     public Game makeChoice(Integer choice) {
@@ -652,7 +662,7 @@ public class Game {
     }
 
     private boolean dealerCannotMakeBJ() {
-        return dealerCards.size() == ONE_CARD &&
+        return !dealerCards.isEmpty() &&
                 dealerCards.get(0).getRank() < TEN_RANK &&
                 dealerCards.get(0).getRank() > ACE_RANK;
     }

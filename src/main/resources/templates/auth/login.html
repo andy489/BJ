@@ -33,7 +33,7 @@
         </div>
 
         <div class="user-box user-box-icon">
-            <input name="password"
+            <input id="password" name="password"
                    type="password" required=""
                    th:value="${password}"/>
             <i id="password-eye" class="fa-regular fa-eye material-icon"></i>
@@ -56,7 +56,7 @@
         </div>
 
         <div id="g-recaptcha-login" class="recaptcha">
-            <button class="g-recaptcha w-50" type="submit"
+            <button class="g-recaptcha" type="submit"
                     th:attr="data-sitekey=${@recaptchaConfig.getSite()}"
                     data-callback='onSubmit1'
                     data-action='submit'>
@@ -66,6 +66,12 @@
                 <span></span>
                 <th:block th:text="#{form.login.btn}">LOGIN</th:block>
             </button>
+            <p class="recaptcha-disclosure">
+                This site is protected by reCAPTCHA —
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy</a>
+                &amp;
+                <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms</a>
+            </p>
         </div>
     </form>
 
@@ -103,7 +109,7 @@
         </p>
 
         <div id="g-recaptcha-forgot" class="recaptcha">
-            <button class="g-recaptcha w-75" type="submit"
+            <button class="g-recaptcha" type="submit"
                     th:attr="data-sitekey=${@recaptchaConfig.getSite()}"
                     data-callback='onSubmit2'
                     data-action='submit'>
@@ -113,6 +119,12 @@
                 <span></span>
                 <th:block th:text="#{form.res.btn}">SEND INSTRUCTIONS</th:block>
             </button>
+            <p class="recaptcha-disclosure">
+                This site is protected by reCAPTCHA —
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy</a>
+                &amp;
+                <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms</a>
+            </p>
         </div>
     </form>
 

@@ -12,7 +12,10 @@
 <header th:replace="~{fragment/common::navbar}"></header>
 
 <div class="wrapper" th:object="${game}">
-    <div class="cards-wrapper">
+
+    <!-- ── Scaled card canvas (card table only) ── -->
+    <div class="cards-wrapper" id="cardsWrapper">
+
         <div class="game-metadata-wrapper">
             <span class="game-info" th:text="#{game.user} + ':'">User</span>
             <div class="small-deli"></div>
@@ -68,7 +71,6 @@
                              th:classappend="'d-' + *{playerCardsEven - 1} + '-' + ${game.dPlayerCards + iStat.index}"/>
                     </div>
 
-
                     <div class="score-box">
                         <div class="curr-result-user" th:text="#{game.player} + ':'">Player</div>
                         <div class="small-deli"></div>
@@ -83,376 +85,416 @@
                 </div>
             </div>
         </div>
+
     </div>
+    <!-- EO: cards-wrapper -->
 
-    <!--  CHOICE MODAL: EVEN MONEY -->
-    <div class="choice-modal-wrapper row"
-         th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_EVEN_MONEY_YES')) ? '' : 'd-none'}">
-        <div class="modal-title col-12"
-             th:with="even=#{dec.even.money}"
-             th:text="${#strings.toUpperCase(even)} + '?'">
-            EVEN MONEY?
-        </div>
-        <div class="col-6 choice-box">
-            <form th:action="@{/play/even}"
-                  th:method="post">
-                <button type="submit" class="btn btn-decision btn-even btn-sec-dec-yes"></button>
-                <input type="hidden" name="evenMoney" value="true">
-                <div class="btn-cmd"
-                     th:with="yes=#{dec.yes}"
-                     th:text="${#strings.toUpperCase(yes)}">
-                    YES
-                </div>
-            </form>
-        </div>
-        <div class="col-6 choice-box">
-            <form th:action="@{/play/even}"
-                  th:method="post">
-                <button type="submit" class="btn btn-decision btn-even btn-sec-dec-no"></button>
-                <input type="hidden" name="evenMoney" value="false">
-                <div class="btn-cmd"
-                     th:with="no=#{dec.no}"
-                     th:text="${#strings.toUpperCase(no)}">
-                    NO
-                </div>
-            </form>
-        </div>
-    </div>
-    <!--  EO:CHOICE MODAL: EVEN MONEY  -->
+    <!-- ── Controls panel — never scaled, always full-width ── -->
+    <div class="controls-panel">
 
-    <!--  CHOICE MODAL: INSURANCE  -->
-    <div class="choice-modal-wrapper row"
-         th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_INSURANCE_NO')) ? '' : 'd-none'}">
-        <div class="modal-title col-12"
-             th:with="insurance=#{dec.insurance}"
-             th:text="${#strings.toUpperCase(insurance)} + '?'">
-            INSURANCE?
-        </div>
-        <div class="col-2"></div>
-        <div class="col-4 choice-box" th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_INSURANCE_YES')) ? '' : 'd-none'}">
-            <form th:action="@{/play/insurance}"
-                  th:method="post">
-                <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-yes"></button>
-                <input type="hidden" name="insurance" value="true">
-                <div class="btn-cmd"
-                     th:with="yes=#{dec.yes}"
-                     th:text="${#strings.toUpperCase(yes)}">
-                    YES
-                </div>
-            </form>
-        </div>
-        <div class="col-4 choice-box">
-            <form th:action="@{/play/insurance}"
-                  th:method="post">
-                <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-no"></button>
-                <input type="hidden" name="insurance" value="false">
-                <div class="btn-cmd"
-                     th:with="no=#{dec.no}"
-                     th:text="${#strings.toUpperCase(no)}">
-                    NO
-                </div>
-            </form>
-        </div>
-        <div class="col-2"></div>
-    </div>
-    <!--  EO:CHOICE MODAL: INSURANCE  -->
+        <!-- ── Modal overlay — shown whenever any modal is visible ── -->
+        <div class="modal-overlay"
+             th:classappend="${
+               #lists.contains(game.availableChoices, game.availableChoicesCodeMap.get('CHOICE_EVEN_MONEY_YES')) ||
+               #lists.contains(game.availableChoices, game.availableChoicesCodeMap.get('CHOICE_INSURANCE_NO')) ||
+               #lists.contains(game.availableChoices, game.availableChoicesCodeMap.get('CHOICE_DOUBLE_DOWN_NO')) ||
+               !#lists.isEmpty(game.errCodeList)
+               ? 'active' : ''}">
 
-    <!--  CHOICE MODAL: DOUBLE DOWN  -->
-    <div class="choice-modal-wrapper row"
-         th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_DOUBLE_DOWN_NO')) ? '' : 'd-none'}">
-        <div class="modal-title col-12"
-             th:with="dd=#{dec.double.down}"
-             th:text="${#strings.toUpperCase(dd)} + '?'">
-            DOUBLE DOWN?
-        </div>
-        <div class="col-2"></div>
-        <div class="col-4 choice-box" th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_DOUBLE_DOWN_YES')) ? '' : 'd-none'}">
-            <form th:action="@{/play/dd-confirm}"
-                  th:method="post">
-                <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-yes"></button>
-                <input type="hidden" name="confirm" value="true">
-                <div class="btn-cmd"
-                     th:with="yes=#{dec.yes}"
-                     th:text="${#strings.toUpperCase(yes)}">
-                    YES
-                </div>
-            </form>
-        </div>
-        <div class="col-4 choice-box">
-            <form th:action="@{/play/dd-confirm}"
-                  th:method="post">
-                <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-no"></button>
-                <input type="hidden" name="confirm" value="false">
-                <div class="btn-cmd"
-                     th:with="no=#{dec.no}"
-                     th:text="${#strings.toUpperCase(no)}">
-                    NO
-                </div>
-            </form>
-        </div>
-        <div class="col-2"></div>
-    </div>
-    <!--  EO:CHOICE MODAL: DOUBLE DOWN  -->
-
-    <!--  MODAL ERROR  -->
-    <div class="err-modal-wrapper row" th:classappend="${(#lists.isEmpty(game.errCodeList) ? 'd-none' : '') +
-            (#lists.contains(game.errCodeList, game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ?
-            'err-modal-wrapper-dep-link' : '')}">
-        <div class="modal-title col-12" th:each="errCode : ${game.errCodeList}"
-             th:text="#{err.code.__${errCode}__(#{min.bet},#{max.bet})} + '.'">
-            Error Message
-        </div>
-        <div class="choice-box">
-            <form th:action="@{/play/accept}"
-                  th:method="post">
-                <input type="hidden" name="depositRedirect" value="false">
-                <button type="submit" class="btn btn-err btn-err-ok"
-                        th:classappend="${#lists.contains(game.errCodeList,
-                    game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ? 'btn-err-smaller' : ''}">
-                    <i class="fa-solid fa-check fa-xl" th:if="${#lists.contains(game.errCodeList,
-                    game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS'))}"></i>
-                    <i class="fa-solid fa-check fa-2xl" th:unless="${#lists.contains(game.errCodeList,
-                    game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS'))}"></i>
-                </button>
-            </form>
-        </div>
-        <div class="choice-box"
-             th:classappend="${#lists.contains(game.errCodeList,
-               game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ? '' : 'd-none'}">
-            <form th:action="@{/play/accept}"
-                  th:method="post">
-                <input type="hidden" name="depositRedirect" value="true">
-                <button type="submit" class="go-to-link btn btn-outline-success"
-                        th:with="go_to_deposit=#{link.deposit}"
-                        th:text="${#strings.toUpperCase(go_to_deposit)}">
-                </button>
-            </form>
-
-<!--            <a class="go-to-link btn btn-outline-success"-->
-<!--               th:href="@{/credit-card/deposit}"-->
-<!--               th:with="go_to_deposit=#{link.deposit}"-->
-<!--               th:text="${#strings.toUpperCase(go_to_deposit)}">-->
-<!--                GO TO DEPOSIT-->
-<!--            </a>-->
-        </div>
-    </div>
-    <!--  EO: MODAL ERROR -->
-
-    <!--  BJ DECISION  -->
-    <div class="row decision-box-wrapper">
-        <div class="row inner-decision-box-wrapper justify-content-center">
-            <div class="col-1 decision dec-sur">
-                <form th:action="@{/play/surrender}"
-                      th:method="post">
-                    <button type="submit" class="btn btn-decision btn-surrender"
-                            th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_SURRENDER')) ? '' : 'disabled'}">
-                    </button>
-                    <div class="btn-cmd" th:text="#{dec.surrender}">
-                        Surrender
-                    </div>
+            <!--  CHOICE MODAL: EVEN MONEY -->
+            <div class="choice-modal-wrapper row"
+                 th:classappend="${#lists.contains(game.availableChoices,
+                 game.availableChoicesCodeMap.get('CHOICE_EVEN_MONEY_YES')) ? '' : 'd-none'}">
+            <div class="modal-title col-12"
+                 th:with="even=#{dec.even.money}"
+                 th:text="${#strings.toUpperCase(even)} + '?'">EVEN MONEY?</div>
+            <div class="col-6 choice-box">
+                <form th:action="@{/play/even}" th:method="post">
+                    <button type="submit" class="btn btn-decision btn-even btn-sec-dec-yes"></button>
+                    <input type="hidden" name="evenMoney" value="true">
+                    <div class="btn-cmd" th:with="yes=#{dec.yes}" th:text="${#strings.toUpperCase(yes)}">YES</div>
                 </form>
             </div>
-            <div class="col-1 decision dec-spl">
-                <form action="">
-                    <button type="submit" class="btn btn-decision btn-split"
-                            th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_SPLIT')) ? '' : 'disabled'}">
-                    </button>
-                    <div class="btn-cmd" th:text="#{dec.split}">
-                        Split
-                    </div>
-                </form>
-            </div>
-            <div class="col-1 decision dec-dou">
-                <form th:action="@{/play/double-down}"
-                      th:method="post">
-                    <input type="hidden" name="doubleDown" value="true">
-                    <button type="submit" class="btn btn-decision btn-double"
-                            th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_DOUBLE_DOWN')) ? '' : 'disabled'}">
-                    </button>
-                    <div class="btn-cmd" th:text="#{bet.double}">
-                        Double
-                    </div>
-                </form>
-            </div>
-            <div class="col-1 decision dec-sta">
-                <form th:action="@{/play/stand}"
-                      th:method="post">
-                    <button type="submit" class="btn btn-decision btn-stand"
-                            th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_STAND')) ? '' : 'disabled'}">
-                    </button>
-                    <div class="btn-cmd" th:text="#{dec.stand}">
-                        Stand
-                    </div>
-                </form>
-            </div>
-            <div class="col-1 decision dec-hit">
-                <form th:action="@{/play/hit}"
-                      th:method="post">
-                    <button type="submit" class="btn btn-decision btn-hit"
-                            th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_HIT')) ? '' : 'disabled'}">
-                    </button>
-                    <div class="btn-cmd" th:text="#{dec.hit}">
-                        Hit
-                    </div>
-                </form>
-            </div>
-            <div class="col-1 decision dec-dea">
-                <form th:action="@{/play/deal}"
-                      th:method="post">
-                    <input class="curr-bet-value" type="hidden" name="betStr" th:value="${game.wallet.lastBet} > 0 ? ${game.wallet.lastBet} : 0.00">
-                    <button type="submit" class="btn btn-decision btn-deal"
-                            th:classappend="${#lists.contains(game.availableChoices,
-                            game.availableChoicesCodeMap.get('CHOICE_DEAL')) ? '' : 'disabled'}">
-                    </button>
-                    <div class="btn-cmd" th:text="#{dec.deal}">
-                        Deal
-                    </div>
+            <div class="col-6 choice-box">
+                <form th:action="@{/play/even}" th:method="post">
+                    <button type="submit" class="btn btn-decision btn-even btn-sec-dec-no"></button>
+                    <input type="hidden" name="evenMoney" value="false">
+                    <div class="btn-cmd" th:with="no=#{dec.no}" th:text="${#strings.toUpperCase(no)}">NO</div>
                 </form>
             </div>
         </div>
-    </div>
-    <!--  EO: BJ DECISION  -->
+        <!--  EO:CHOICE MODAL: EVEN MONEY  -->
 
-    <!--  BET CHIP  -->
-    <div class="row chip-box-wrapper"
-         th:classappend="${#lists.contains(game.availableChoices,
-         game.availableChoicesCodeMap.get('CHOICE_CHIP_OPERATIONS')) ? '' : 'd-none'}">
-        <div class="row inner-chip-box-wrapper justify-content-center">
-            <div class="col-1 chip">
-                <form action="">
+        <!--  CHOICE MODAL: INSURANCE  -->
+        <div class="choice-modal-wrapper row"
+             th:classappend="${#lists.contains(game.availableChoices,
+             game.availableChoicesCodeMap.get('CHOICE_INSURANCE_NO')) ? '' : 'd-none'}">
+            <div class="modal-title col-12"
+                 th:with="insurance=#{dec.insurance}"
+                 th:text="${#strings.toUpperCase(insurance)} + '?'">INSURANCE?</div>
+            <div class="col-2"></div>
+            <div class="col-4 choice-box" th:classappend="${#lists.contains(game.availableChoices,
+             game.availableChoicesCodeMap.get('CHOICE_INSURANCE_YES')) ? '' : 'd-none'}">
+                <form th:action="@{/play/insurance}" th:method="post">
+                    <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-yes"></button>
+                    <input type="hidden" name="insurance" value="true">
+                    <div class="btn-cmd" th:with="yes=#{dec.yes}" th:text="${#strings.toUpperCase(yes)}">YES</div>
+                </form>
+            </div>
+            <div class="col-4 choice-box">
+                <form th:action="@{/play/insurance}" th:method="post">
+                    <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-no"></button>
+                    <input type="hidden" name="insurance" value="false">
+                    <div class="btn-cmd" th:with="no=#{dec.no}" th:text="${#strings.toUpperCase(no)}">NO</div>
+                </form>
+            </div>
+            <div class="col-2"></div>
+        </div>
+        <!--  EO:CHOICE MODAL: INSURANCE  -->
+
+        <!--  CHOICE MODAL: DOUBLE DOWN  -->
+        <div class="choice-modal-wrapper row"
+             th:classappend="${#lists.contains(game.availableChoices,
+             game.availableChoicesCodeMap.get('CHOICE_DOUBLE_DOWN_NO')) ? '' : 'd-none'}">
+            <div class="modal-title col-12"
+                 th:with="dd=#{dec.double.down}"
+                 th:text="${#strings.toUpperCase(dd)} + '?'">DOUBLE DOWN?</div>
+            <div class="col-2"></div>
+            <div class="col-4 choice-box" th:classappend="${#lists.contains(game.availableChoices,
+             game.availableChoicesCodeMap.get('CHOICE_DOUBLE_DOWN_YES')) ? '' : 'd-none'}">
+                <form th:action="@{/play/dd-confirm}" th:method="post">
+                    <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-yes"></button>
+                    <input type="hidden" name="confirm" value="true">
+                    <div class="btn-cmd" th:with="yes=#{dec.yes}" th:text="${#strings.toUpperCase(yes)}">YES</div>
+                </form>
+            </div>
+            <div class="col-4 choice-box">
+                <form th:action="@{/play/dd-confirm}" th:method="post">
+                    <button type="submit" class="btn btn-decision btn-sec-dec btn-sec-dec-no"></button>
+                    <input type="hidden" name="confirm" value="false">
+                    <div class="btn-cmd" th:with="no=#{dec.no}" th:text="${#strings.toUpperCase(no)}">NO</div>
+                </form>
+            </div>
+            <div class="col-2"></div>
+        </div>
+        <!--  EO:CHOICE MODAL: DOUBLE DOWN  -->
+
+        <!--  MODAL ERROR  -->
+        <div class="err-modal-wrapper row" th:classappend="${(#lists.isEmpty(game.errCodeList) ? 'd-none' : '') +
+                (#lists.contains(game.errCodeList, game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ?
+                'err-modal-wrapper-dep-link' : '')}">
+            <div class="modal-title col-12" th:each="errCode : ${game.errCodeList}"
+                 th:text="#{err.code.__${errCode}__(#{min.bet},#{max.bet})} + '.'">Error Message</div>
+            <div class="choice-box">
+                <form th:action="@{/play/accept}" th:method="post">
+                    <input type="hidden" name="depositRedirect" value="false">
+                    <button type="submit" class="btn btn-err btn-err-ok"
+                            th:classappend="${#lists.contains(game.errCodeList,
+                        game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ? 'btn-err-smaller' : ''}">
+                        <i class="fa-solid fa-check fa-xl" th:if="${#lists.contains(game.errCodeList,
+                        game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS'))}"></i>
+                        <i class="fa-solid fa-check fa-2xl" th:unless="${#lists.contains(game.errCodeList,
+                        game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS'))}"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="choice-box"
+                 th:classappend="${#lists.contains(game.errCodeList,
+                   game.errCodeMap.get('ERR_CODE_INSUFFICIENT_FUNDS')) ? '' : 'd-none'}">
+                <form th:action="@{/play/accept}" th:method="post">
+                    <input type="hidden" name="depositRedirect" value="true">
+                    <button type="submit" class="go-to-link btn btn-outline-success"
+                            th:with="go_to_deposit=#{link.deposit}"
+                            th:text="${#strings.toUpperCase(go_to_deposit)}">
+                    </button>
+                </form>
+            </div>
+        </div>
+        <!--  EO: MODAL ERROR -->
+
+        <!--  CONFIRM MODAL: SURRENDER (client-side only) -->
+        <div id="surrender-confirm-modal" class="choice-modal-wrapper row d-none">
+            <div class="modal-title col-12"
+                 th:with="sur=#{dec.surrender}"
+                 th:text="${#strings.toUpperCase(sur)} + '?'">SURRENDER?</div>
+            <div class="col-6 choice-box">
+                <button type="button" id="btn-surrender-yes" class="btn btn-decision btn-sec-dec btn-sec-dec-yes"></button>
+                <div class="btn-cmd" th:with="yes=#{dec.yes}" th:text="${#strings.toUpperCase(yes)}">YES</div>
+            </div>
+            <div class="col-6 choice-box">
+                <button type="button" id="btn-surrender-no" class="btn btn-decision btn-sec-dec btn-sec-dec-no"></button>
+                <div class="btn-cmd" th:with="no=#{dec.no}" th:text="${#strings.toUpperCase(no)}">NO</div>
+            </div>
+        </div>
+        <!--  EO: CONFIRM MODAL: SURRENDER -->
+
+        <!--  CONFIRM MODAL: HIT ON HARD 17+ (client-side only) -->
+        <div id="hit-hard17-confirm-modal" class="choice-modal-wrapper row d-none">
+            <div class="modal-title col-12" th:text="#{dec.hit.hard17}">HIT ON 17+?</div>
+            <div class="col-6 choice-box">
+                <button type="button" id="btn-hit-hard17-yes" class="btn btn-decision btn-hit"></button>
+                <div class="btn-cmd" th:with="yes=#{dec.yes}" th:text="${#strings.toUpperCase(yes)}">YES</div>
+            </div>
+            <div class="col-6 choice-box">
+                <button type="button" id="btn-hit-hard17-no" class="btn btn-decision btn-stand"></button>
+                <div class="btn-cmd" th:with="no=#{dec.no}" th:text="${#strings.toUpperCase(no)}">NO</div>
+            </div>
+        </div>
+        <!--  EO: CONFIRM MODAL: HIT ON HARD 17+ -->
+
+        </div>
+        <!-- ── EO: Modal overlay ── -->
+
+        <!--  BJ DECISION  -->
+        <div class="decision-box-wrapper">
+            <div class="inner-decision-box-wrapper">
+                <div class="decision dec-sur">
+                    <form id="form-surrender" th:action="@{/play/surrender}" th:method="post">
+                        <button type="button" id="btn-surrender-trigger" class="btn btn-decision btn-surrender"
+                                th:classappend="${#lists.contains(game.availableChoices,
+                                game.availableChoicesCodeMap.get('CHOICE_SURRENDER')) ? '' : 'disabled'}"></button>
+                        <div class="btn-cmd" th:text="#{dec.surrender}">Surrender</div>
+                    </form>
+                </div>
+                <div class="decision dec-spl">
+                    <form action="">
+                        <button type="submit" class="btn btn-decision btn-split"
+                                th:classappend="${#lists.contains(game.availableChoices,
+                                game.availableChoicesCodeMap.get('CHOICE_SPLIT')) ? '' : 'disabled'}"></button>
+                        <div class="btn-cmd" th:text="#{dec.split}">Split</div>
+                    </form>
+                </div>
+                <div class="decision dec-dou">
+                    <form th:action="@{/play/double-down}" th:method="post">
+                        <input type="hidden" name="doubleDown" value="true">
+                        <button type="submit" class="btn btn-decision btn-double"
+                                th:classappend="${#lists.contains(game.availableChoices,
+                                game.availableChoicesCodeMap.get('CHOICE_DOUBLE_DOWN')) ? '' : 'disabled'}"></button>
+                        <div class="btn-cmd" th:text="#{bet.double}">Double</div>
+                    </form>
+                </div>
+                <div class="decision dec-sta">
+                    <form th:action="@{/play/stand}" th:method="post">
+                        <button type="submit" class="btn btn-decision btn-stand"
+                                th:classappend="${#lists.contains(game.availableChoices,
+                                game.availableChoicesCodeMap.get('CHOICE_STAND')) ? '' : 'disabled'}"></button>
+                        <div class="btn-cmd" th:text="#{dec.stand}">Stand</div>
+                    </form>
+                </div>
+                <div class="decision dec-hit">
+                    <form id="form-hit" th:action="@{/play/hit}" th:method="post">
+                        <button type="button" id="btn-hit-trigger" class="btn btn-decision btn-hit"
+                                th:classappend="${#lists.contains(game.availableChoices,
+                                game.availableChoicesCodeMap.get('CHOICE_HIT')) ? '' : 'disabled'}"></button>
+                        <div class="btn-cmd" th:text="#{dec.hit}">Hit</div>
+                    </form>
+                </div>
+                <div class="decision dec-dea">
+                    <form class="form-deal" th:action="@{/play/deal}" th:method="post">
+                        <input class="curr-bet-value" type="hidden" name="betStr"
+                               th:value="${game.wallet.currentBet}">
+                        <button type="submit" class="btn btn-decision btn-deal"
+                                th:classappend="${#lists.contains(game.availableChoices,
+                                game.availableChoicesCodeMap.get('CHOICE_DEAL')) ? '' : 'disabled'}"></button>
+                        <div class="btn-cmd" th:text="#{dec.deal}">Deal</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--  EO: BJ DECISION  -->
+
+        <!--  BET CHIP  -->
+        <div class="chip-box-wrapper"
+             th:classappend="${#lists.contains(game.availableChoices,
+             game.availableChoicesCodeMap.get('CHOICE_CHIP_OPERATIONS')) ? '' : 'd-none'}">
+            <div class="inner-chip-box-wrapper">
+                <div class="chip">
                     <button type="button" class="btn btn-chip chip-250">
                         <span class="chip-value">2.5</span>
                     </button>
-                </form>
-            </div>
-            <div class="col-1 chip">
-                <form action="">
+                </div>
+                <div class="chip">
                     <button type="button" class="btn btn-chip chip-500">
                         <span class="chip-value">5</span>
                     </button>
-                </form>
-            </div>
-            <div class="col-1 chip">
-                <form action="">
+                </div>
+                <div class="chip">
                     <button type="button" class="btn btn-chip chip-1000">
                         <span class="chip-value">10</span>
                     </button>
-                </form>
-            </div>
-            <div class="col-1 chip">
-                <form action="">
+                </div>
+                <div class="chip">
                     <button type="button" class="btn btn-chip chip-2500">
                         <span class="chip-value">25</span>
                     </button>
-                </form>
-            </div>
-            <div class="col-1 chip">
-                <form action="">
+                </div>
+                <div class="chip">
                     <button type="button" class="btn btn-chip chip-5000">
                         <span class="chip-value">50</span>
                     </button>
-                </form>
-            </div>
-            <div class="col-1 chip">
-                <form action="">
+                </div>
+                <div class="chip">
                     <button type="button" class="btn btn-chip chip-10000">
                         <span class="chip-value">100</span>
                     </button>
-                </form>
-            </div>
-            <div class="col-1 bet-action">
-                <form th:action="@{/play/repeat-last-bet}"
-                      th:method="post">
-                    <button type="submit" class="btn btn-bet">
-                        <i class="fas fa-redo-alt fa-2x"></i>
-                    </button>
-                    <span th:text="#{bet.repeat}">Repeat</span>
-                </form>
-            </div>
-            <div class="col-1 bet-action">
-                <form action="">
-                    <button type="button" class="btn btn-bet btn-chip-double">
-                        <i class="fas fa-angle-double-up fa-2x"></i>
-                    </button>
-                    <span th:text="#{bet.double}">Double</span>
-                </form>
-            </div>
-            <div class="col-1 bet-action">
-                <form th:action="@{/play/clear-bet}"
-                      th:method="post">
-                    <button type="submit" class="btn btn-bet">
-                        <i class="fas fa-window-close fa-2x"></i>
-                    </button>
-                    <span th:text="#{bet.clear}">Clear</span>
-                </form>
+                </div>
+                <div class="bet-actions-wrapper">
+                <div class="bet-action">
+                    <form th:action="@{/play/repeat-last-bet}" th:method="post">
+                        <button type="submit" class="btn btn-bet">
+                            <i class="fas fa-redo-alt fa-lg"></i>
+                        </button>
+                        <span th:text="#{bet.repeat}">Repeat</span>
+                    </form>
+                </div>
+                <div class="bet-action">
+                    <form action="">
+                        <button type="button" class="btn btn-bet btn-chip-double">
+                            <i class="fas fa-angle-double-up fa-lg"></i>
+                        </button>
+                        <span th:text="#{bet.double}">Double</span>
+                    </form>
+                </div>
+                <div class="bet-action">
+                    <form class="form-clear" th:action="@{/play/clear-bet}" th:method="post">
+                        <button type="submit" class="btn btn-bet">
+                            <i class="fas fa-window-close fa-lg"></i>
+                        </button>
+                        <span th:text="#{bet.clear}">Clear</span>
+                    </form>
+                </div>
+                </div>
             </div>
         </div>
-    </div>
-    <!--  EO:BET CHIP  -->
+        <!--  EO:BET CHIP  -->
 
-    <!--  BALANCE  -->
-    <div class="row balance-box-wrapper">
-        <div class="col-1"></div>
-        <div class="col-2 cash-stat">
-            <div class="balance-box-title" th:text="#{bet.balance} + ':'">
-                Balance
-            </div>
-            <div class="row balance-box-value">
-                <div class="">
-                    <span class="balance"
-                          th:text="${#numbers.formatCurrency(game.wallet.balance)}">100.55</span>
+        <!--  BALANCE  -->
+        <div class="balance-box-wrapper">
+            <div class="cash-stat">
+                <div class="balance-box-title" th:text="#{bet.balance} + ':'">Balance</div>
+                <div class="balance-box-value">
+                    <span class="balance" th:text="${#numbers.formatCurrency(game.wallet.balance)}">$100.55</span>
                 </div>
             </div>
-        </div>
-        <div class="col-2 cash-stat">
-            <div class="last-bet-box-title" th:text="#{bet.last.win} + ':'">
-                Last Win
-            </div>
-            <div class="row last-bet-box-value">
-                <div class="">
-                    <span th:text="${#numbers.formatCurrency(game.wallet.lastWin)}">1.23</span>
+            <div class="cash-stat">
+                <div class="last-bet-box-title" th:text="#{bet.last.win} + ':'">Last Win</div>
+                <div class="last-bet-box-value">
+                    <span th:text="${#numbers.formatCurrency(game.wallet.lastWin)}">$1.23</span>
                 </div>
             </div>
-        </div>
-        <div class="col-2"></div>
-        <div class="col-2 cash-stat">
-            <div class="curr-bet-box-title" th:text="#{bet.curr} + ':'">
-                Current Bet
-            </div>
-            <div class="row curr-bet-box-value">
-                <div class="">
-                    <span class="curr-bet"
-                          th:text="${#numbers.formatCurrency(game.wallet.currentBet)}">1.23</span>
+            <div class="cash-stat">
+                <div class="curr-bet-box-title" th:text="#{bet.curr} + ':'">Current Bet</div>
+                <div class="curr-bet-box-value">
+                    <span class="curr-bet" th:text="${#numbers.formatCurrency(game.wallet.currentBet)}">$1.23</span>
                 </div>
             </div>
-        </div>
-        <div class="col-2 bet-legend">
-            <div>
-                <span th:text="#{bet.min} + ':'">Min bet:</span>
-                <span th:text="${#numbers.formatCurrency(10)}">10</span>
-            </div>
-            <div>
-                <span th:text="#{bet.max} + ':'">Max bet:</span>
-                <span th:text="${#numbers.formatCurrency(1000)}">1000</span>
+            <div class="bet-legend">
+                <div><span th:text="#{bet.min} + ':'">Min:</span> <span th:text="${#numbers.formatCurrency(10)}">$10</span></div>
+                <div><span th:text="#{bet.max} + ':'">Max:</span> <span th:text="${#numbers.formatCurrency(1000)}">$1,000</span></div>
             </div>
         </div>
-        <div class="col-1"></div>
+        <!--  EO:BALANCE  -->
+
     </div>
-    <!--  EO:BALANCE  -->
+    <!-- EO: controls-panel -->
+
 </div>
 
-<!--<div id="dimmer"></div>-->
-<script defer th:src="@{/js/jquery/jquery.js}"></script>
+<script th:src="@{/js/jquery/jquery.js}"></script>
 <script defer th:src="@{/js/play/bj-play.js}"></script>
+<script th:inline="javascript">
+    var BJ_LAST_CHOICE    = /*[[${game.lastChoice}]]*/ 0;
+    var BJ_PLAYER_HARD    = /*[[${game.playerHardScore()}]]*/ 0;
+    var BJ_PLAYER_IS_SOFT = /*[[${game.playerIsSoft()}]]*/ false;
+    var BJ_GAME_DEALT     = /*[[${game.dealt}]]*/ false;
+</script>
+<script>
+    (function () {
+        /* ── Card animation ──────────────────────────────────────
+           Choices that result in a new card being dealt to player or dealer.
+           Any other action (stand, insurance, even-money, etc.) must NOT
+           trigger the deal+flip animation on already-visible cards.
+        ── */
+        var CARD_DEALING_CHOICES = [3, 6, 9, 10]; /* DOUBLE_DOWN, DOUBLE_DOWN_YES, HIT, DEAL */
+
+        var allCards = Array.from(document.querySelectorAll(
+            '.dealer-cards .play-card:not(.double-down-card), ' +
+            '.player-cards .play-card:not(.double-down-card)'
+        ));
+        var isInitialDeal = allCards.length <= 4 && BJ_LAST_CHOICE === 10; /* CHOICE_DEAL */
+        var isCardDealing  = CARD_DEALING_CHOICES.indexOf(BJ_LAST_CHOICE) !== -1;
+
+        var totalDuration = 0;
+
+        if (isInitialDeal) {
+            /* stagger: dealer cards first, then player cards */
+            var dealerCards = document.querySelectorAll('.dealer-cards .play-card:not(.double-down-card)');
+            var playerCards = document.querySelectorAll('.player-cards .play-card:not(.double-down-card)');
+            var delay = 0;
+            Array.from(dealerCards).forEach(function (c) {
+                c.style.willChange = 'transform';
+                c.style.animationDelay = delay + 'ms';
+                delay += 100;
+            });
+            Array.from(playerCards).forEach(function (c) {
+                c.style.willChange = 'transform';
+                c.style.animationDelay = delay + 'ms';
+                delay += 100;
+            });
+            /* release will-change after all animations finish */
+            totalDuration = delay + 420;
+            setTimeout(function () {
+                allCards.forEach(function (c) { c.style.willChange = 'auto'; });
+            }, totalDuration);
+        } else if (isCardDealing) {
+            /* only the last card is new — suppress animation on all others */
+            var lastCard = allCards[allCards.length - 1];
+            allCards.forEach(function (c, i) {
+                if (i < allCards.length - 1) {
+                    c.style.animation = 'none';
+                } else {
+                    c.style.willChange = 'transform';
+                }
+            });
+            totalDuration = 420;
+            setTimeout(function () { lastCard.style.willChange = 'auto'; }, 420);
+        } else {
+            /* no new card dealt — suppress all card animations */
+            allCards.forEach(function (c) {
+                c.style.animation = 'none';
+            });
+        }
+
+        /* ── Delay modals until after card animation + 250ms ── */
+        var overlay = document.querySelector('.modal-overlay');
+        if (overlay && overlay.classList.contains('active')) {
+            var modalDelay = isCardDealing ? totalDuration : 0;
+            overlay.classList.remove('active');
+            overlay.style.visibility = 'hidden';
+            setTimeout(function () {
+                overlay.style.visibility = '';
+                overlay.classList.add('active');
+            }, modalDelay);
+        }
+
+        /* ── Viewport scale ── */
+        var TABLE_W = 900;
+        function scaleTable() {
+            var wrapper = document.getElementById('cardsWrapper');
+            if (!wrapper) return;
+            var vw = Math.min(window.innerWidth, document.documentElement.clientWidth);
+            var scale = Math.min(1, (vw - 16) / TABLE_W);
+            wrapper.style.setProperty('--scale', scale);
+            if (scale < 1) {
+                var naturalH = wrapper.scrollHeight;
+                wrapper.style.marginBottom = (scale * naturalH - naturalH) + 'px';
+            } else {
+                wrapper.style.marginBottom = '';
+            }
+        }
+        scaleTable();
+        window.addEventListener('resize', scaleTable);
+    })();
+</script>
 </body>
 </html>

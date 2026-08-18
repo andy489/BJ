@@ -1,4 +1,6 @@
 :root {
+    --electric: #ffd347;
+    --electric-glow: rgba(255, 211, 71, 0.6);
     --linkedin: #0d64c4;
     --facebook: #0d64c4;
 }
@@ -42,7 +44,7 @@
 .reset-password-btn:hover, .remembered-password-btn:hover {
     text-decoration: underline;
     color: var(--electric);
-    text-shadow: 0 0 24px var(--electric);
+    text-shadow: 0 0 18px var(--electric-glow);
     cursor: pointer;
 }
 

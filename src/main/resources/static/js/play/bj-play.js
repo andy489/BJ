@@ -13,6 +13,46 @@ $(document).ready(function () {
         $('.err-modal-wrapper').addClass("d-none")
     })
 
+    /* Surrender confirm modal */
+    $('#btn-surrender-trigger').click(function () {
+        if ($(this).hasClass('disabled')) return
+        $('#surrender-confirm-modal').removeClass('d-none')
+        $('.modal-overlay').addClass('active')
+    })
+
+    $('#btn-surrender-yes').click(function () {
+        $('#surrender-confirm-modal').addClass('d-none')
+        $('.modal-overlay').removeClass('active')
+        $('#form-surrender').submit()
+    })
+
+    $('#btn-surrender-no').click(function () {
+        $('#surrender-confirm-modal').addClass('d-none')
+        $('.modal-overlay').removeClass('active')
+    })
+
+    /* Hit on hard 17+ confirm modal */
+    $('#btn-hit-trigger').click(function () {
+        if ($(this).hasClass('disabled')) return
+        if (typeof BJ_PLAYER_HARD !== 'undefined' && BJ_PLAYER_HARD >= 17 && !BJ_PLAYER_IS_SOFT) {
+            $('#hit-hard17-confirm-modal').removeClass('d-none')
+            $('.modal-overlay').addClass('active')
+        } else {
+            $('#form-hit').submit()
+        }
+    })
+
+    $('#btn-hit-hard17-yes').click(function () {
+        $('#hit-hard17-confirm-modal').addClass('d-none')
+        $('.modal-overlay').removeClass('active')
+        $('#form-hit').submit()
+    })
+
+    $('#btn-hit-hard17-no').click(function () {
+        $('#hit-hard17-confirm-modal').addClass('d-none')
+        $('.modal-overlay').removeClass('active')
+    })
+
     $('.chip-250').click(function () {
         calcChip(CHIP_S, false)
     })
@@ -41,10 +81,38 @@ $(document).ready(function () {
         calcChip(null, true)
     })
 
-    $('.btn-chip-double').click(function () {
-        calcChip(null, true)
+    /* Allow clear when chips are staged, or when a game has been played (reset after hand) */
+    $('.form-clear').on('submit', function (e) {
+        var betVal = parseFloat($('.curr-bet-value').val())
+        var hasStaged = !isNaN(betVal) && betVal > 0
+        if (!hasStaged && !BJ_GAME_DEALT) {
+            e.preventDefault()
+            return false
+        }
     })
+
+    /* Prevent deal submission when bet is below minimum */
+    $('.form-deal').on('submit', function (e) {
+        var betVal = parseFloat($('.curr-bet-value').val())
+        if (isNaN(betVal) || betVal < MIN_BET) {
+            e.preventDefault()
+            return false
+        }
+    })
+
+    /* Keep deal button appearance in sync with current bet */
+    refreshDealButton()
 })
+
+function refreshDealButton() {
+    var betVal = parseFloat($('.curr-bet-value').val())
+    var dealBtn = $('.btn-deal')
+    if (isNaN(betVal) || betVal < MIN_BET) {
+        dealBtn.addClass('disabled')
+    } else {
+        dealBtn.removeClass('disabled')
+    }
+}
 
 function calcChip(chipValue, doubleChip) {
     let hiddenBetField = $('.curr-bet-value')[0]
@@ -124,6 +192,8 @@ function calcChip(chipValue, doubleChip) {
     currBetElem.innerText = resultBet
     balanceElem.innerText = resultBalance
     hiddenBetField.value = newBet
+
+    refreshDealButton()
 }
 
 String.prototype.splice = function (start, delCount, newSubStr) {
