@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="stoevand" id="26">
+        <addColumn tableName="wallets">
+            <column name="split_bet" type="DECIMAL(38, 2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="stoevand" id="27">
+        <addColumn tableName="last_games">
+            <column name="split_hands" type="TEXT"/>
+            <column name="split_hand_multipliers" type="VARCHAR(1023)"/>
+            <column name="split_double_down_flags" type="VARCHAR(255)"/>
+            <column name="split_active" type="BIT(1)" defaultValueBoolean="false"/>
+            <column name="active_split_hand_index" type="INT" defaultValueNumeric="0"/>
+            <column name="split_count" type="INT" defaultValueNumeric="0"/>
+            <column name="split_aces" type="BIT(1)" defaultValueBoolean="false"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

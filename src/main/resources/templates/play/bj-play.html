@@ -29,6 +29,10 @@
         </div>
 
         <div class="game-wrapper">
+            <img th:if="${@gameProperties.showCardShuffler}"
+                 class="card-shuffler-layer"
+                 th:src="@{'./../images/background/card-shuffler.png'}"
+                 alt="" aria-hidden="true"/>
             <div class="row dealer-cards">
                 <div class="dealer-cards-box">
                     <div class="col-12 play-card-wrapper" th:if="${game.dealerCards.size == 1}"
@@ -55,7 +59,9 @@
             </div>
 
             <div class="row player-cards">
-                <div class="player-cards-box">
+
+                <!-- ── Normal (non-split) player hand ── -->
+                <div class="player-cards-box" th:unless="*{splitActive} or not *{#lists.isEmpty(splitHands)}">
                     <div class="col-12 play-card-wrapper" th:unless="*{doubleDown}">
                         <img th:each="c, iStat : *{playerCards}"
                              th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
@@ -77,12 +83,33 @@
                         <div class="curr-result-box" th:text="*{playerScore()}">100/200</div>
                     </div>
 
-                    <div class="col-12 play-card-wrapper" th:if="*{doubleDown}"
+                    <div class="col-12 play-card-wrapper" th:if="*{doubleDown} and not *{#lists.isEmpty(playerCards)}"
                          th:with="dd=${game.playerCards[__${#lists.size(game.playerCards) - 1}__]}">
                         <img th:src="@{'./../images/playing_card/' + ${dd.rank} + '-' + ${dd.suit} +'.png'}"
                              alt="" class="play-card double-down-card"/>
                     </div>
                 </div>
+
+                <!-- ── Split hands side-by-side ── -->
+                <div class="split-hands-wrapper" th:if="*{splitActive} or not *{#lists.isEmpty(splitHands)}">
+                    <div th:each="hand, hStat : *{splitHands}"
+                         class="split-hand-box"
+                         th:classappend="${hStat.index == game.activeSplitHandIndex} ? 'active-hand' : ''">
+                        <div class="split-hand-label"
+                             th:text="#{game.hand} + ' ' + ${hStat.size - hStat.index}">Hand 1</div>
+                        <div class="play-card-wrapper"
+                             th:with="hSize=${#lists.size(hand)}, parity=${hSize % 2}, base=${7 - hSize / 2}">
+                            <img th:each="c, iStat : ${hand}"
+                                 th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
+                                 alt="" class="play-card"
+                                 th:classappend="'d-' + ${parity} + '-' + ${base + iStat.index}"/>
+                        </div>
+                        <div class="score-box">
+                            <div class="curr-result-box" th:text="${game.getScore(hand)}">12</div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -228,9 +255,11 @@
         </div>
         <!--  EO: CONFIRM MODAL: SURRENDER -->
 
-        <!--  CONFIRM MODAL: HIT ON HARD 17+ (client-side only) -->
+        <!--  CONFIRM MODAL: HIT ON {score}? (client-side only) -->
         <div id="hit-hard17-confirm-modal" class="choice-modal-wrapper row d-none">
-            <div class="modal-title col-12" th:text="#{dec.hit.hard17}">HIT ON 17+?</div>
+            <div class="modal-title col-12">
+                <span th:text="#{dec.hit.on}">HIT ON</span> <span id="hit-score-display"></span>?
+            </div>
             <div class="col-6 choice-box">
                 <button type="button" id="btn-hit-hard17-yes" class="btn btn-decision btn-hit"></button>
                 <div class="btn-cmd" th:with="yes=#{dec.yes}" th:text="${#strings.toUpperCase(yes)}">YES</div>
@@ -241,6 +270,20 @@
             </div>
         </div>
         <!--  EO: CONFIRM MODAL: HIT ON HARD 17+ -->
+
+        <!--  CONFIRM MODAL: STAND ON 11 OR LOWER (client-side only) -->
+        <div id="stand-low-confirm-modal" class="choice-modal-wrapper row d-none">
+            <div class="modal-title col-12" th:text="#{dec.stand.low}">STAND ON 11 OR LOWER?</div>
+            <div class="col-6 choice-box">
+                <button type="button" id="btn-stand-low-yes" class="btn btn-decision btn-stand"></button>
+                <div class="btn-cmd" th:with="yes=#{dec.yes}" th:text="${#strings.toUpperCase(yes)}">YES</div>
+            </div>
+            <div class="col-6 choice-box">
+                <button type="button" id="btn-stand-low-no" class="btn btn-decision btn-hit"></button>
+                <div class="btn-cmd" th:with="no=#{dec.no}" th:text="${#strings.toUpperCase(no)}">NO</div>
+            </div>
+        </div>
+        <!--  EO: CONFIRM MODAL: STAND ON 11 OR LOWER -->
 
         </div>
         <!-- ── EO: Modal overlay ── -->
@@ -257,7 +300,7 @@
                     </form>
                 </div>
                 <div class="decision dec-spl">
-                    <form action="">
+                    <form th:action="@{/play/split}" th:method="post">
                         <button type="submit" class="btn btn-decision btn-split"
                                 th:classappend="${#lists.contains(game.availableChoices,
                                 game.availableChoicesCodeMap.get('CHOICE_SPLIT')) ? '' : 'disabled'}"></button>
@@ -274,8 +317,8 @@
                     </form>
                 </div>
                 <div class="decision dec-sta">
-                    <form th:action="@{/play/stand}" th:method="post">
-                        <button type="submit" class="btn btn-decision btn-stand"
+                    <form id="form-stand" th:action="@{/play/stand}" th:method="post">
+                        <button type="button" id="btn-stand-trigger" class="btn btn-decision btn-stand"
                                 th:classappend="${#lists.contains(game.availableChoices,
                                 game.availableChoicesCodeMap.get('CHOICE_STAND')) ? '' : 'disabled'}"></button>
                         <div class="btn-cmd" th:text="#{dec.stand}">Stand</div>
@@ -297,6 +340,15 @@
                                 th:classappend="${#lists.contains(game.availableChoices,
                                 game.availableChoicesCodeMap.get('CHOICE_DEAL')) ? '' : 'disabled'}"></button>
                         <div class="btn-cmd" th:text="#{dec.deal}">Deal</div>
+                    </form>
+                </div>
+                <div class="decision dec-apl"
+                     th:with="hasAutoPlay=${#lists.contains(game.availableChoices, game.availableChoicesCodeMap.get('CHOICE_AUTO_PLAY'))},
+                               hasAutoFin=${#lists.contains(game.availableChoices, game.availableChoicesCodeMap.get('CHOICE_AUTO_FINALIZE'))}"
+                     th:classappend="${hasAutoPlay or hasAutoFin ? '' : 'd-none'}">
+                    <form th:action="${hasAutoPlay ? '/play/auto-play' : '/play/auto-finalize'}" th:method="post">
+                        <button type="submit" class="btn btn-decision btn-auto-play"></button>
+                        <div class="btn-cmd" th:text="#{dec.autoPlay}">Auto Play</div>
                     </form>
                 </div>
             </div>
@@ -407,6 +459,7 @@
     var BJ_PLAYER_HARD    = /*[[${game.playerHardScore()}]]*/ 0;
     var BJ_PLAYER_IS_SOFT = /*[[${game.playerIsSoft()}]]*/ false;
     var BJ_GAME_DEALT     = /*[[${game.dealt}]]*/ false;
+    var BJ_SPLIT_ACTIVE   = /*[[${game.splitActive}]]*/ false;
 </script>
 <script>
     (function () {
@@ -415,7 +468,7 @@
            Any other action (stand, insurance, even-money, etc.) must NOT
            trigger the deal+flip animation on already-visible cards.
         ── */
-        var CARD_DEALING_CHOICES = [3, 6, 9, 10]; /* DOUBLE_DOWN, DOUBLE_DOWN_YES, HIT, DEAL */
+        var CARD_DEALING_CHOICES = [2, 3, 6, 9, 10]; /* SPLIT, DOUBLE_DOWN, DOUBLE_DOWN_YES, HIT, DEAL */
 
         var allCards = Array.from(document.querySelectorAll(
             '.dealer-cards .play-card:not(.double-down-card), ' +
@@ -447,10 +500,18 @@
                 allCards.forEach(function (c) { c.style.willChange = 'auto'; });
             }, totalDuration);
         } else if (isCardDealing) {
-            /* only the last card is new — suppress animation on all others */
-            var lastCard = allCards[allCards.length - 1];
-            allCards.forEach(function (c, i) {
-                if (i < allCards.length - 1) {
+            /* only the last card is new — suppress animation on all others.
+               In split mode the new card is the last card of the active hand box,
+               not necessarily the last card in document order. */
+            var activeHandBox = document.querySelector('.split-hand-box.active-hand');
+            var activeHandCards = activeHandBox
+                ? Array.from(activeHandBox.querySelectorAll('.play-card:not(.double-down-card)'))
+                : null;
+            var lastCard = (activeHandCards && activeHandCards.length > 0)
+                ? activeHandCards[activeHandCards.length - 1]
+                : allCards[allCards.length - 1];
+            allCards.forEach(function (c) {
+                if (c !== lastCard) {
                     c.style.animation = 'none';
                 } else {
                     c.style.willChange = 'transform';
