@@ -31,10 +31,13 @@ $(document).ready(function () {
         $('.modal-overlay').removeClass('active')
     })
 
-    /* Hit on hard 17+ confirm modal */
+    /* Hit on 17+ confirm modal (covers both hard 17 and soft 17+, e.g. soft 19 = hard 9 + 10) */
     $('#btn-hit-trigger').click(function () {
         if ($(this).hasClass('disabled')) return
-        if (typeof BJ_PLAYER_HARD !== 'undefined' && BJ_PLAYER_HARD >= 17 && !BJ_PLAYER_IS_SOFT) {
+        var effectiveScore = (typeof BJ_PLAYER_IS_SOFT !== 'undefined' && BJ_PLAYER_IS_SOFT)
+            ? BJ_PLAYER_HARD + 10
+            : BJ_PLAYER_HARD
+        if (typeof BJ_PLAYER_HARD !== 'undefined' && effectiveScore >= 17) {
             $('#hit-hard17-confirm-modal').removeClass('d-none')
             $('.modal-overlay').addClass('active')
         } else {
@@ -50,6 +53,28 @@ $(document).ready(function () {
 
     $('#btn-hit-hard17-no').click(function () {
         $('#hit-hard17-confirm-modal').addClass('d-none')
+        $('.modal-overlay').removeClass('active')
+    })
+
+    /* Stand on 11 or lower confirm modal */
+    $('#btn-stand-trigger').click(function () {
+        if ($(this).hasClass('disabled')) return
+        if (typeof BJ_PLAYER_HARD !== 'undefined' && BJ_PLAYER_HARD <= 11 && !BJ_PLAYER_IS_SOFT) {
+            $('#stand-low-confirm-modal').removeClass('d-none')
+            $('.modal-overlay').addClass('active')
+        } else {
+            $('#form-stand').submit()
+        }
+    })
+
+    $('#btn-stand-low-yes').click(function () {
+        $('#stand-low-confirm-modal').addClass('d-none')
+        $('.modal-overlay').removeClass('active')
+        $('#form-stand').submit()
+    })
+
+    $('#btn-stand-low-no').click(function () {
+        $('#stand-low-confirm-modal').addClass('d-none')
         $('.modal-overlay').removeClass('active')
     })
 

@@ -150,7 +150,20 @@ body {
     flex-direction: row;
 }
 
-.game-wrapper { height: 32em; }
+.game-wrapper { height: 32em; position: relative; }
+
+/* ── Decorative background card shuffler (optional, YAML-toggled) ── */
+.card-shuffler-layer {
+    position: absolute;
+    bottom: 0.3em;
+    right: 0.8em;
+    width: 13em;
+    height: auto;
+    opacity: 0.45;
+    z-index: 0;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+}
 
 .dealer-cards, .player-cards {
     height: 16em;
@@ -236,10 +249,12 @@ body {
 /* staggered arc heights */
 .dec-sur { margin-bottom: 2.4em; }
 .dec-spl { margin-bottom: 1.3em; }
+.dec-fin { margin-bottom: 1.3em; }
 .dec-dou { margin-bottom: 0.45em; }
 .dec-sta { margin-bottom: 0; }
 .dec-hit { margin-bottom: 0.45em; }
 .dec-dea { margin-bottom: 1.3em; }
+.dec-apl { margin-bottom: 1.3em; }
 
 /* ── Decision & error buttons — unified style ────────── */
 .btn-decision, .btn-err {
@@ -296,6 +311,8 @@ body {
 .btn-stand     { background-image: url('../../images/decision/stand.png'); }
 .btn-hit       { background-image: url('../../images/decision/hit.png'); }
 .btn-deal      { background-image: url('../../images/decision/deal.png'); }
+.btn-auto-finalize { background-image: url('../../images/decision/deal.png'); filter: hue-rotate(160deg) brightness(1.1); }
+.btn-auto-play     { background-image: url('../../images/decision/deal.png'); filter: hue-rotate(90deg) brightness(1.15); }
 
 /* ── Chip tray ───────────────────────────────────────── */
 .chip-box-wrapper {
@@ -501,6 +518,62 @@ body {
 .d-1-12 { right: 35.0em }
 .d-1-13 { right: 42.0em }
 .d-1-14 { right: 49.0em }
+
+/* ── Split hands layout ───────────────────────────────── */
+.split-hands-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+
+.split-hand-box {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid rgba(255, 211, 71, 0.15);
+    border-radius: 0.8em;
+    padding: 6px 4px;
+    background: rgba(0, 0, 0, 0.15);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.split-hand-box.active-hand {
+    border-color: rgba(255, 211, 71, 0.7);
+    box-shadow: 0 0 14px rgba(255, 211, 71, 0.35);
+}
+
+.split-hand-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: rgba(255, 211, 71, 0.75);
+    margin-bottom: 4px;
+}
+
+.split-hand-box .play-card-wrapper {
+    width: 20em;
+    margin: 0 auto;
+    overflow: visible;
+}
+
+/* ── Small screens: tighten split layout so scaled table fits ── */
+@media (max-width: 480px) {
+    .split-hands-wrapper {
+        gap: 4px;
+    }
+    .split-hand-box {
+        padding: 4px 2px;
+    }
+    .split-hand-box .play-card-wrapper {
+        width: 16em;
+    }
+}
 
 /* ── Small screens: shrink fonts/padding ─────────────── */
 @media (max-width: 600px) {

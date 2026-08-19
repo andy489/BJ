@@ -56,6 +56,11 @@ mail:
   smtp-auth: true
   transport-protocol: smtp
 
+game:
+  blackjack:
+    max-splits: 4
+    show-card-shuffler: true
+
 logging:
   level:
     org:
