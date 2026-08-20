@@ -92,6 +92,12 @@ public class PlayController extends BaseController {
         return super.redirect("/play");
     }
 
+    @PostMapping("/split-dd-advance")
+    public ModelAndView splitDdAdvance() {
+        gameService.splitDdAdvance();
+        return super.redirect("/play");
+    }
+
     @PostMapping("/auto-play")
     public ModelAndView autoPlay() {
         gameService.autoPlay();

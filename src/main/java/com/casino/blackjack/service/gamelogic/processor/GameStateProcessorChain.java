@@ -33,6 +33,7 @@ public class GameStateProcessorChain {
                 new StandProcessor(),
                 new AutoFinalizeProcessor(),
                 new AutoPlayProcessor(),
+                new SplitDdAdvanceProcessor(maxSplits),
                 new InsuranceProcessor(),
                 new InitialDealSetupProcessor()
         );

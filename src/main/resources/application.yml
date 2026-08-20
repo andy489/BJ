@@ -60,6 +60,8 @@ game:
   blackjack:
     max-splits: 4
     show-card-shuffler: true
+    # Change to any DeckScenario enum value for local dev testing; must stay RANDOM in prod.
+    deck-scenario: RANDOM
 
 logging:
   level:

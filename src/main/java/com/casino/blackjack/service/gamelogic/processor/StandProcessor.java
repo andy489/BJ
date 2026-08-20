@@ -23,6 +23,12 @@ public class StandProcessor implements GameStateProcessor {
     @Override
     public GameContext process(GameContext ctx) {
         Game game = ctx.game();
+
+        if (game.getSplitActive()) {
+            SplitHandHelper.advanceOrFinalize(ctx, 0.0, game.getDoubleDown(), ctx.maxSplits());
+            return ctx;
+        }
+
         game.setFinalized(true);
         game.dealerPlayUntilSoft17Public();
 

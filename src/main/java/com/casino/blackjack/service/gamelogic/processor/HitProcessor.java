@@ -6,9 +6,11 @@ import com.casino.blackjack.service.gamelogic.dto.Game;
 import java.util.List;
 
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_CNT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_FINALIZE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_HIT;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DOUBLE_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PUSH_MULTI;
@@ -26,6 +28,25 @@ public class HitProcessor implements GameStateProcessor {
         Game game = ctx.game();
         game.playerHit();
         Count playerCount = game.getCount(game.getPlayerCards());
+
+        if (game.getSplitActive()) {
+            if (playerCount.getLeft() > BJ_CNT) {
+                SplitHandHelper.advanceOrFinalize(ctx, ZERO_MULTI, game.getDoubleDown(), ctx.maxSplits());
+            } else {
+                boolean canAffordSplit = ctx.walletEntity().getBalance()
+                        .compareTo(ctx.walletEntity().getHandBet()) >= 0;
+                List<Integer> choices = new java.util.ArrayList<>();
+                choices.add(CHOICE_STAND);
+                choices.add(CHOICE_HIT);
+                choices.add(CHOICE_AUTO_FINALIZE);
+                if (canAffordSplit && game.isPair() && !game.getSplitAces()
+                        && game.getSplitCount() < ctx.maxSplits()) {
+                    choices.add(CHOICE_SPLIT);
+                }
+                game.setAvailableChoices(choices);
+            }
+            return ctx;
+        }
 
         if (playerCount.getRight().equals(BJ_CNT)) {
             game.dealerPlayUntilSoft17Public();

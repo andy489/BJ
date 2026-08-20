@@ -31,6 +31,8 @@ public class WalletEntity extends BaseEntity {
 
     private BigDecimal insuranceBet;
 
+    private BigDecimal splitBet;
+
     @OneToOne
     private UserEntity owner;
 
@@ -42,17 +44,19 @@ public class WalletEntity extends BaseEntity {
         handBet = BigDecimal.ZERO;
         doubleBet = BigDecimal.ZERO;
         insuranceBet = BigDecimal.ZERO;
+        splitBet = BigDecimal.ZERO;
     }
 
     public static WalletEntity of(Wallet wallet) {
         return new WalletEntity()
                 .setBalance(wallet.getBalance())
                 .setCurrentBet(wallet.getCurrentBet())
-                .setLastWin(wallet.getLastBet())
-                .setCurrentBet(wallet.getCurrentBet())
+                .setLastWin(wallet.getLastWin())
+                .setLastBet(wallet.getLastBet())
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())
-                .setInsuranceBet(wallet.getInsuranceBet());
+                .setInsuranceBet(wallet.getInsuranceBet())
+                .setSplitBet(wallet.getSplitBet());
     }
 
     public static void map(WalletEntity walletEntity, Wallet wallet) {
@@ -62,7 +66,8 @@ public class WalletEntity extends BaseEntity {
                 .setCurrentBet(wallet.getCurrentBet())
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())
-                .setInsuranceBet(wallet.getInsuranceBet());
+                .setInsuranceBet(wallet.getInsuranceBet())
+                .setSplitBet(wallet.getSplitBet());
     }
 
     public BigDecimal deposit(BigDecimal depositSum) {
@@ -77,35 +82,26 @@ public class WalletEntity extends BaseEntity {
 
     // returns total bet amount
     public BigDecimal payBet(Double handMultiplier, Double insuranceMultiplier) {
-        lastWin = handBet.multiply(new BigDecimal(handMultiplier))
+        BigDecimal totalReturn = handBet.multiply(new BigDecimal(handMultiplier))
                 .add(doubleBet.multiply(new BigDecimal(handMultiplier)))
                 .add(insuranceBet.multiply(new BigDecimal(insuranceMultiplier)));
+        lastWin = totalReturn.max(BigDecimal.ZERO);
+        lastBet = new BigDecimal(String.valueOf(currentBet));
 
-        balance = balance.add(lastWin);
-        BigDecimal toReturn = new BigDecimal(String.valueOf(currentBet));
+        balance = balance.add(totalReturn);
         currentBet = BigDecimal.ZERO;
         handBet = BigDecimal.ZERO;
         doubleBet = BigDecimal.ZERO;
         insuranceBet = BigDecimal.ZERO;
+        splitBet = BigDecimal.ZERO;
 
-        return toReturn;
+        return lastBet;
     }
 
     public void placeHandBet(BigDecimal betValue) {
         balance = balance.subtract(betValue);
         handBet = betValue;
         currentBet = currentBet.add(betValue);
-    }
-
-    public Boolean placeHandBetSecure(BigDecimal betValue) {
-        if(balance.compareTo(betValue) < 0) {
-            balance = balance.subtract(betValue);
-            handBet = betValue;
-            currentBet = currentBet.add(betValue);
-            return true;
-        }
-
-        return false;
     }
 
     public void placeInsuranceBet(BigDecimal betValue) {

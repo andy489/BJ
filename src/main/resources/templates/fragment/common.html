@@ -26,9 +26,21 @@
     <script th:src="@{/js/toggle/toggle-request-param.js}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Play dropdown
+            // Play dropdown — open on hover (desktop), toggle on click (mobile)
             var dd = document.querySelector('.nav-play-dropdown');
             if (dd) {
+                var ddLeaveTimer = null;
+                // Hover: open on enter, close on leave with small delay
+                dd.addEventListener('mouseenter', function () {
+                    clearTimeout(ddLeaveTimer);
+                    dd.classList.add('open');
+                });
+                dd.addEventListener('mouseleave', function () {
+                    ddLeaveTimer = setTimeout(function () {
+                        dd.classList.remove('open');
+                    }, 150);
+                });
+                // Click: toggle (for touch / keyboard nav)
                 dd.querySelector('.nav-play-trigger').addEventListener('click', function (e) {
                     e.stopPropagation();
                     dd.classList.toggle('open');

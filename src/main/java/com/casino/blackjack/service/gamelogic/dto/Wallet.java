@@ -1,7 +1,6 @@
 package com.casino.blackjack.service.gamelogic.dto;
 
 import com.casino.blackjack.model.entity.WalletEntity;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,6 +28,8 @@ public class Wallet {
 
     private BigDecimal insuranceBet;
 
+    private BigDecimal splitBet;
+
     public Wallet() {
         balance = BigDecimal.ZERO;
         lastWin = BigDecimal.ZERO;
@@ -37,6 +38,7 @@ public class Wallet {
         handBet = BigDecimal.ZERO;
         doubleBet = BigDecimal.ZERO;
         insuranceBet = BigDecimal.ZERO;
+        splitBet = BigDecimal.ZERO;
     }
 
     public static Wallet of(WalletEntity walletEntity) {
@@ -46,18 +48,21 @@ public class Wallet {
                 .setLastBet(walletEntity.getLastBet())
                 .setCurrentBet(walletEntity.getCurrentBet())
                 .setHandBet(walletEntity.getHandBet())
+                .setInsuranceBet(walletEntity.getInsuranceBet())
                 .setDoubleBet(walletEntity.getDoubleBet())
-                .setInsuranceBet(walletEntity.getInsuranceBet());
+                .setSplitBet(walletEntity.getSplitBet());
     }
 
     public static WalletEntity map(WalletEntity walletEntity, Wallet wallet) {
         return walletEntity
                 .setBalance(wallet.getBalance())
                 .setLastWin(wallet.getLastWin())
+                .setLastBet(wallet.getLastBet())
                 .setCurrentBet(wallet.getCurrentBet())
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())
-                .setInsuranceBet(wallet.getInsuranceBet());
+                .setInsuranceBet(wallet.getInsuranceBet())
+                .setSplitBet(wallet.getSplitBet());
     }
 
     public Wallet deposit(BigDecimal depositSum) {
@@ -66,10 +71,12 @@ public class Wallet {
     }
 
     public Wallet payBet(Double handMultiplier, Double insuranceMultiplier) {
-        lastWin = handBet.multiply(new BigDecimal(handMultiplier))
+        BigDecimal totalReturn = handBet.multiply(new BigDecimal(handMultiplier))
                 .add(insuranceBet.multiply(new BigDecimal(insuranceMultiplier)));
+        // lastWin = net profit (0 on push, negative shows as 0 implicitly via display)
+        lastWin = totalReturn.subtract(handBet).subtract(insuranceBet);
 
-        balance = balance.add(lastWin);
+        balance = balance.add(totalReturn);
         currentBet = BigDecimal.ZERO;
         handBet = BigDecimal.ZERO;
         insuranceBet = BigDecimal.ZERO;
@@ -90,11 +97,11 @@ public class Wallet {
         return this;
     }
 
-    public boolean canDouble() {
+    public boolean cannotAffordDouble() {
         return balance.compareTo(currentBet) < 0;
     }
 
-    public void doubleBet(){
+    public void doubleBet() {
         balance = balance.subtract(currentBet);
         currentBet = currentBet.add(currentBet);
         doubleBet = handBet;

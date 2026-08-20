@@ -42,15 +42,4 @@ public class BetHistoryEntity extends BaseEntity implements Serializable {
     @OneToOne
     @JoinColumn(name = "game_hash", referencedColumnName = "hash")
     private PlayedGameEntity playedGame;
-
-    public static BetHistoryEntity of(BigDecimal totalBetAmount, BigDecimal returnAmount,
-                                      UserEntity user, PlayedGameEntity playedGame) {
-
-        return new BetHistoryEntity()
-                .setTotalBetAmount(BigDecimal.ZERO)
-                .setDoubleDown(false)
-                .setReturnAmount(BigDecimal.ZERO)
-                .setUser(user)
-                .setPlayedGame(playedGame);
-    }
 }

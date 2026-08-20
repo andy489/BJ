@@ -121,11 +121,13 @@ public class AuthController extends BaseController {
         if (forgot != null && forgot) {
             ModelAndView modelAndView = new ModelAndView();
             modelAndView.addObject("forgot", true);
-
+            modelAndView.addObject("loginProcessingUrl", "/auth/login");
             return super.view("auth/login", modelAndView);
         }
 
-        return super.view("auth/login");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("loginProcessingUrl", "/auth/login");
+        return super.view("auth/login", modelAndView);
     }
 
     @PostMapping("/login-error")

@@ -1,32 +1,10 @@
 package com.casino.blackjack.service.gamelogic.util;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class GameUtil {
-
-    public static final Map<String, Integer> CHOICES;
-    public static final Map<String, Integer> ERRORS;
-
-    static {
-        CHOICES = new LinkedHashMap<>();
-        ERRORS = new LinkedHashMap<>();
-
-        Field[] declaredFields = GameUtil.class.getDeclaredFields();
-
-        int i = 0, j = 0;
-        for (Field field : declaredFields) {
-            if (field.getName().startsWith("CHOICE_")) {
-                CHOICES.put(field.getName(), i++);
-            }
-
-            if (field.getName().startsWith("ERR_CODE_")) {
-                ERRORS.put(field.getName(), j++);
-            }
-        }
-    }
 
     public static final int DISPLACEMENT_BASE = 7;
 
@@ -60,6 +38,7 @@ public class GameUtil {
     public static final Integer CHOICE_CLEAR_LAST_BET = 18;
     public static final Integer CHOICE_AUTO_FINALIZE = 19;
     public static final Integer CHOICE_AUTO_PLAY = 20;
+    public static final Integer CHOICE_SPLIT_DD_ADVANCE = 21;
 
     public static final Integer CLUBS_SUIT = 0;
     public static final Integer DIAMONDS_SUIT = 1;
@@ -128,12 +107,47 @@ public class GameUtil {
     public static final Integer TEN = 10;
     public static final Integer NINE = 9;
 
-    public static final Map<Integer, String> ERROR_MAP = new LinkedHashMap<>();
+    // ── Maps declared after all constants so static initializer can reference them ──
+
+    public static final Map<String, Integer> CHOICES;
+    public static final Map<String, Integer> ERRORS;
+    public static final Map<Integer, String> ERROR_MAP;
 
     static {
+        CHOICES = new LinkedHashMap<>();
+        CHOICES.put("CHOICE_CHIP_OPERATIONS",                CHOICE_CHIP_OPERATIONS);
+        CHOICES.put("CHOICE_SURRENDER",                      CHOICE_SURRENDER);
+        CHOICES.put("CHOICE_SPLIT",                          CHOICE_SPLIT);
+        CHOICES.put("CHOICE_DOUBLE_DOWN",                    CHOICE_DOUBLE_DOWN);
+        CHOICES.put("CHOICE_DOUBLE_DOWN_NOT_ENOUGH_MONEY",   CHOICE_DOUBLE_DOWN_NOT_ENOUGH_MONEY);
+        CHOICES.put("CHOICE_DOUBLE_NOT_BASIC_STRATEGY",      CHOICE_DOUBLE_NOT_BASIC_STRATEGY);
+        CHOICES.put("CHOICE_DOUBLE_DOWN_YES",                CHOICE_DOUBLE_DOWN_YES);
+        CHOICES.put("CHOICE_DOUBLE_DOWN_NO",                 CHOICE_DOUBLE_DOWN_NO);
+        CHOICES.put("CHOICE_STAND",                          CHOICE_STAND);
+        CHOICES.put("CHOICE_HIT",                            CHOICE_HIT);
+        CHOICES.put("CHOICE_DEAL",                           CHOICE_DEAL);
+        CHOICES.put("CHOICE_EVEN_MONEY_YES",                 CHOICE_EVEN_MONEY_YES);
+        CHOICES.put("CHOICE_EVEN_MONEY_NO",                  CHOICE_EVEN_MONEY_NO);
+        CHOICES.put("CHOICE_INSURANCE_YES",                  CHOICE_INSURANCE_YES);
+        CHOICES.put("CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY", CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY);
+        CHOICES.put("CHOICE_INSURANCE_NO",                   CHOICE_INSURANCE_NO);
+        CHOICES.put("CHOICE_REPEAT_LAST_BET",                CHOICE_REPEAT_LAST_BET);
+        CHOICES.put("CHOICE_REPEAT_LAST_BET_AGAIN",          CHOICE_REPEAT_LAST_BET_AGAIN);
+        CHOICES.put("CHOICE_CLEAR_LAST_BET",                 CHOICE_CLEAR_LAST_BET);
+        CHOICES.put("CHOICE_AUTO_FINALIZE",                  CHOICE_AUTO_FINALIZE);
+        CHOICES.put("CHOICE_AUTO_PLAY",                      CHOICE_AUTO_PLAY);
+        CHOICES.put("CHOICE_SPLIT_DD_ADVANCE",               CHOICE_SPLIT_DD_ADVANCE);
+
+        ERRORS = new LinkedHashMap<>();
+        ERRORS.put("ERR_CODE_INSUFFICIENT_FUNDS", ERR_CODE_INSUFFICIENT_FUNDS);
+        ERRORS.put("ERR_CODE_INVALID_BET",        ERR_CODE_INVALID_BET);
+        ERRORS.put("ERR_CODE_LOW_BET",            ERR_CODE_LOW_BET);
+        ERRORS.put("ERR_CODE_HIGH_BET",           ERR_CODE_HIGH_BET);
+
+        ERROR_MAP = new LinkedHashMap<>();
         ERROR_MAP.put(ERR_CODE_INSUFFICIENT_FUNDS, ERR_MSG_INSUFFICIENT_FUNDS);
-        ERROR_MAP.put(ERR_CODE_INVALID_BET, ERR_MSG_INVALID_BET);
-        ERROR_MAP.put(ERR_CODE_LOW_BET, ERR_MSG_LOW_BET);
-        ERROR_MAP.put(ERR_CODE_HIGH_BET, ERR_MSG_HIGH_BET);
+        ERROR_MAP.put(ERR_CODE_INVALID_BET,        ERR_MSG_INVALID_BET);
+        ERROR_MAP.put(ERR_CODE_LOW_BET,            ERR_MSG_LOW_BET);
+        ERROR_MAP.put(ERR_CODE_HIGH_BET,           ERR_MSG_HIGH_BET);
     }
 }

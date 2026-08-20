@@ -62,11 +62,26 @@ public class GameEntity extends BaseEntity implements Serializable {
 
     private LocalDateTime dealtTime;
 
+    private String splitHands;
+
+    private String splitHandMultipliers;
+
+    private String splitDoubleDownFlags;
+
+    private Boolean splitActive;
+
+    private Integer activeSplitHandIndex;
+
+    private Integer splitCount;
+
+    private Boolean splitAces;
+
     @OneToOne
     private UserEntity owner;
 
     public static GameEntity of(Game game, ObjectMapper om, UserEntity owner) {
         List<String> properties = extractGameProperties(game, om);
+        String[] splitJson = extractSplitProperties(game, om);
 
         return new GameEntity()
                 .setHash(game.getHash())
@@ -82,11 +97,19 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setDoubleDown(game.getDoubleDown())
                 .setDealerSecondCard(properties.get(PROP_IND_DEALER_SECOND_CARD))
                 .setDealtTime(game.getDealtTime())
+                .setSplitHands(splitJson[0])
+                .setSplitHandMultipliers(splitJson[1])
+                .setSplitDoubleDownFlags(splitJson[2])
+                .setSplitActive(game.getSplitActive())
+                .setActiveSplitHandIndex(game.getActiveSplitHandIndex())
+                .setSplitCount(game.getSplitCount())
+                .setSplitAces(game.getSplitAces())
                 .setOwner(owner);
     }
 
     public static GameEntity map(GameEntity gameEntity, Game game, ObjectMapper om) {
         List<String> properties = extractGameProperties(game, om);
+        String[] splitJson = extractSplitProperties(game, om);
 
         return gameEntity
                 .setHash(game.getHash())
@@ -101,7 +124,26 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setInsurance(game.getInsurance())
                 .setDoubleDown(game.getDoubleDown())
                 .setDealerSecondCard(properties.get(PROP_IND_DEALER_SECOND_CARD))
-                .setDealtTime(game.getDealtTime());
+                .setDealtTime(game.getDealtTime())
+                .setSplitHands(splitJson[0])
+                .setSplitHandMultipliers(splitJson[1])
+                .setSplitDoubleDownFlags(splitJson[2])
+                .setSplitActive(game.getSplitActive())
+                .setActiveSplitHandIndex(game.getActiveSplitHandIndex())
+                .setSplitCount(game.getSplitCount())
+                .setSplitAces(game.getSplitAces());
+    }
+
+    private static String[] extractSplitProperties(Game game, ObjectMapper om) {
+        try {
+            return new String[]{
+                    om.writeValueAsString(game.getSplitHands()),
+                    om.writeValueAsString(game.getSplitHandMultipliers()),
+                    om.writeValueAsString(game.getSplitDoubleDownFlags())
+            };
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static List<String> extractGameProperties(Game game, ObjectMapper om) {

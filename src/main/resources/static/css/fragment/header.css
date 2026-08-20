@@ -385,7 +385,6 @@ ul.navbar-nav { float: right; }
     margin-left: 2px;
 }
 
-.nav-play-dropdown:hover .nav-play-chevron,
 .nav-play-dropdown.open .nav-play-chevron {
     transform: rotate(180deg);
 }
@@ -409,7 +408,6 @@ ul.navbar-nav { float: right; }
     z-index: 200;
 }
 
-.nav-play-dropdown:hover .nav-play-menu,
 .nav-play-dropdown.open .nav-play-menu {
     opacity: 1;
     pointer-events: all;

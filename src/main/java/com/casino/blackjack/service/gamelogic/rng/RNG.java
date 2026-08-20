@@ -13,7 +13,7 @@ import static java.lang.Math.abs;
 
 public class RNG {
 
-    private static final String GAME_HASH_SYM = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY0123456789";
+    private static final String GAME_HASH_SYM = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     private static final Integer GAME_HASH_LEN = 10;
 

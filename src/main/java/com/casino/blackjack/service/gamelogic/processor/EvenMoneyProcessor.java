@@ -17,7 +17,7 @@ public class EvenMoneyProcessor implements GameStateProcessor {
     @Override
     public boolean canProcess(GameContext ctx) {
         Integer last = ctx.game().getLastTakenChoicePublic();
-        return last >= CHOICE_EVEN_MONEY_YES && last <= CHOICE_EVEN_MONEY_NO;
+        return last.equals(CHOICE_EVEN_MONEY_YES) || last.equals(CHOICE_EVEN_MONEY_NO);
     }
 
     @Override

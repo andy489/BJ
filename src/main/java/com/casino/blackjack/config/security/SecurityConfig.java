@@ -14,10 +14,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableMethodSecurity // for @PreAuthorize to work
@@ -36,7 +39,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http // .csrf(AbstractHttpConfigurer::disable)
+        return http
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new XorCsrfTokenRequestAttributeHandler())
+                )
+                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 // defines which pages will be authorized
                 .authorizeHttpRequests(auth -> {
                     auth
@@ -56,6 +64,7 @@ public class SecurityConfig {
                                     "/credit-card/**",
                                     "/play/**"
                             ).authenticated()
+                            .requestMatchers(HttpMethod.POST, "/auth/logout").authenticated()
                             .requestMatchers(HttpMethod.POST, "/auth/**")
                             .anonymous()
                             .requestMatchers(HttpMethod.GET, "/auth/**")

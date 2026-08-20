@@ -37,6 +37,7 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURA
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_REPEAT_LAST_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_FINALIZE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_PLAY;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT_DD_ADVANCE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_REPEAT_LAST_BET_AGAIN;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
@@ -163,7 +164,7 @@ public class GameService {
 
         game.setWallet(wallet.placeHandBet(bet)).adjustDealerCardsAfterDeal();
 
-        if (wallet.canDouble()) {
+        if (wallet.cannotAffordDouble()) {
             game.removeAvailableChoice(CHOICE_DOUBLE_DOWN);
         }
 
@@ -194,6 +195,10 @@ public class GameService {
 
     public void autoPlay() {
         choiceNoOption(CHOICE_AUTO_PLAY);
+    }
+
+    public void splitDdAdvance() {
+        choiceNoOption(CHOICE_SPLIT_DD_ADVANCE);
     }
 
     public void insurance(Boolean insurance) {

@@ -11,7 +11,10 @@ public enum LocaleEnum {
     IT("it_IT", "IT"),
     ES("es_ES", "ES"),
     RU("ru_RU", "RU"),
-    ZH("zh_CN", "ZH");
+    ZH("zh_CN", "ZH"),
+    PL("pl_PL", "PL"),
+    JA("ja_JP", "JA"),
+    EL("el_GR", "EL");
 
     private final String baseLocaleId;
     private final String displayName;

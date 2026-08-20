@@ -18,7 +18,7 @@ html, body {
 body {
     background: fixed center/cover url('./../../images/background/09-play-bj-bg-red.png');
     font-family: "Source Sans Pro", sans-serif;
-    font-size: 18px;
+    font-size: 15px;
 }
 
 [data-theme="light"] body {
@@ -45,6 +45,7 @@ body {
     transform-origin: top center;
     transform: scale(var(--scale, 1));
     perspective: 800px;
+    padding-bottom: 1.5em;
     /* JS sets marginBottom to compensate for scale shrink */
 }
 
@@ -140,7 +141,7 @@ body {
 
 /* ── Card table area ─────────────────────────────────── */
 .play-card-wrapper, .play-card {
-    height: 12em;
+    height: 10em;
     position: relative;
     justify-content: center;
 }
@@ -150,7 +151,7 @@ body {
     flex-direction: row;
 }
 
-.game-wrapper { height: 32em; position: relative; }
+.game-wrapper { min-height: 28em; position: relative; }
 
 /* ── Decorative background card shuffler (optional, YAML-toggled) ── */
 .card-shuffler-layer {
@@ -166,12 +167,12 @@ body {
 }
 
 .dealer-cards, .player-cards {
-    height: 16em;
+    height: 14em;
     text-align: center;
 }
 
 .player-cards-box, .dealer-cards-box {
-    min-width: 44em;
+    min-width: 35em;
 }
 
 /* ── Card deal + flip animation ──────────────────────── */
@@ -493,36 +494,36 @@ body {
     z-index: 2;
 }
 
-/* ── Card displacement (generated, unchanged) ────────── */
-.d-0-0  { right: -45.4em }
-.d-0-1  { right: -38.4em }
-.d-0-2  { right: -31.4em }
-.d-0-3  { right: -24.4em }
-.d-0-4  { right: -17.4em }
-.d-0-5  { right: -10.4em }
-.d-0-6  { right: -3.4em }
-.d-0-7  { right: 3.4em }
-.d-0-8  { right: 10.4em }
-.d-0-9  { right: 17.4em }
-.d-0-10 { right: 24.4em }
-.d-0-11 { right: 31.4em }
-.d-0-12 { right: 38.4em }
-.d-0-13 { right: 45.4em }
-.d-1-0  { right: -49.0em }
-.d-1-1  { right: -42.0em }
-.d-1-2  { right: -35.0em }
-.d-1-3  { right: -28.0em }
-.d-1-4  { right: -21.0em }
-.d-1-5  { right: -14.0em }
-.d-1-6  { right: -7.0em }
-.d-1-7  { right: 0.0em }
-.d-1-8  { right: 7.0em }
-.d-1-9  { right: 14.0em }
-.d-1-10 { right: 21.0em }
-.d-1-11 { right: 28.0em }
-.d-1-12 { right: 35.0em }
-.d-1-13 { right: 42.0em }
-.d-1-14 { right: 49.0em }
+/* ── Card displacement (generated for 10em-height cards, step 5.6em) ────────── */
+.d-0-0  { right: -36.40em }
+.d-0-1  { right: -30.80em }
+.d-0-2  { right: -25.20em }
+.d-0-3  { right: -19.60em }
+.d-0-4  { right: -14.00em }
+.d-0-5  { right: -8.40em }
+.d-0-6  { right: -2.80em }
+.d-0-7  { right: 2.80em }
+.d-0-8  { right: 8.40em }
+.d-0-9  { right: 14.00em }
+.d-0-10 { right: 19.60em }
+.d-0-11 { right: 25.20em }
+.d-0-12 { right: 30.80em }
+.d-0-13 { right: 36.40em }
+.d-1-0  { right: -39.20em }
+.d-1-1  { right: -33.60em }
+.d-1-2  { right: -28.00em }
+.d-1-3  { right: -22.40em }
+.d-1-4  { right: -16.80em }
+.d-1-5  { right: -11.20em }
+.d-1-6  { right: -5.60em }
+.d-1-7  { right: 0.00em }
+.d-1-8  { right: 5.60em }
+.d-1-9  { right: 11.20em }
+.d-1-10 { right: 16.80em }
+.d-1-11 { right: 22.40em }
+.d-1-12 { right: 28.00em }
+.d-1-13 { right: 33.60em }
+.d-1-14 { right: 39.20em }
 
 /* ── Split hands layout ───────────────────────────────── */
 .split-hands-wrapper {
@@ -537,6 +538,7 @@ body {
 .split-hand-box {
     flex: 1 1 0;
     min-width: 0;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -576,13 +578,13 @@ body {
 }
 
 /* Override d-* positioning inside split hands — cards stack with simple overlap */
-.split-hand-box .play-card-wrapper .play-card {
+.split-hand-box .play-card-wrapper .play-card:not(.double-down-card) {
     position: relative !important;
     right: auto !important;
-    margin-left: -2.8em;
+    margin-left: -3.8em;
 }
 
-.split-hand-box .play-card-wrapper .play-card:first-child {
+.split-hand-box .play-card-wrapper .play-card:not(.double-down-card):first-child {
     margin-left: 0;
 }
 
@@ -598,18 +600,42 @@ body {
     .split-hand-box {
         padding: 4px 2px;
     }
-    .split-hand-box .play-card-wrapper .play-card {
-        margin-left: -2.2em;
+    .split-hand-box .play-card-wrapper .play-card:not(.double-down-card) {
+        margin-left: -3.5em;
     }
 }
 
 /* ── Small screens: shrink fonts/padding ─────────────── */
 @media (max-width: 600px) {
-    body { font-size: 15px; }
+    html, body { min-height: 0; }
+    body { font-size: 13px; }
     .btn-decision { width: 2.9em; height: 2.9em; }
     .btn-chip { width: 3.1em; height: 3.1em; }
     .btn-bet { width: 2.8em; height: 2.8em; }
     .inner-chip-box-wrapper { gap: 4px 8px; }
     .inner-decision-box-wrapper { gap: 4px; }
     .balance-box-wrapper { gap: 8px 14px; }
+    .wrapper { min-height: 0; padding-bottom: 16px; }
+    .game-wrapper { min-height: 19em; }
+}
+
+/* ── iPhone and small phones ─────────────────────────── */
+@media (max-width: 430px) {
+    body { font-size: 11px; }
+    .btn-decision { width: 2.7em; height: 2.7em; }
+    .btn-chip { width: 2.9em; height: 2.9em; }
+    .btn-bet { width: 2.5em; height: 2.5em; }
+    .inner-chip-box-wrapper { gap: 3px 6px; padding: 0.4em 0.4em; }
+    .inner-decision-box-wrapper { gap: 3px; padding: 0.4em 0.4em 0.5em; }
+    .balance-box-wrapper { gap: 6px 10px; padding: 0.4em 0.6em; margin-top: 6px; }
+    .cash-stat { min-width: 4em; }
+    .balance-box-value, .last-bet-box-value, .curr-bet-box-value { min-width: 4em; font-size: 0.8rem; }
+    .dec-sur { margin-bottom: 1.8em; }
+    .dec-spl { margin-bottom: 1.0em; }
+    .dec-fin { margin-bottom: 1.0em; }
+    .dec-dou { margin-bottom: 0.35em; }
+    .dec-dea { margin-bottom: 1.0em; }
+    .dec-apl { margin-bottom: 1.0em; }
+    .wrapper { padding: 6px 0 12px; }
+    .game-wrapper { min-height: 16em; }
 }

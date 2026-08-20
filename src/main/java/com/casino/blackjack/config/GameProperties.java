@@ -1,0 +1,40 @@
+package com.casino.blackjack.config;
+
+import com.casino.blackjack.service.gamelogic.rng.scenario.DeckScenario;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@Component
+@ConfigurationProperties(prefix = "game.blackjack")
+public class GameProperties {
+
+    private int maxSplits = 4;
+
+    private boolean showCardShuffler = false;
+
+    private DeckScenario deckScenario = DeckScenario.RANDOM;
+
+    public int getMaxSplits() {
+        return maxSplits;
+    }
+
+    public void setMaxSplits(int maxSplits) {
+        this.maxSplits = maxSplits;
+    }
+
+    public boolean isShowCardShuffler() {
+        return showCardShuffler;
+    }
+
+    public void setShowCardShuffler(boolean showCardShuffler) {
+        this.showCardShuffler = showCardShuffler;
+    }
+
+    public DeckScenario getDeckScenario() {
+        return deckScenario;
+    }
+
+    public void setDeckScenario(DeckScenario deckScenario) {
+        this.deckScenario = deckScenario;
+    }
+}

@@ -21,5 +21,6 @@ public record GameContext(
         BetHistoryService betHistoryService,
         BasicStrategy basicStrategy,
         LocalDateTimeProvider clock,
-        ObjectMapper om
+        ObjectMapper om,
+        int maxSplits
 ) {}

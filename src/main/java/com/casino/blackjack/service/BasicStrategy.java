@@ -32,11 +32,21 @@ public class BasicStrategy {
         List<Card> dealerCards = game.getDealerCards();
 
         if (playerCards.size() != INITIAL_DEALT_CARD_COUNT) {
-            throw new RuntimeException("Expected initial dealt cards, but found " + playerCards.size() + " cards");
+            return false;
         }
 
         Count playerCount = game.getCount(playerCards);
         Card dealerFirstCard = dealerCards.get(0);
+
+        int playerTotal = playerCount.getLeft();
+        int dealerNominal = dealerFirstCard.getRank() >= TEN_RANK ? TEN : dealerFirstCard.getRank();
+
+        if (playerTotal <= SEVEN_RANK) {
+            return false;
+        }
+        if (playerTotal >= EIGHT_RANK && dealerNominal > playerTotal) {
+            return false;
+        }
 
         if (containsCard(playerCards, ACE_RANK)) {
             if (containsCard(playerCards, List.of(TWO_RANK, THREE_RANK))) {

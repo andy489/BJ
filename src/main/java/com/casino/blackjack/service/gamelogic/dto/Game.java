@@ -93,6 +93,22 @@ public class Game {
     private Map<String, Integer> availableChoicesCodeMap;
     private Map<String, Integer> errCodeMap;
 
+    // ── Split state ───────────────────────────────────────────────────────────
+    /** Pending/completed split hands (excludes the active hand in playerCards). */
+    private List<List<Card>> splitHands;
+    /** Result multiplier for each split hand, indexed same as splitHands. */
+    private List<Double> splitHandMultipliers;
+    /** Double-down flag for each split hand, indexed same as splitHands. */
+    private List<Boolean> splitDoubleDownFlags;
+    /** Whether a split is currently in progress. */
+    private Boolean splitActive;
+    /** 0 = playing main hand (playerCards); 1+ = index into splitHands. */
+    private Integer activeSplitHandIndex;
+    /** How many splits have been performed this round. */
+    private Integer splitCount;
+    /** True when the original split was on Aces (one card per hand, no further action). */
+    private Boolean splitAces;
+
     public Game() {
         hash = NO_ID_STR;
         dealt = false;
@@ -117,6 +133,14 @@ public class Game {
         errCodeMap = fillErrMap();
 
         finalized = false;
+
+        splitHands = new ArrayList<>();
+        splitHandMultipliers = new ArrayList<>();
+        splitDoubleDownFlags = new ArrayList<>();
+        splitActive = false;
+        activeSplitHandIndex = 0;
+        splitCount = 0;
+        splitAces = false;
     }
 
     public Game(Game game) {
@@ -138,6 +162,13 @@ public class Game {
         this.errCodeList = game.errCodeList;
         this.availableChoicesCodeMap = game.availableChoicesCodeMap;
         this.errCodeMap = game.errCodeMap;
+        this.splitHands = game.splitHands;
+        this.splitHandMultipliers = game.splitHandMultipliers;
+        this.splitDoubleDownFlags = game.splitDoubleDownFlags;
+        this.splitActive = game.splitActive;
+        this.activeSplitHandIndex = game.activeSplitHandIndex;
+        this.splitCount = game.splitCount;
+        this.splitAces = game.splitAces;
     }
 
     public static Game of(GameEntity gameEntity, ObjectMapper om, WalletEntity walletEntity) {
@@ -161,6 +192,9 @@ public class Game {
         List<Card> dealerCards, playerCards;
         List<Integer> availableChoices, takenChoices, errCodeList;
         Card dealerSecondCard;
+        List<List<Card>> splitHands;
+        List<Double> splitHandMultipliers;
+        List<Boolean> splitDoubleDownFlags;
 
         try {
             dealerCards = om.readValue(gameEntity.getDealerCards(), new TypeReference<>() {
@@ -175,6 +209,15 @@ public class Game {
             });
             dealerSecondCard = om.readValue(gameEntity.getDealerSecondCard(), new TypeReference<>() {
             });
+            splitHands = gameEntity.getSplitHands() != null
+                    ? om.readValue(gameEntity.getSplitHands(), new TypeReference<>() {})
+                    : new ArrayList<>();
+            splitHandMultipliers = gameEntity.getSplitHandMultipliers() != null
+                    ? om.readValue(gameEntity.getSplitHandMultipliers(), new TypeReference<>() {})
+                    : new ArrayList<>();
+            splitDoubleDownFlags = gameEntity.getSplitDoubleDownFlags() != null
+                    ? om.readValue(gameEntity.getSplitDoubleDownFlags(), new TypeReference<>() {})
+                    : new ArrayList<>();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -193,7 +236,14 @@ public class Game {
                 .setHandMultiplier(gameEntity.getHandMultiplier())
                 .setInsuranceMultiplier(gameEntity.getInsuranceMultiplier())
                 .setErrCodeList(errCodeList)
-                .setFinalized(gameEntity.getFinalized());
+                .setFinalized(gameEntity.getFinalized())
+                .setSplitHands(splitHands)
+                .setSplitHandMultipliers(splitHandMultipliers)
+                .setSplitDoubleDownFlags(splitDoubleDownFlags)
+                .setSplitActive(gameEntity.getSplitActive() != null && gameEntity.getSplitActive())
+                .setActiveSplitHandIndex(gameEntity.getActiveSplitHandIndex() != null ? gameEntity.getActiveSplitHandIndex() : 0)
+                .setSplitCount(gameEntity.getSplitCount() != null ? gameEntity.getSplitCount() : 0)
+                .setSplitAces(gameEntity.getSplitAces() != null && gameEntity.getSplitAces());
     }
 
     public Game deal() {
@@ -234,7 +284,8 @@ public class Game {
     }
 
     public Integer playerCardsEven() {
-        return playerCards.size() % 2;
+        int n = doubleDown ? playerCards.size() - 1 : playerCards.size();
+        return n % 2;
     }
 
     public Integer dDealerCards() {
@@ -242,7 +293,8 @@ public class Game {
     }
 
     public Integer dPlayerCards() {
-        return DISPLACEMENT_BASE - playerCards.size() / 2;
+        int n = doubleDown ? playerCards.size() - 1 : playerCards.size();
+        return DISPLACEMENT_BASE - n / 2;
     }
 
     public Game removeLastChoice() {
@@ -613,6 +665,102 @@ public class Game {
         return checkPair(playerCards);
     }
 
+    /** True if another split is available (balance OK check is done in processor). */
+    public boolean canSplitAgain(int maxSplits) {
+        return splitCount < maxSplits && checkPair(playerCards);
+    }
+
+    /**
+     * Initialise a split. splitHands[0] = main hand (after split), splitHands[1] = new hand.
+     * playerCards = active hand (copy of splitHands[activeSplitHandIndex]).
+     * Caller must have already deducted the bet from the wallet.
+     */
+    public void initSplit(boolean isAces) {
+        splitActive = true;
+        splitAces = isAces;
+        splitCount++;
+
+        Card movedCard = playerCards.remove(1);
+
+        // Left child keeps original position; right child (new hand) is inserted to its right.
+        // Play order: rightmost (Hand 1) first, leftmost (Hand N) last.
+        hit(playerCards);
+        List<Card> leftHand = new ArrayList<>(playerCards);
+
+        List<Card> rightHand = new ArrayList<>();
+        rightHand.add(movedCard);
+        hit(rightHand);
+
+        if (splitHands.isEmpty()) {
+            // First split: left child at index 0, right child (Hand 1) at index 1.
+            splitHands.add(leftHand);
+            splitHandMultipliers.add(0.0d);
+            splitDoubleDownFlags.add(false);
+            splitHands.add(rightHand);
+            splitHandMultipliers.add(0.0d);
+            splitDoubleDownFlags.add(false);
+            // Start with the rightmost hand (Hand 1).
+            activeSplitHandIndex = 1;
+        } else {
+            // Re-split: replace active slot with left child, insert right child after it.
+            splitHands.set(activeSplitHandIndex, leftHand);
+            splitHands.add(activeSplitHandIndex + 1, rightHand);
+            splitHandMultipliers.add(activeSplitHandIndex + 1, 0.0d);
+            splitDoubleDownFlags.add(activeSplitHandIndex + 1, false);
+            // Play the newly inserted right child first.
+            activeSplitHandIndex++;
+        }
+
+        playerCards = new ArrayList<>(splitHands.get(activeSplitHandIndex));
+        doubleDown = false;
+    }
+
+    /**
+     * Called when the current active hand is done.
+     * Saves result for this hand and advances to the next, or returns false when all done.
+     */
+    public boolean advanceSplitHand(double multiplier, boolean wasDouble) {
+        // Save completed hand state
+        splitHands.set(activeSplitHandIndex, new ArrayList<>(playerCards));
+        splitHandMultipliers.set(activeSplitHandIndex, multiplier);
+        splitDoubleDownFlags.set(activeSplitHandIndex, wasDouble);
+
+        // Play order: rightmost (highest index) first, leftmost last — decrement.
+        activeSplitHandIndex--;
+
+        if (activeSplitHandIndex >= 0) {
+            playerCards = new ArrayList<>(splitHands.get(activeSplitHandIndex));
+            doubleDown = false;
+            return true;
+        }
+
+        // All done — point playerCards at the last played hand (index 0) for display
+        playerCards = new ArrayList<>(splitHands.get(0));
+        return false;
+    }
+
+    public List<Card> getActiveHandCards() {
+        return playerCards;
+    }
+
+    public String activeHandScore() {
+        return getScore(playerCards);
+    }
+
+    public Integer activeHandHardScore() {
+        return getCount(playerCards).getLeft();
+    }
+
+    public Boolean activeHandIsSoft() {
+        Count c = getCount(playerCards);
+        return !c.getLeft().equals(c.getRight()) && c.getRight() <= BJ_CNT;
+    }
+
+    /** Hit the active hand (playerCards). */
+    public void splitHandHit() {
+        hit(playerCards);
+    }
+
     public boolean dealerFirstCardCannotMakeBJ() {
         return dealerCannotMakeBJ();
     }
@@ -657,8 +805,11 @@ public class Game {
     }
 
     private boolean checkPair(List<Card> cards) {
-        return cards.size() == 2 &&
-                Objects.equals(cards.get(0).getRank(), cards.get(1).getRank());
+        if (cards.size() != 2) return false;
+        int r0 = cards.get(0).getRank();
+        int r1 = cards.get(1).getRank();
+        // Same rank, or both are 10-value cards (10, J, Q, K)
+        return r0 == r1 || (r0 >= TEN_RANK && r1 >= TEN_RANK);
     }
 
     private boolean dealerCannotMakeBJ() {

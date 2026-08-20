@@ -95,7 +95,8 @@
                          th:classappend="${hStat.index == game.activeSplitHandIndex} ? 'active-hand' : ''">
                         <div class="split-hand-label"
                              th:text="#{game.hand} + ' ' + ${hStat.size - hStat.index}">Hand 1</div>
-                        <div th:with="isActiveDD=${game.doubleDown and hStat.index == game.activeSplitHandIndex},
+                        <div th:with="isActiveDD=${game.doubleDown and hStat.index == game.activeSplitHandIndex
+                                                      or (hStat.index != game.activeSplitHandIndex and game.splitDoubleDownFlags != null and hStat.index < #lists.size(game.splitDoubleDownFlags) and game.splitDoubleDownFlags[__${hStat.index}__])},
                                       hSize=${#lists.size(hand)}, parity=${hSize % 2}, base=${7 - hSize / 2}"
                              th:class="${isActiveDD} ? 'play-card-wrapper double-down-wrapper' : 'play-card-wrapper'">
                             <img th:each="c, iStat : ${hand}"
@@ -429,27 +430,36 @@
             <div class="cash-stat">
                 <div class="balance-box-title" th:text="#{bet.balance} + ':'">Balance</div>
                 <div class="balance-box-value">
-                    <span class="balance" th:text="${#numbers.formatCurrency(game.wallet.balance)}">$100.55</span>
+                    <span class="balance" th:text="'£' + ${#numbers.formatInteger(game.wallet.balance, 1, 'COMMA')}">£100</span>
                 </div>
             </div>
             <div class="cash-stat">
                 <div class="last-bet-box-title" th:text="#{bet.last.win} + ':'">Last Win</div>
                 <div class="last-bet-box-value">
-                    <span th:text="${#numbers.formatCurrency(game.wallet.lastWin)}">$1.23</span>
+                    <span th:text="'£' + ${#numbers.formatInteger(game.wallet.lastWin, 1, 'COMMA')}">£1</span>
+                </div>
+            </div>
+            <div class="cash-stat">
+                <div class="last-bet-box-title" th:text="#{bet.last.bet} + ':'">Last Bet</div>
+                <div class="last-bet-box-value">
+                    <span th:text="'£' + ${#numbers.formatInteger(game.wallet.lastBet, 1, 'COMMA')}">£1</span>
                 </div>
             </div>
             <div class="cash-stat">
                 <div class="curr-bet-box-title" th:text="#{bet.curr} + ':'">Current Bet</div>
                 <div class="curr-bet-box-value">
-                    <span class="curr-bet" th:text="${#numbers.formatCurrency(game.wallet.currentBet)}">$1.23</span>
+                    <span class="curr-bet" th:text="'£' + ${#numbers.formatInteger(game.wallet.currentBet, 1, 'COMMA')}">£1</span>
                 </div>
             </div>
             <div class="bet-legend">
-                <div><span th:text="#{bet.min} + ':'">Min:</span> <span th:text="${#numbers.formatCurrency(10)}">$10</span></div>
-                <div><span th:text="#{bet.max} + ':'">Max:</span> <span th:text="${#numbers.formatCurrency(1000)}">$1,000</span></div>
+                <div><span th:text="#{bet.min} + ':'">Min:</span> <span th:text="'£' + ${#numbers.formatInteger(10, 1, 'COMMA')}">£10</span></div>
+                <div><span th:text="#{bet.max} + ':'">Max:</span> <span th:text="'£' + ${#numbers.formatInteger(1000, 1, 'COMMA')}">£1,000</span></div>
             </div>
         </div>
         <!--  EO:BALANCE  -->
+
+        <!-- hidden form for split-dd-advance (submitted by JS timer) -->
+        <form th:action="@{/play/split-dd-advance}" th:method="post" style="display:none"></form>
 
     </div>
     <!-- EO: controls-panel -->
@@ -464,6 +474,7 @@
     var BJ_PLAYER_IS_SOFT = /*[[${game.playerIsSoft()}]]*/ false;
     var BJ_GAME_DEALT     = /*[[${game.dealt}]]*/ false;
     var BJ_SPLIT_ACTIVE   = /*[[${game.splitActive}]]*/ false;
+    var BJ_SPLIT_DD       = /*[[${game.splitActive and game.doubleDown}]]*/ false;
 </script>
 <script>
     (function () {
@@ -549,31 +560,81 @@
             if (!wrapper) return;
             var vw = Math.min(window.innerWidth, document.documentElement.clientWidth);
             var scale = Math.min(1, (vw - 16) / TABLE_W);
+            // Reset margin first so offsetHeight reflects natural height
+            wrapper.style.marginBottom = '';
             wrapper.style.setProperty('--scale', scale);
             if (scale < 1) {
-                var naturalH = wrapper.scrollHeight;
-                wrapper.style.marginBottom = (scale * naturalH - naturalH) + 'px';
-            } else {
-                wrapper.style.marginBottom = '';
+                // Force layout recalc before reading height
+                var naturalH = wrapper.offsetHeight;
+                wrapper.style.marginBottom = ((scale - 1) * naturalH) + 'px';
             }
         }
         scaleTable();
-        window.addEventListener('resize', scaleTable);
+        window.addEventListener('resize', function () { scaleTable(); adaptSplitHandOverlap(); positionDDCards(); });
+        // Re-run after images finish loading to get accurate offsetHeight
+        window.addEventListener('load', function () { scaleTable(); adaptSplitHandOverlap(); positionDDCards(); });
+        setTimeout(function () { scaleTable(); adaptSplitHandOverlap(); positionDDCards(); }, 200);
 
-        /* ── Double-down card: snap to last upright card position ── */
-        (function positionDDCard() {
-            var ddCard = document.querySelector('.double-down-card');
-            if (!ddCard) return;
-            var wrapper = ddCard.closest('.double-down-wrapper');
-            var uprights = Array.from(wrapper.querySelectorAll('.play-card:not(.double-down-card)'));
-            if (!uprights.length) return;
-            var lastCard = uprights[uprights.length - 1];
-            var wRect = wrapper.getBoundingClientRect();
-            var cRect = lastCard.getBoundingClientRect();
-            // Position dd card at the same top-left as the last upright card (relative to wrapper)
-            ddCard.style.left = (cRect.left - wRect.left) + 'px';
-            ddCard.style.top  = (cRect.top  - wRect.top)  + 'px';
-        })();
+        /* ── Split hands: adaptive card overlap ─────────────────────────
+           For each hand box, compute the tightest margin-left that makes
+           all cards fit within the box width, but clamp so each card
+           still shows at least MIN_STRIP em of its face.
+        ── */
+        function adaptSplitHandOverlap() {
+            var MIN_STRIP_PX = 14; /* minimum visible px per card (≈1.4em at 10px base) */
+            var boxes = Array.from(document.querySelectorAll('.split-hand-box'));
+            boxes.forEach(function (box) {
+                var uprights = Array.from(box.querySelectorAll('.play-card:not(.double-down-card)'));
+                if (uprights.length < 2) return;
+                var cardW   = uprights[0].offsetWidth;
+                var boxW    = box.offsetWidth - 8; /* subtract padding */
+                var n = uprights.length;
+                /* total = cardW + (n-1)*(cardW - overlap); solve for overlap */
+                var neededOverlap = (cardW * n - boxW) / (n - 1);
+                var maxOverlap = cardW - MIN_STRIP_PX;
+                var overlap = Math.min(Math.max(neededOverlap, 0), maxOverlap);
+                var marginPx = -overlap;
+                for (var i = 1; i < uprights.length; i++) {
+                    uprights[i].style.marginLeft = marginPx + 'px';
+                }
+            });
+        }
+        adaptSplitHandOverlap();
+
+        /* ── Double-down card: centered over all upright cards, bottom-aligned ── */
+        function positionDDCards() {
+            var ddCards = Array.from(document.querySelectorAll('.double-down-card'));
+            ddCards.forEach(function (ddCard) {
+                var wrapper = ddCard.closest('.double-down-wrapper');
+                var uprights = Array.from(wrapper.querySelectorAll('.play-card:not(.double-down-card)'));
+                if (!uprights.length) return;
+                var cardH = ddCard.offsetHeight;
+                var cardW = ddCard.offsetWidth;
+                var inSplitBox = !!ddCard.closest('.split-hand-box');
+                var centerX, groupBottom;
+                if (inSplitBox) {
+                    var lefts  = uprights.map(function(c) { return c.offsetLeft; });
+                    var rights = uprights.map(function(c) { return c.offsetLeft + c.offsetWidth; });
+                    centerX     = (Math.min.apply(null, lefts) + Math.max.apply(null, rights)) / 2;
+                    groupBottom = Math.max.apply(null, uprights.map(function(c) { return c.offsetTop + c.offsetHeight; }));
+                } else {
+                    centerX     = wrapper.offsetWidth / 2;
+                    groupBottom = Math.max.apply(null, uprights.map(function(c) { return c.offsetTop + c.offsetHeight; }));
+                }
+                ddCard.style.left = (centerX - cardW / 2) + 'px';
+                // Bottom-align: after rotate(90deg), visual_bottom = topCSS + cardH/2 + cardW/2
+                ddCard.style.top  = (groupBottom - cardH / 2 - cardW / 2) + 'px';
+            });
+        }
+        positionDDCards();
+
+        /* ── Split double-down: auto-advance after brief card reveal ── */
+        if (BJ_SPLIT_DD) {
+            var sddForm = document.querySelector('form[action="/play/split-dd-advance"]');
+            if (sddForm) {
+                setTimeout(function () { sddForm.submit(); }, 700);
+            }
+        }
     })();
 </script>
 </body>
