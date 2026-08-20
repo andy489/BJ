@@ -581,7 +581,7 @@ body {
 .split-hand-box .play-card-wrapper .play-card:not(.double-down-card) {
     position: relative !important;
     right: auto !important;
-    margin-left: -3.8em;
+    margin-left: -4.4em;
 }
 
 .split-hand-box .play-card-wrapper .play-card:not(.double-down-card):first-child {
@@ -601,7 +601,7 @@ body {
         padding: 4px 2px;
     }
     .split-hand-box .play-card-wrapper .play-card:not(.double-down-card) {
-        margin-left: -3.5em;
+        margin-left: -4.2em;
     }
 }
 

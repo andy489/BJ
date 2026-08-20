@@ -492,18 +492,42 @@
 
                     <!-- ── Cards: player hand vs dealer hand ── -->
                     <div class="hist-row-cards">
-                        <div class="hist-hand-group">
-                            <span class="hist-hand-label" th:text="#{game.user} + ':'">You:</span>
-                            <span th:each="card : ${h.playerCardLabels}"
-                                  th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red' : 'hist-card'"
-                                  th:text="${card}">A♠</span>
-                        </div>
-                        <div class="hist-hand-group">
-                            <span class="hist-hand-label" th:text="#{game.dealer} + ':'">Dealer:</span>
-                            <span th:each="card : ${h.dealerCardLabels}"
-                                  th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red' : 'hist-card'"
-                                  th:text="${card}">K♣</span>
-                        </div>
+                        <!-- split round: show each split hand + per-hand badge, then dealer -->
+                        <th:block th:if="${not #lists.isEmpty(h.splitHandViews)}">
+                            <th:block th:each="sh : ${h.splitHandViews}">
+                                <div class="hist-hand-group">
+                                    <span class="hist-hand-label"
+                                          th:text="#{history.hand} + ' ' + ${sh.handNumber} + ':'">Hand 1:</span>
+                                    <span th:each="card : ${sh.cardLabels}"
+                                          th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red' : 'hist-card'"
+                                          th:text="${card}">A♠</span>
+                                    <span th:classappend="${sh.resultBadgeClass}"
+                                          class="hist-badge"
+                                          th:text="${sh.resultLabel}">win</span>
+                                </div>
+                            </th:block>
+                            <div class="hist-hand-group">
+                                <span class="hist-hand-label" th:text="#{game.dealer} + ':'">Dealer:</span>
+                                <span th:each="card : ${h.dealerCardLabels}"
+                                      th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red' : 'hist-card'"
+                                      th:text="${card}">K♣</span>
+                            </div>
+                        </th:block>
+                        <!-- normal round: player cards vs dealer cards -->
+                        <th:block th:unless="${not #lists.isEmpty(h.splitHandViews)}">
+                            <div class="hist-hand-group">
+                                <span class="hist-hand-label" th:text="#{game.user} + ':'">You:</span>
+                                <span th:each="card : ${h.playerCardLabels}"
+                                      th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red' : 'hist-card'"
+                                      th:text="${card}">A♠</span>
+                            </div>
+                            <div class="hist-hand-group">
+                                <span class="hist-hand-label" th:text="#{game.dealer} + ':'">Dealer:</span>
+                                <span th:each="card : ${h.dealerCardLabels}"
+                                      th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red' : 'hist-card'"
+                                      th:text="${card}">K♣</span>
+                            </div>
+                        </th:block>
                     </div>
 
                     <!-- ── Action tags + special badges ── -->
@@ -543,7 +567,8 @@
 
         var allCards = Array.from(document.querySelectorAll(
             '.dealer-cards .play-card:not(.double-down-card), ' +
-            '.player-cards .play-card:not(.double-down-card)'
+            '.player-cards .play-card:not(.double-down-card), ' +
+            '.split-hand-box .play-card:not(.double-down-card)'
         ));
         var isInitialDeal = allCards.length <= 4 && BJ_LAST_CHOICE === 10; /* CHOICE_DEAL */
         var isCardDealing  = CARD_DEALING_CHOICES.indexOf(BJ_LAST_CHOICE) !== -1;

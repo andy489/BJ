@@ -24,7 +24,6 @@ public class BetHistoryView {
             Map.entry(13, "K")
     );
 
-    // Integer choice codes → short display label (only meaningful player actions)
     private static final Map<Integer, String> CHOICE_LABEL = Map.ofEntries(
             Map.entry(1,  "Surrender"),
             Map.entry(2,  "Split"),
@@ -39,6 +38,40 @@ public class BetHistoryView {
             Map.entry(15, "Insurance ✗")
     );
 
+    /** One split hand: its card labels and result multiplier. */
+    public static class SplitHandView {
+        private final int handNumber;
+        private final List<String> cardLabels;
+        private final double multiplier;
+
+        SplitHandView(int handNumber, List<String> cardLabels, double multiplier) {
+            this.handNumber = handNumber;
+            this.cardLabels = cardLabels;
+            this.multiplier = multiplier;
+        }
+
+        public int getHandNumber()          { return handNumber; }
+        public List<String> getCardLabels() { return cardLabels; }
+        public double getMultiplier()       { return multiplier; }
+
+        /** > 1.0 = win, == 1.0 = push, < 1.0 = loss (0 = bust/loss) */
+        public String getResultClass() {
+            if (multiplier > 1.0) return "hist-win";
+            if (multiplier == 1.0) return "hist-push";
+            return "hist-loss";
+        }
+        public String getResultBadgeClass() {
+            if (multiplier > 1.0) return "hist-badge-win";
+            if (multiplier == 1.0) return "hist-badge-push";
+            return "hist-badge-loss";
+        }
+        public String getResultLabel() {
+            if (multiplier > 1.0) return "win";
+            if (multiplier == 1.0) return "push";
+            return "loss";
+        }
+    }
+
     private final BigDecimal totalBet;
     private final BigDecimal returnAmount;
     private final boolean doubleDown;
@@ -48,6 +81,7 @@ public class BetHistoryView {
     private final List<String> playerCardLabels;
     private final List<String> dealerCardLabels;
     private final List<String> actionLabels;
+    private final List<SplitHandView> splitHandViews;
 
     private BetHistoryView(BetHistoryEntity h, ObjectMapper om) {
         this.totalBet      = h.getTotalBetAmount();
@@ -60,6 +94,10 @@ public class BetHistoryView {
         this.playerCardLabels = parseCards(h.getPlayedGame().getPlayerCards(), om);
         this.dealerCardLabels = parseCards(h.getPlayedGame().getDealerCards(), om);
         this.actionLabels     = parseActions(h.getPlayedGame().getTakenChoices(), om);
+        this.splitHandViews   = parseSplitHands(
+                h.getPlayedGame().getSplitHands(),
+                h.getPlayedGame().getSplitHandMultipliers(),
+                om);
     }
 
     public static BetHistoryView of(BetHistoryEntity h, ObjectMapper om) {
@@ -92,17 +130,41 @@ public class BetHistoryView {
         }
     }
 
-    public BigDecimal getTotalBet()       { return totalBet; }
-    public BigDecimal getReturnAmount()   { return returnAmount; }
-    public boolean isDoubleDown()         { return doubleDown; }
-    public boolean isSplit()              { return split; }
-    public boolean isInsurance()          { return insurance; }
-    public LocalDateTime getFinalizedTime() { return finalizedTime; }
-    public List<String> getPlayerCardLabels() { return playerCardLabels; }
-    public List<String> getDealerCardLabels() { return dealerCardLabels; }
-    public List<String> getActionLabels()     { return actionLabels; }
+    private static List<SplitHandView> parseSplitHands(String handsJson, String multipliersJson, ObjectMapper om) {
+        if (handsJson == null || handsJson.isBlank()) return Collections.emptyList();
+        try {
+            List<List<Card>> hands = om.readValue(handsJson, new TypeReference<>() {});
+            List<Double> multipliers = (multipliersJson != null && !multipliersJson.isBlank())
+                    ? om.readValue(multipliersJson, new TypeReference<>() {})
+                    : Collections.emptyList();
 
-    /** Net result: positive = win, zero = push, negative = loss */
+            List<SplitHandView> result = new java.util.ArrayList<>();
+            for (int i = 0; i < hands.size(); i++) {
+                List<String> labels = hands.get(i).stream()
+                        .map(c -> RANK_LABEL.getOrDefault(c.getRank(), "?")
+                                + SUIT_SYMBOL.getOrDefault(c.getSuit(), "?"))
+                        .collect(Collectors.toList());
+                double mult = (i < multipliers.size()) ? multipliers.get(i) : 0.0;
+                result.add(new SplitHandView(i + 1, labels, mult));
+            }
+            return result;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+    public BigDecimal getTotalBet()              { return totalBet; }
+    public BigDecimal getReturnAmount()          { return returnAmount; }
+    public boolean isDoubleDown()                { return doubleDown; }
+    public boolean isSplit()                     { return split; }
+    public boolean isInsurance()                 { return insurance; }
+    public LocalDateTime getFinalizedTime()      { return finalizedTime; }
+    public List<String> getPlayerCardLabels()    { return playerCardLabels; }
+    public List<String> getDealerCardLabels()    { return dealerCardLabels; }
+    public List<String> getActionLabels()        { return actionLabels; }
+    public List<SplitHandView> getSplitHandViews() { return splitHandViews; }
+
+    /** Net result for the whole round: positive = win, zero = push, negative = loss */
     public int resultSign() {
         return returnAmount.compareTo(totalBet);
     }

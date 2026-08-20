@@ -47,6 +47,10 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
 
     private LocalDateTime finalizedTime;
 
+    private String splitHands;
+
+    private String splitHandMultipliers;
+
     @ManyToOne(cascade = {CascadeType.MERGE})
     private UserEntity owner;
 
@@ -61,6 +65,8 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
                 .setInsurance(gameEntity.getInsurance())
                 .setDoubleDown(gameEntity.getDoubleDown())
                 .setDealtTime(gameEntity.getDealtTime())
+                .setSplitHands(gameEntity.getSplitHands())
+                .setSplitHandMultipliers(gameEntity.getSplitHandMultipliers())
                 .setOwner(gameEntity.getOwner());
     }
 

@@ -29,5 +29,12 @@
             </column>
         </addColumn>
     </changeSet>
+    <!-- Add split hand data to played_games so history can show per-hand cards and results -->
+    <changeSet author="stoevand" id="30">
+        <addColumn tableName="played_games">
+            <column name="split_hands" type="TEXT"/>
+            <column name="split_hand_multipliers" type="VARCHAR(1023)"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
