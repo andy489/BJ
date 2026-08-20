@@ -639,3 +639,133 @@ body {
     .wrapper { padding: 6px 0 12px; }
     .game-wrapper { min-height: 16em; }
 }
+
+/* ── Hand History Panel ──────────────────────────────── */
+.history-panel-wrapper {
+    width: 100%;
+    max-width: 760px;
+    margin: 12px auto 0;
+    padding: 0 8px 16px;
+}
+
+.history-toggle-btn {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 211, 71, 0.25);
+    border-radius: 1.2em;
+    color: rgba(255, 211, 71, 0.85);
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.history-toggle-btn::after {
+    content: '▸';
+    font-size: 0.75em;
+    transition: transform 0.2s;
+}
+
+.history-toggle-btn--open::after {
+    transform: rotate(90deg);
+}
+
+.history-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 211, 71, 0.5);
+}
+
+.history-panel {
+    display: none;
+    margin-top: 8px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 211, 71, 0.2);
+    border-radius: 1em;
+    padding: 10px 12px;
+    overflow-x: auto;
+}
+
+.history-panel--open {
+    display: block;
+}
+
+.history-empty {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 0.8em 0;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.history-table thead tr {
+    border-bottom: 1px solid rgba(255, 211, 71, 0.3);
+}
+
+.history-table th {
+    color: rgba(255, 211, 71, 0.75);
+    font-weight: 700;
+    text-align: left;
+    padding: 4px 8px 6px;
+    white-space: nowrap;
+}
+
+.history-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    white-space: nowrap;
+}
+
+.history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.hist-win  { background: rgba(0, 180, 80, 0.08); }
+.hist-push { background: rgba(255, 211, 71, 0.06); }
+.hist-loss { background: rgba(200, 30, 30, 0.08); }
+
+.hist-badge {
+    display: inline-block;
+    border-radius: 0.5em;
+    padding: 1px 7px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.hist-badge-win  { background: rgba(0, 200, 80, 0.22); color: #6eff9e; }
+.hist-badge-push { background: rgba(255, 211, 71, 0.2); color: #ffd347; }
+.hist-badge-loss { background: rgba(220, 50, 50, 0.2);  color: #ff7b7b; }
+
+.hist-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.hist-tag {
+    display: inline-block;
+    border-radius: 0.4em;
+    padding: 1px 5px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.hist-tag-dd    { background: rgba(80, 160, 255, 0.2); color: #7ec8ff; }
+.hist-tag-split { background: rgba(180, 100, 255, 0.2); color: #d4a0ff; }
+.hist-tag-ins   { background: rgba(255, 160, 50, 0.2);  color: #ffca7a; }
+
+@media (max-width: 600px) {
+    .history-table { font-size: 0.72rem; }
+    .history-table th, .history-table td { padding: 4px 5px; }
+}

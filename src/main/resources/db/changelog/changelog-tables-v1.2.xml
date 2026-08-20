@@ -21,5 +21,13 @@
         <addNotNullConstraint tableName="wallets" columnName="last_win"
                               columnDataType="DECIMAL(38,2)" defaultNullValue="0.00"/>
     </changeSet>
+    <!-- Add split flag to bet_history to distinguish split-hand rounds -->
+    <changeSet author="stoevand" id="29">
+        <addColumn tableName="bet_history">
+            <column name="split" type="BIT(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

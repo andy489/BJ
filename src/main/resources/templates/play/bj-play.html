@@ -464,6 +464,54 @@
     </div>
     <!-- EO: controls-panel -->
 
+    <!-- ── Hand History Panel ── -->
+    <div class="history-panel-wrapper">
+        <button class="history-toggle-btn" id="historyToggleBtn"
+                th:text="#{history.title}">Last 10 Hands</button>
+        <div class="history-panel" id="historyPanel">
+            <div th:if="${#lists.isEmpty(betHistory)}" class="history-empty"
+                 th:text="#{history.empty}">No hands played yet</div>
+            <table th:unless="${#lists.isEmpty(betHistory)}" class="history-table">
+                <thead>
+                    <tr>
+                        <th th:text="#{history.col.hand}">#</th>
+                        <th th:text="#{history.col.time}">Time</th>
+                        <th th:text="#{history.col.bet}">Bet</th>
+                        <th th:text="#{history.col.return}">Return</th>
+                        <th th:text="#{history.col.result}">Result</th>
+                        <th th:text="#{history.col.actions}">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="h, i : ${betHistory}"
+                        th:classappend="${h.returnAmount > h.totalBetAmount} ? 'hist-win' : (${h.returnAmount == h.totalBetAmount} ? 'hist-push' : 'hist-loss')">
+                        <td th:text="${betHistory.size - i.index}">1</td>
+                        <td th:text="${h.playedGame.finalizedTime != null} ? ${#temporals.format(h.playedGame.finalizedTime, 'HH:mm dd MMM')} : '-'">12:00</td>
+                        <td th:text="'£' + ${#numbers.formatInteger(h.totalBetAmount, 1, 'COMMA')}">£10</td>
+                        <td th:text="'£' + ${#numbers.formatInteger(h.returnAmount, 1, 'COMMA')}">£20</td>
+                        <td>
+                            <span th:if="${h.returnAmount > h.totalBetAmount}"
+                                  class="hist-badge hist-badge-win" th:text="#{history.result.win}">Win</span>
+                            <span th:if="${h.returnAmount == h.totalBetAmount}"
+                                  class="hist-badge hist-badge-push" th:text="#{history.result.push}">Push</span>
+                            <span th:if="${h.returnAmount < h.totalBetAmount}"
+                                  class="hist-badge hist-badge-loss" th:text="#{history.result.loss}">Loss</span>
+                        </td>
+                        <td class="hist-tags">
+                            <span th:if="${h.doubleDown}" class="hist-tag hist-tag-dd"
+                                  th:text="#{history.tag.dd}">DD</span>
+                            <span th:if="${h.split}" class="hist-tag hist-tag-split"
+                                  th:text="#{history.tag.split}">Split</span>
+                            <span th:if="${h.playedGame.insurance}" class="hist-tag hist-tag-ins"
+                                  th:text="#{history.tag.insurance}">Ins</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- EO: Hand History Panel -->
+
 </div>
 
 <script th:src="@{/js/jquery/jquery.js}"></script>
@@ -635,6 +683,17 @@
                 setTimeout(function () { sddForm.submit(); }, 700);
             }
         }
+    })();
+</script>
+<script>
+    (function () {
+        var btn   = document.getElementById('historyToggleBtn');
+        var panel = document.getElementById('historyPanel');
+        if (!btn || !panel) return;
+        btn.addEventListener('click', function () {
+            var open = panel.classList.toggle('history-panel--open');
+            btn.classList.toggle('history-toggle-btn--open', open);
+        });
     })();
 </script>
 </body>

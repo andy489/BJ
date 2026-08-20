@@ -34,6 +34,9 @@ public class BetHistoryEntity extends BaseEntity implements Serializable {
     private Boolean doubleDown;
 
     @Column(nullable = false)
+    private Boolean split;
+
+    @Column(nullable = false)
     private BigDecimal returnAmount;
 
     @ManyToOne(cascade = {CascadeType.MERGE})

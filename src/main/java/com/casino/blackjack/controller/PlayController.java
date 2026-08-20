@@ -1,6 +1,8 @@
 package com.casino.blackjack.controller;
 
+import com.casino.blackjack.service.BetHistoryService;
 import com.casino.blackjack.service.GameService;
+import com.casino.blackjack.service.auth.UserService;
 import com.casino.blackjack.service.gamelogic.dto.Game;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +17,15 @@ import org.springframework.web.servlet.ModelAndView;
 public class PlayController extends BaseController {
 
     private final GameService gameService;
+    private final BetHistoryService betHistoryService;
+    private final UserService userService;
 
-    public PlayController(GameService gameService) {
+    public PlayController(GameService gameService,
+                          BetHistoryService betHistoryService,
+                          UserService userService) {
         this.gameService = gameService;
+        this.betHistoryService = betHistoryService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -25,6 +33,7 @@ public class PlayController extends BaseController {
         Game table = gameService.getTable();
         table.setDealerSecondCard(null);
         mav.addObject("game", table);
+        mav.addObject("betHistory", betHistoryService.getLast10(userService.getCurrentLoggedUserId()));
         return super.view("play/bj-play", mav);
     }
 

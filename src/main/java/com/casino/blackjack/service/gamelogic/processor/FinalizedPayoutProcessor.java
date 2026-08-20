@@ -58,6 +58,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 .setReturnAmount(ctx.walletEntity().getLastWin())
                 .setPlayedGame(playedGame)
                 .setDoubleDown(game.getDoubleDown())
+                .setSplit(game.getSplitHands() != null && !game.getSplitHands().isEmpty())
                 .setUser(playedGame.getOwner());
         ctx.betHistoryService().save(betHistory);
 
