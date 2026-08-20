@@ -31,13 +31,14 @@ $(document).ready(function () {
         $('.modal-overlay').removeClass('active')
     })
 
-    /* Hit on 17+ confirm modal (covers both hard 17 and soft 17+, e.g. soft 19 = hard 9 + 10) */
+    /* Hit on {score} confirm modal (covers both hard 17 and soft 17+, e.g. soft 19 = hard 9 + 10) */
     $('#btn-hit-trigger').click(function () {
         if ($(this).hasClass('disabled')) return
         var effectiveScore = (typeof BJ_PLAYER_IS_SOFT !== 'undefined' && BJ_PLAYER_IS_SOFT)
             ? BJ_PLAYER_HARD + 10
             : BJ_PLAYER_HARD
         if (typeof BJ_PLAYER_HARD !== 'undefined' && effectiveScore >= 17) {
+            $('#hit-score-display').text(effectiveScore)
             $('#hit-hard17-confirm-modal').removeClass('d-none')
             $('.modal-overlay').addClass('active')
         } else {
