@@ -20,7 +20,6 @@ public class GameStateProcessorChain {
                 new InsuranceBetProcessor(),
                 new SplitBetProcessor(maxSplits),
                 new DoubleDownBetProcessor(),
-                new DoubleDownYesWalletProcessor(),
                 new InsufficientFundsReCheckProcessor(),
                 new ErrorPassthroughProcessor(),
                 new FinalizedPayoutProcessor(),

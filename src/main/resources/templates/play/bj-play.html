@@ -69,24 +69,22 @@
                              th:classappend="'d-' + *{playerCardsEven} + '-' + ${game.dPlayerCards + iStat.index}"/>
                     </div>
 
-                    <div class="col-12 play-card-wrapper" th:if="*{doubleDown}">
-                        <img th:unless="${iStat.index == iStat.size - 1}"
-                             th:each="c, iStat : *{playerCards}"
+                    <div class="col-12 play-card-wrapper double-down-wrapper" th:if="*{doubleDown}">
+                        <img th:each="c, iStat : *{playerCards}"
+                             th:unless="${iStat.index == iStat.size - 1}"
                              th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
                              alt="" class="play-card"
-                             th:classappend="'d-' + *{playerCardsEven - 1} + '-' + ${game.dPlayerCards + iStat.index}"/>
+                             th:classappend="'d-' + *{playerCardsEven} + '-' + ${game.dPlayerCards + iStat.index}"/>
+                        <img th:if="not *{#lists.isEmpty(playerCards)}"
+                             th:with="dd=${game.playerCards[__${#lists.size(game.playerCards) - 1}__]}"
+                             th:src="@{'./../images/playing_card/' + ${dd.rank} + '-' + ${dd.suit} +'.png'}"
+                             alt="" class="play-card double-down-card"/>
                     </div>
 
                     <div class="score-box">
                         <div class="curr-result-user" th:text="#{game.player} + ':'">Player</div>
                         <div class="small-deli"></div>
                         <div class="curr-result-box" th:text="*{playerScore()}">100/200</div>
-                    </div>
-
-                    <div class="col-12 play-card-wrapper" th:if="*{doubleDown} and not *{#lists.isEmpty(playerCards)}"
-                         th:with="dd=${game.playerCards[__${#lists.size(game.playerCards) - 1}__]}">
-                        <img th:src="@{'./../images/playing_card/' + ${dd.rank} + '-' + ${dd.suit} +'.png'}"
-                             alt="" class="play-card double-down-card"/>
                     </div>
                 </div>
 
@@ -97,12 +95,18 @@
                          th:classappend="${hStat.index == game.activeSplitHandIndex} ? 'active-hand' : ''">
                         <div class="split-hand-label"
                              th:text="#{game.hand} + ' ' + ${hStat.size - hStat.index}">Hand 1</div>
-                        <div class="play-card-wrapper"
-                             th:with="hSize=${#lists.size(hand)}, parity=${hSize % 2}, base=${7 - hSize / 2}">
+                        <div th:with="isActiveDD=${game.doubleDown and hStat.index == game.activeSplitHandIndex},
+                                      hSize=${#lists.size(hand)}, parity=${hSize % 2}, base=${7 - hSize / 2}"
+                             th:class="${isActiveDD} ? 'play-card-wrapper double-down-wrapper' : 'play-card-wrapper'">
                             <img th:each="c, iStat : ${hand}"
+                                 th:unless="${isActiveDD and iStat.index == iStat.size - 1}"
                                  th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
                                  alt="" class="play-card"
                                  th:classappend="'d-' + ${parity} + '-' + ${base + iStat.index}"/>
+                            <img th:if="${isActiveDD and not #lists.isEmpty(hand)}"
+                                 th:with="dd=${hand[__${#lists.size(hand) - 1}__]}"
+                                 th:src="@{'./../images/playing_card/' + ${dd.rank} + '-' + ${dd.suit} +'.png'}"
+                                 alt="" class="play-card double-down-card"/>
                         </div>
                         <div class="score-box">
                             <div class="curr-result-box" th:text="${game.getScore(hand)}">12</div>
@@ -555,6 +559,21 @@
         }
         scaleTable();
         window.addEventListener('resize', scaleTable);
+
+        /* ── Double-down card: snap to last upright card position ── */
+        (function positionDDCard() {
+            var ddCard = document.querySelector('.double-down-card');
+            if (!ddCard) return;
+            var wrapper = ddCard.closest('.double-down-wrapper');
+            var uprights = Array.from(wrapper.querySelectorAll('.play-card:not(.double-down-card)'));
+            if (!uprights.length) return;
+            var lastCard = uprights[uprights.length - 1];
+            var wRect = wrapper.getBoundingClientRect();
+            var cRect = lastCard.getBoundingClientRect();
+            // Position dd card at the same top-left as the last upright card (relative to wrapper)
+            ddCard.style.left = (cRect.left - wRect.left) + 'px';
+            ddCard.style.top  = (cRect.top  - wRect.top)  + 'px';
+        })();
     })();
 </script>
 </body>

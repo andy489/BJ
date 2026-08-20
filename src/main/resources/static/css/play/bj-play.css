@@ -481,11 +481,16 @@ body {
 
 .low-bet { color: #ff6b6b; }
 
-/* ── Double-down rotated card ────────────────────────── */
-.double-down-card {
-    transform: rotate(90deg);
+/* ── Double-down card layout ─────────────────────────── */
+.double-down-wrapper {
     position: relative;
-    top: -12.1em;
+}
+
+/* Horizontal card placed on top of the second upright card; JS sets left/top */
+.double-down-card {
+    position: absolute !important;
+    transform: rotate(90deg);
+    z-index: 2;
 }
 
 /* ── Card displacement (generated, unchanged) ────────── */
@@ -566,6 +571,10 @@ body {
     position: static;
 }
 
+.split-hand-box .play-card-wrapper.double-down-wrapper {
+    position: relative;
+}
+
 /* Override d-* positioning inside split hands — cards stack with simple overlap */
 .split-hand-box .play-card-wrapper .play-card {
     position: relative !important;
@@ -575,6 +584,10 @@ body {
 
 .split-hand-box .play-card-wrapper .play-card:first-child {
     margin-left: 0;
+}
+
+.split-hand-box .play-card-wrapper.double-down-wrapper {
+    position: relative;
 }
 
 /* ── Small screens: tighten split layout so scaled table fits ── */
