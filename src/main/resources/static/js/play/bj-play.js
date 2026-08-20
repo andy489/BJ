@@ -145,41 +145,37 @@ function calcChip(chipValue, doubleChip) {
 
     let currBetElem = $('.curr-bet')[0]
     let balanceElem = $('.balance')[0]
-    let currBet = currBetElem.innerText
-    let currBalance = balanceElem.innerText
 
-    let currency = currBet.match(/[^\d,]/g).join('').trim()
-    let amountBet = currBet.replace(/[^0-9]+/g, '')
-    let amountBalance = currBalance.replace(/[^0-9]+/g, '')
+    // Read current bet from hidden field (always accurate decimal) and
+    // balance from display (now integer-only: strip currency symbol + commas).
+    let amountBet     = parseFloat(hiddenBetField.value) || 0.0
+    let amountBalance = parseFloat(balanceElem.innerText.replace(/[^0-9]/g, '')) || 0.0
 
-    amountBet = amountBet.splice(amountBet.length - 2, 0, '.')
-    amountBalance = amountBalance.splice(amountBalance.length - 2, 0, '.')
-
-    if (+amountBalance === 0.0) {
+    if (amountBalance === 0.0) {
         return
     }
 
     let newBet, newBalance
     if (doubleChip) {
-        newBet = +amountBet * 2
-        newBalance = +amountBalance - +amountBet
+        newBet     = amountBet * 2
+        newBalance = amountBalance - amountBet
     } else {
-        newBet = (+amountBet + chipValue)
-        newBalance = (+amountBalance - chipValue)
+        newBet     = amountBet + chipValue
+        newBalance = amountBalance - chipValue
     }
 
     if (newBet > MAX_BET) {
         let diff = newBet - MAX_BET
-        newBet = MAX_BET
+        newBet     = MAX_BET
         newBalance += diff
     }
 
     if (newBalance < 0.0) {
         if (doubleChip) {
-            newBet = +amountBet + +amountBalance
+            newBet = amountBet + amountBalance
         } else {
             let diff = chipValue + newBalance
-            newBet = +amountBet + diff
+            newBet = amountBet + diff
         }
         newBalance = 0.0
     }
@@ -190,38 +186,11 @@ function calcChip(chipValue, doubleChip) {
         currBetElem.classList.remove('low-bet')
     }
 
-    let newBetStr = newBet.toFixed(2)
-    let newBalanceStr = newBalance.toFixed(2)
-
-    let resultBet = newBetStr
-    let resultBalance = newBalanceStr
-
-    if (currency.startsWith('$')) {
-        currency = currency.replace(/.$/, '')
-
-        for (let i = newBetStr.length - 6; i > 0; i -= 3) {
-            resultBet = resultBet.splice(i, 0, ',')
-        }
-
-        for (let i = newBalanceStr.length - 6; i > 0; i -= 3) {
-            resultBalance = resultBalance.splice(i, 0, ',')
-        }
-
-        resultBet = currency + resultBet
-        resultBalance = currency + resultBalance
-    } else {
-        resultBet = resultBet.replace('.', ',')
-        resultBet = resultBet + ' ' + currency
-        resultBalance = resultBalance + ' ' + currency
-    }
-
-    currBetElem.innerText = resultBet
-    balanceElem.innerText = resultBalance
-    hiddenBetField.value = newBet
+    // Display as integer pounds (no decimals), comma-separated thousands.
+    currBetElem.innerText = '£' + Math.round(newBet).toLocaleString('en-GB')
+    balanceElem.innerText = '£' + Math.round(newBalance).toLocaleString('en-GB')
+    hiddenBetField.value  = newBet
 
     refreshDealButton()
 }
 
-String.prototype.splice = function (start, delCount, newSubStr) {
-    return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount))
-}
