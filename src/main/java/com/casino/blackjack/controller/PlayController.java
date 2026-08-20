@@ -80,6 +80,24 @@ public class PlayController extends BaseController {
         return super.redirect("/play");
     }
 
+    @PostMapping("/split")
+    public ModelAndView split() {
+        gameService.split();
+        return super.redirect("/play");
+    }
+
+    @PostMapping("/auto-finalize")
+    public ModelAndView autoFinalize() {
+        gameService.autoFinalize();
+        return super.redirect("/play");
+    }
+
+    @PostMapping("/auto-play")
+    public ModelAndView autoPlay() {
+        gameService.autoPlay();
+        return super.redirect("/play");
+    }
+
     @PostMapping("/dd-confirm")
     public ModelAndView doubleDownConfirm(@RequestParam Boolean confirm) {
         gameService.ddConfirm(confirm);

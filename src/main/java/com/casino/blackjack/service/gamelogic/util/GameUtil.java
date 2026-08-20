@@ -58,6 +58,8 @@ public class GameUtil {
     public static final Integer CHOICE_REPEAT_LAST_BET = 16;
     public static final Integer CHOICE_REPEAT_LAST_BET_AGAIN = 17;
     public static final Integer CHOICE_CLEAR_LAST_BET = 18;
+    public static final Integer CHOICE_AUTO_FINALIZE = 19;
+    public static final Integer CHOICE_AUTO_PLAY = 20;
 
     public static final Integer CLUBS_SUIT = 0;
     public static final Integer DIAMONDS_SUIT = 1;

@@ -15,6 +15,7 @@ import com.casino.blackjack.service.gamelogic.rng.CardSource;
 import com.casino.blackjack.service.gamelogic.rng.RNG;
 import com.casino.blackjack.util.LocalDateTimeProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.casino.blackjack.config.GameProperties;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -34,7 +35,10 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURA
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURANCE_YES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_REPEAT_LAST_BET;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_FINALIZE;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_PLAY;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_REPEAT_LAST_BET_AGAIN;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SURRENDER;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_HIGH_BET;
@@ -63,6 +67,7 @@ public class GameService {
     private final CardSource cardSource;
 
     private final ObjectMapper om;
+    private final int maxSplits;
 
     public GameService(LastGameRepository lastGameRepository, PastGameRepository pastGameRepository,
                        WalletRepository walletRepository, UserService userService,
@@ -70,7 +75,8 @@ public class GameService {
                        LocalDateTimeProvider localDateTimeProvider,
                        GameStateProcessorChain processorChain, DisplayProcessorChain displayProcessorChain,
                        CardSource cardSource,
-                       ObjectMapper om) {
+                       ObjectMapper om,
+                       GameProperties gameProperties) {
         this.lastGameRepository = lastGameRepository;
         this.pastGameRepository = pastGameRepository;
         this.walletRepository = walletRepository;
@@ -82,6 +88,7 @@ public class GameService {
         this.displayProcessorChain = displayProcessorChain;
         this.cardSource = cardSource;
         this.om = om;
+        this.maxSplits = gameProperties.getMaxSplits();
     }
 
     public Game getTable() {
@@ -165,6 +172,10 @@ public class GameService {
         walletRepository.save(walletEntity);
     }
 
+    public void split() {
+        choiceNoOption(CHOICE_SPLIT);
+    }
+
     public void surrender() {
         choiceNoOption(CHOICE_SURRENDER);
     }
@@ -175,6 +186,14 @@ public class GameService {
 
     public void hit() {
         choiceNoOption(CHOICE_HIT);
+    }
+
+    public void autoFinalize() {
+        choiceNoOption(CHOICE_AUTO_FINALIZE);
+    }
+
+    public void autoPlay() {
+        choiceNoOption(CHOICE_AUTO_PLAY);
     }
 
     public void insurance(Boolean insurance) {
@@ -271,10 +290,15 @@ public class GameService {
 
         if (gameEntity.isPresent()) {
             GameEntity currGameEntity = gameEntity.get();
+            Game snapshot = Game.of(currGameEntity, om);
+            if (!snapshot.getAvailableChoices().contains(choice)) {
+                return;
+            }
+
             WalletEntity walletEntity = extractWallet()
                     .orElseThrow(() -> new IllegalStateException(NO_WALLET_FOUND));
 
-            Game game = Game.of(currGameEntity, om)
+            Game game = snapshot
                     .setCardSource(cardSource)
                     .makeChoice(choice);
 
@@ -293,12 +317,18 @@ public class GameService {
 
         if (gameEntity.isPresent()) {
             GameEntity currGameEntity = gameEntity.get();
+            Integer choice = yes ? yesChoice : noChoice;
+            Game snapshot = Game.of(currGameEntity, om);
+            if (!snapshot.getAvailableChoices().contains(choice)) {
+                return;
+            }
+
             WalletEntity walletEntity = extractWallet()
                     .orElseThrow(() -> new IllegalStateException(NO_WALLET_FOUND));
 
-            Game game = Game.of(currGameEntity, om)
+            Game game = snapshot
                     .setCardSource(cardSource)
-                    .makeChoice(yes ? yesChoice : noChoice);
+                    .makeChoice(choice);
 
             GameContext ctx = buildContext(game, currGameEntity, walletEntity);
             GameContext result = processorChain.process(ctx);
@@ -313,7 +343,7 @@ public class GameService {
     private GameContext buildContext(Game game, GameEntity gameEntity, WalletEntity walletEntity) {
         return new GameContext(game, gameEntity, walletEntity,
                 lastGameRepository, pastGameRepository, walletRepository,
-                betHistoryService, basicStrategy, localDateTimeProvider, om);
+                betHistoryService, basicStrategy, localDateTimeProvider, om, maxSplits);
     }
 
     private Optional<GameEntity> extractLastGame() {

@@ -557,9 +557,24 @@ body {
 }
 
 .split-hand-box .play-card-wrapper {
-    width: 20em;
+    width: auto;
     margin: 0 auto;
     overflow: visible;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: static;
+}
+
+/* Override d-* positioning inside split hands — cards stack with simple overlap */
+.split-hand-box .play-card-wrapper .play-card {
+    position: relative !important;
+    right: auto !important;
+    margin-left: -2.8em;
+}
+
+.split-hand-box .play-card-wrapper .play-card:first-child {
+    margin-left: 0;
 }
 
 /* ── Small screens: tighten split layout so scaled table fits ── */
@@ -570,8 +585,8 @@ body {
     .split-hand-box {
         padding: 4px 2px;
     }
-    .split-hand-box .play-card-wrapper {
-        width: 16em;
+    .split-hand-box .play-card-wrapper .play-card {
+        margin-left: -2.2em;
     }
 }
 
