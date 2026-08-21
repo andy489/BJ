@@ -223,7 +223,12 @@
     border-color: rgba(120,90,0,0.35);
     color: #1a1100;
 }
-[data-theme="light"] .sim-stat-label { color: rgba(20,15,0,0.5); }
+[data-theme="light"] .sim-stat-label { color: rgba(20,15,0,0.55); }
 [data-theme="light"] .sim-stat-value { color: #1a1100; }
 [data-theme="light"] .sim-stat--rtp .sim-stat-value { color: #8b6914; }
+[data-theme="light"] .sim-stat--win .sim-stat-value  { color: #1a7a3a; }
+[data-theme="light"] .sim-stat--loss .sim-stat-value { color: #b01a1a; }
+[data-theme="light"] .sim-stat--bj .sim-stat-value   { color: #1a55a0; }
+[data-theme="light"] .sim-results-title { color: #8b6914; }
 [data-theme="light"] .sim-strategy-text { color: rgba(20,15,0,0.75); }
+[data-theme="light"] .sim-strategy-label { color: rgba(100,75,0,0.7); }

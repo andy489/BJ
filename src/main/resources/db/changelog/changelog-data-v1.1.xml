@@ -12,4 +12,13 @@
         </insert>
     </changeSet>
 
+    <!-- Set yana's password to 1234 (BCrypt cost 10) and activate her account -->
+    <changeSet author="andy489" id="data-v1.1-2">
+        <update tableName="users">
+            <column name="password" value="$2a$10$PpCMfnywF6yNyKPuOibWT.CsKT8zJ54i4D80Yt1isICJWEh9mrj7S"/>
+            <column name="is_active" valueBoolean="true"/>
+            <where>id = 2</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
