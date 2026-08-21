@@ -1,378 +1,277 @@
-# Blackjack
+# Push365 Casino
 
-## Overview
-
-A comprehensive Spring Boot web application that simulates a Blackjack casino game with complete user management, credit
-card processing, email verification, and internationalization support. The application follows MVC architecture with
-Spring Security for authentication and authorization.
-
-## Core Features
-
-### Game Features
-- **Full Blackjack Game Logic** - Complete implementation with standard Blackjack rules including:
-  - Hit, Stand, Double Down, Split, Surrender 
-  - Insurance and Even Money options 
-  - Dealer plays until soft 17 
-  - Natural Blackjack payouts (2.5:1)
-  - Insurance pays 2:1 
-- **Betting System** - Minimum bet 10.00, maximum 1,000.00 
-- **Game History** - Track all played games with bet history 
-- **Persistent Game State** - Incomplete games are saved and can be resumed
-
-### User Management
-- **Registration System** - New user registration with validation 
-- **Email Verification** - Account activation via email confirmation 
-- **Password Reset** - Forgot password functionality with email reset links 
-- **Profile Management** - User profiles with personal information 
-- **Role-Based Access** - REGULAR, MODERATOR, ADMIN roles
-
-### Payment System
-- **Credit Card Registration** - Store multiple credit cards (max 3 per user)
-- **Deposit Functionality** - Add funds to user wallet
-- **Card Verification** - Luhn algorithm validation, expiration date checking
-- **Supported Cards** - Visa, Mastercard, American Express, Discover, Troy
-
-### Security Features
-- **Spring Security** - Comprehensive security configuration
-- **Remember Me** - Persistent login functionality
-- **CSRF Protection** - Enabled for all forms
-- **Password Encoding** - BCrypt password hashing
-- **reCAPTCHA Integration** - Google reCAPTCHA v2 for form protection
-
-### Internationalization
-- **Multi-Language Support** - English and Bulgarian (български)
-- **Locale Switching** - Cookie-based language preferences
-- **Dynamic Content** - All user-facing text can be internationalized
-
-### Email System
-- **Registration Emails** - Account activation links
-- **Password Reset Emails** - Secure password reset tokens
-- **HTML Email Templates** - Responsive email designs using Thymeleaf
-- **MailHog Integration** - Email testing during development
-
-## Technical Stack
-### Backend
-- **Framework**: Spring Boot 3.4.5 
-- **Security**: Spring Security 6.x 
-- **Database**: MySQL with Hibernate JPA 
-- **Migration**: Liquibase for database version control 
-- **Email**: JavaMailSender with SMTP support 
-- **Validation**: Hibernate Validator with custom annotations 
-- **Template Engine**: Thymeleaf 
-- **HTTP Client**: RestTemplate and WebClient
-
-### Frontend
-- **Templating**: Thymeleaf with Spring Security integration
-- **CSS Framework**: Custom CSS with responsive design
-- **JavaScript**: Client-side form validation and AJAX calls
-- **reCAPTCHA**: Google reCAPTCHA integration
-
-### Build & Deployment
-- **Build Tool**: Gradle
-- **Containerization**: Docker support for MySQL and MailHog
-- **Java Version**: 25
-
-## Architecture Highlights
-
-### Design Patterns
-- **MVC Pattern** — Clear separation of concerns (Controllers, Services, Repositories)
-- **Post-Redirect-Get (PRG)** — Every game action is a POST that mutates state, followed by a redirect to GET `/play` which re-hydrates and renders the updated game
-- **Dependency Injection** — Spring IoC container management
-- **DTO Pattern** — Data transfer objects between layers; `Game` (in-memory DTO) is separate from `GameEntity` (JPA entity)
-- **Repository Pattern** — Data access abstraction with Spring Data JPA
-- **Chain of Responsibility Pattern** — Game logic and wallet/persistence operations are handled by an ordered chain of single-purpose processors (see below)
+A full-stack Spring Boot casino web application featuring Blackjack with complete user management, wallet system, email verification, and support for 10 languages. Built as a portfolio project.
 
 ---
+
+## Screenshots
+
+### Lobby
+
+| Light — Desktop | Dark — Desktop |
+|---|---|
+| ![Lobby Light Desktop](assets/screenshots/2026-08/lobby-light-desktop.png) | ![Lobby Dark Desktop](assets/screenshots/2026-08/lobby-dark-desktop.png) |
+
+| Light — Mobile | Dark — Mobile |
+|---|---|
+| ![Lobby Light Mobile](assets/screenshots/2026-08/lobby-light-mobile.png) | ![Lobby Dark Mobile](assets/screenshots/2026-08/lobby-dark-mobile.png) |
+
+Authenticated lobby (dark):
+
+![Lobby Authenticated Dark Desktop](assets/screenshots/2026-08/lobby-auth-dark-desktop.png)
+
+---
+
+### Login & Register
+
+| Login Light | Login Dark | Login Dark Mobile |
+|---|---|---|
+| ![Login Light](assets/screenshots/2026-08/login-light-desktop.png) | ![Login Dark](assets/screenshots/2026-08/login-dark-desktop.png) | ![Login Dark Mobile](assets/screenshots/2026-08/login-dark-mobile.png) |
+
+Settings panel open (language + theme toggle):
+
+![Settings Open](assets/screenshots/2026-08/login-settings-open.png)
+
+| Register Light | Register Dark | Register Mobile |
+|---|---|---|
+| ![Register Light](assets/screenshots/2026-08/register-light-desktop.png) | ![Register Dark](assets/screenshots/2026-08/register-dark-desktop.png) | ![Register Light Mobile](assets/screenshots/2026-08/register-light-mobile.png) |
+
+---
+
+### Gameplay — Blackjack
+
+| Double Down | Double Down Win |
+|---|---|
+| ![Double Down](assets/screenshots/2026-08/play-double-down.png) | ![Double Down Win](assets/screenshots/2026-08/play-double-down-win.png) |
+
+| Split — Active | Split — Ready |
+|---|---|
+| ![Split Active](assets/screenshots/2026-08/play-split-active.png) | ![Split Ready](assets/screenshots/2026-08/play-split-ready.png) |
+
+| Even Money Offer | Push |
+|---|---|
+| ![Even Money](assets/screenshots/2026-08/play-bj-even-money.png) | ![Push](assets/screenshots/2026-08/play-bj-push.png) |
+
+---
+
+## Features
+
+### Game
+- Hit, Stand, Double Down, Split, Surrender
+- Insurance and Even Money options
+- Dealer plays to soft 17
+- Natural Blackjack pays 3:2 — Insurance pays 2:1
+- Basic Strategy advisor with deviation confirmation prompt
+- Auto-play button to let the dealer resolve the hand
+- Persistent game state — unfinished games resume on next visit
+- Game history with bet records
+
+### User Management
+- Registration with email verification (activation link, 60 min expiry)
+- Forgot password with email reset (30 min expiry)
+- Role-based access: REGULAR, MODERATOR, ADMIN
+- Profile management
+
+### Wallet & Payments
+- Deposit via credit card (Visa, Mastercard, Amex, Discover, Troy)
+- Cash-out to registered card
+- Luhn algorithm validation + expiration date check
+- Up to 3 cards per user
+
+### Security
+- Spring Security with BCrypt password hashing
+- CSRF protection on all forms
+- Google reCAPTCHA v2 on registration and login
+- Remember-me persistent login
+- Session fixation protection
+
+### UI / UX
+- Light ♥ and dark ♠ themes — persisted in localStorage, default light
+- Responsive layout — hamburger nav on mobile
+- Live weather widget (Sofia, Las Vegas, Monte Carlo, Macao) via OpenWeatherMap
+- Navbar settings dropdown: language switcher + theme toggle
+
+### Internationalization
+10 languages — switched via cookie, no page reload required:
+
+| Code | Language |
+|------|----------|
+| `en` | English |
+| `bg` | Български (Bulgarian) |
+| `de` | Deutsch (German) |
+| `el` | Ελληνικά (Greek) |
+| `es` | Español (Spanish) |
+| `it` | Italiano (Italian) |
+| `ja` | 日本語 (Japanese) |
+| `pl` | Polski (Polish) |
+| `ru` | Русский (Russian) |
+| `zh` | 中文 (Chinese) |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Language | Java 25 |
+| Framework | Spring Boot 3.4.5 |
+| Security | Spring Security 6 |
+| Template | Thymeleaf |
+| Database | MySQL + Hibernate JPA |
+| Migrations | Liquibase |
+| Email | JavaMailSender + MailHog (dev) |
+| HTTP Client | WebClient |
+| Validation | Hibernate Validator + custom annotations |
+| Build | Gradle |
+| Infrastructure | Docker (MySQL + MailHog) |
+
+---
+
+## Architecture
+
+### MVC + Post-Redirect-Get
+
+Every game action is a POST that mutates state, followed by a redirect to `GET /play`. The GET call re-hydrates the game from the database and renders the updated view. This prevents double-submission on refresh.
 
 ### Game Engine — Chain of Responsibility
 
-The entire game loop is driven by a **Chain of Responsibility** implemented in the `processor` package. The central class is `GameStateProcessorChain`, which holds an ordered list of all processors and on each request walks through them until the first one whose `canProcess()` returns `true` — that processor handles the request exclusively and the chain stops.
+Game logic is implemented as a **Chain of Responsibility** in the `processor` package. `GameStateProcessorChain` holds an ordered list of single-purpose processors. On each request it walks the list; the first processor whose `canProcess()` returns `true` handles the request exclusively and the chain stops.
 
-#### GameContext
-
-Every processor receives a `GameContext` record containing all data and infrastructure it could need:
+Every processor receives a `GameContext` record containing the in-memory `Game` DTO, the JPA entities, repositories, `BasicStrategy`, an injectable clock, and the Jackson `ObjectMapper`.
 
 ```
-GameContext
-  ├── game          — the in-memory Game DTO (cards, choices, multipliers)
-  ├── gameEntity    — the JPA entity currently persisted in last_games
-  ├── walletEntity  — the player's wallet JPA entity
-  ├── lastGameRepo  — repository for last_games table
-  ├── pastGameRepo  — repository for played_games table
-  ├── walletRepo    — repository for wallets table
-  ├── betHistoryService
-  ├── basicStrategy — advises whether a double-down follows basic strategy
-  ├── clock         — injectable LocalDateTimeProvider (enables test determinism)
-  └── om            — Jackson ObjectMapper (Game ↔ JSON serialization)
-```
-
-Pure-logic processors only use `game`; wallet-aware processors also read/write `walletEntity`, `walletRepo`, `lastGameRepo`, etc.
-
-#### Processor ordering in GameStateProcessorChain
-
-```
-── Wallet / persistence processors (run first) ─────────────────────────────────
+── Wallet / persistence processors ──────────────────────────────────────────
  1. RepeatLastBetProcessor            CHOICE_REPEAT_LAST_BET
-                                      Places the last recorded bet amount onto the wallet.
-
  2. RepeatLastBetAgainProcessor       CHOICE_REPEAT_LAST_BET_AGAIN
-                                      No-op pass-through (already handled this turn).
-
  3. ClearLastBetProcessor             CHOICE_CLEAR_LAST_BET
-                                      Returns the current bet to the player's balance.
-
  4. InsuranceBetProcessor             CHOICE_INSURANCE_YES
-                                      Deducts the insurance half-bet from the wallet,
-                                      or flags insufficient funds.
-
  5. DoubleDownBetProcessor            CHOICE_DOUBLE_DOWN
-                                      Checks whether the wallet can cover the additional
-                                      bet. Consults BasicStrategy: if correct play,
-                                      sets finalized=true and doubles the bet immediately;
-                                      if not basic strategy, prompts the player for
-                                      confirmation (CHOICE_DOUBLE_NOT_BASIC_STRATEGY).
-
  6. DoubleDownYesWalletProcessor      CHOICE_DOUBLE_DOWN_YES
-                                      Doubles the wallet bet after the player confirms
-                                      the non-basic-strategy double.
-
- 7. InsufficientFundsReCheckProcessor CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY
+ 7. SplitBetProcessor                 CHOICE_SPLIT
+ 8. InsufficientFundsReCheckProcessor CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY
                                       CHOICE_DOUBLE_DOWN_NOT_ENOUGH_MONEY
-                                      Re-checks if the balance now covers the pending
-                                      bet; restores choices if affordable.
+ 9. ErrorPassthroughProcessor         any non-empty errCodeList
+10. FinalizedPayoutProcessor          gameEntity.finalized == true
 
- 8. ErrorPassthroughProcessor         any non-empty errCodeList
-                                      Passes errors to the view for rendering, then
-                                      clears them from the DB so they don't persist.
-
- 9. FinalizedPayoutProcessor          gameEntity.finalized == true
-                                      Moves the game from last_games → played_games,
-                                      applies payout multipliers to the wallet,
-                                      and saves a BetHistoryEntity record.
-
-── Pure game-logic processors (no DB access) ───────────────────────────────────
-10. NotDealtOrFinalizedProcessor      !game.dealt || game.finalized
-                                      Resets to the betting phase. If a double-down
-                                      was pending, completes it first.
-
-11. DoubleDownConfirmProcessor        CHOICE_DOUBLE_DOWN_YES / CHOICE_DOUBLE_DOWN_NO
-                                      YES: deals the double card, dealer plays out,
-                                      hand is settled.
-                                      NO: cancels the confirm, resumes normal play.
-
-12. SurrenderProcessor                CHOICE_SURRENDER
-                                      Finalizes the hand; dealer reveals one card;
-                                      player forfeits half the bet (0.5× multiplier).
-
-13. PlayerBlackjackAfterDealProcessor CHOICE_DEAL + player has blackjack
-                                      If the dealer's upcard cannot make BJ, pays
-                                      3:2 immediately. Otherwise offers even money.
-
-14. EvenMoneyProcessor                CHOICE_EVEN_MONEY_YES / CHOICE_EVEN_MONEY_NO
-                                      YES: pays 2:1 regardless of dealer outcome.
-                                      NO: plays out — pays BJ only if dealer has no BJ.
-
-15. HitProcessor                      CHOICE_HIT
-                                      Deals one card to the player. If 21: dealer
-                                      plays out and hand is settled. If bust: finalize
-                                      with no payout. Otherwise: offer Stand/Hit again.
-
-16. StandProcessor                    CHOICE_STAND
-                                      Dealer plays to soft-17. Compares hands and
-                                      sets the hand multiplier accordingly.
-
-17. InsuranceProcessor                CHOICE_INSURANCE_YES / CHOICE_INSURANCE_NO
-                                      If dealer has hidden BJ: finalize and pay
-                                      insurance (if taken). Otherwise: normal play
-                                      continues (Stand / Hit / Double / Split).
-
-18. InitialDealSetupProcessor         canProcess = true (fallthrough, always last)
-                                      Runs when no prior processor matched. Sets up
-                                      the initial decision choices: Insurance (if
-                                      dealer upcard is Ace), Surrender, Stand, Hit,
-                                      Double Down, Split (if pair).
+── Pure game-logic processors ───────────────────────────────────────────────
+11. NotDealtOrFinalizedProcessor      !game.dealt || game.finalized
+12. AutoFinalizeProcessor             CHOICE_AUTO_FINALIZE
+13. DoubleDownConfirmProcessor        CHOICE_DOUBLE_DOWN_YES / CHOICE_DOUBLE_DOWN_NO
+14. SurrenderProcessor                CHOICE_SURRENDER
+15. PlayerBlackjackAfterDealProcessor CHOICE_DEAL + player has blackjack
+16. EvenMoneyProcessor                CHOICE_EVEN_MONEY_YES / CHOICE_EVEN_MONEY_NO
+17. HitProcessor                      CHOICE_HIT
+18. StandProcessor                    CHOICE_STAND
+19. InsuranceProcessor                CHOICE_INSURANCE_YES / CHOICE_INSURANCE_NO
+20. InitialDealSetupProcessor         fallthrough — always last
 ```
 
-#### CardSource — injectable card drawing seam
+### Card Source — Injectable RNG Seam
 
-All card drawing goes through a `CardSource` interface, exposed as a Spring `@Bean` in `BlackjackApplication`:
+All card drawing goes through a `CardSource` interface:
 
-- **`RngCardSource`** — draws from the real random number generator (production)
-- **`FixedCardSource`** — drains a pre-loaded `Queue<Card>` in exact order (testing / scenario replay)
+- **`RngCardSource`** — production: real random shuffle
+- **`FixedCardSource`** — testing: drains a pre-loaded queue in exact order
 
-The active scenario is controlled by a single line in `BlackjackApplication`:
+The active source is controlled by `game.deck-scenario` in `application.yml`. Set to `RANDOM` in production; change to any `DeckScenario` enum value for deterministic scenario testing.
 
-```java
-private static final DeckMode MODE = DeckMode.RANDOM;
-```
+### GameService — Thin Orchestrator
 
-`DeckMode` is an enum where each value describes a scenario and provides its own `FixedCardSource`. Switching scenarios requires changing only that one line — no comment/uncomment patterns.
+`GameService` only: loads entities, deserializes the JSON game blob, builds `GameContext`, calls `processorChain.process(ctx)`, saves the result, returns `game` to the controller.
 
-#### GameService — thin orchestrator
+### Key Custom Validations
 
-`GameService` no longer contains any game or wallet logic. Its responsibilities are:
+| Annotation | Purpose |
+|-----------|---------|
+| `@UniqueEmail` / `@UniqueUsername` | DB-level duplicate check at validation time |
+| `@CustomCreditCardNumber` | Luhn algorithm |
+| `@FutureExpirationDate` | Card expiry |
+| `@MinAge` | 18+ age gate |
+| `@FieldMatch` | Password confirmation |
 
-1. Load `GameEntity` and `WalletEntity` from the database
-2. Deserialize the JSON blob in `GameEntity` into a `Game` DTO
-3. Build a `GameContext` from all loaded data plus infrastructure dependencies
-4. Call `processorChain.process(ctx)` — the chain does all the work
-5. Save the result and return `game` to the controller
+### Database Schema
 
-The `deal()` method is the only exception — it validates the incoming bet string and creates a fresh `Game` before handing off to the chain.
+| Table | Purpose |
+|-------|---------|
+| `users` | Accounts |
+| `roles` | Authorization roles |
+| `wallets` | Balances and current bet |
+| `credit_cards` | Registered cards |
+| `last_games` | Active (in-progress) game state as JSON |
+| `played_games` | Completed game history |
+| `bet_history` | Per-game bet records |
+| `activation_tokens` | Email verification tokens |
+| `reset_pass_tokens` | Password reset tokens |
 
 ---
 
-### Key Components
-#### Configuration Classes
-- `SecurityConfig` — Spring Security configuration
-- `I18nConfig` — Internationalization setup
-- `MailConfig` — Email configuration
-- `RecaptchaConfig` — Google reCAPTCHA settings
-- `WebConfig` — Web MVC configuration
+## Quick Start
 
-#### Service Layer
-- `GameService` — Thin orchestrator: loads state, builds `GameContext`, delegates to the processor chain
-- `GameStateProcessorChain` — Walks the ordered processor list; first match wins
-- `BasicStrategy` — Advises whether a double-down is correct basic strategy given the player's hand and dealer upcard
-- `UserService` — User management operations
-- `CreditCardService` — Payment processing
-- `WalletService` — Balance management
-- `MailService` — Email communications
-- `UserTokenService` — Token generation and validation
-- `RecaptchaService` — CAPTCHA verification
-
-#### Custom Validations
-- `@UniqueEmail` / `@UniqueUsername` - Duplicate checking 
-- `@CustomCreditCardNumber` - Card number validation 
-- `@FutureExpirationDate` - Expiry date validation 
-- `@MinAge` - Age restriction (18+)
-- `@FieldMatch` - Password confirmation matching
-
-### Database Schema
-### Core Entities
-- `users` - User account information 
-- `roles` - User roles for authorization 
-- `wallets` - User balances and betting amounts 
-- `credit_cards` - Registered credit cards 
-- `last_games` - Current incomplete game sessions 
-- `played_games` - Game history 
-- `bet_history` - Betting records 
-- `activation_tokens` - Email verification tokens 
-- `reset_pass_tokens` - Password reset tokens
-
-### API Endpoints
-### Public Endpoints
-- `/` - Home page
-- `/auth/login` - Login page
-- `/auth/register` - Registration page
-- `/auth/reset` - Password reset request
-- `/rules` - Game rules
-- `/test/**` - Testing endpoints
-
-### Protected Endpoints
-- `/play/**` - Gameplay endpoints
-- `/credit-card/**` - Credit card management
-- `/auth/activation` - Account activation
-- `/auth/reset_pass` - Password reset
-
-## Running the Application
 ### Prerequisites
+
 - Java 25+
-- Docker (optional, for MySQL/MailHog)
-- MySQL database (if not using Docker)
+- Docker (for MySQL + MailHog)
 
-### Quick Start with Docker
-```shell
-cd /path/to/BJ
-open -a docker
+### Run
 
-# Start MySQL and MailHog containers
+```bash
+# Clone and enter the project
+cd BJ
+
+# Start MySQL (port 3306) and MailHog (SMTP 1025 / UI 8025)
 docker-compose up -d
 
-# Run the Spring Boot application
+# Start the application
 ./gradlew bootRun
 ```
 
-### Access Points
-- Application: http://localhost:8080
-- MailHog UI: http://localhost:8025 (for viewing emails)
-- MySQL: localhost:3306
+Open `http://localhost:8080`.
 
-### Database Client (e.g. Sequel Ace)
-Use a **Standard** connection:
+### Dev credentials
 
-| Field    | Value   |
-|----------|---------|
-| Host     | `127.0.0.1` |
-| Username | `root`  |
-| Password | *(empty)* |
-| Database | `bjdb`  |
-| Port     | `3306`  |
+| Field | Value |
+|-------|-------|
+| Username | `pesho` |
+| Password | `1234` |
 
-### Configuration Properties
-Key configuration options in `application.properties`:
+### Access points
 
-```yml
-# Database
-spring.datasource.url=jdbc:mysql://localhost:3306/bjdb
+| Service | URL |
+|---------|-----|
+| Application | http://localhost:8080 |
+| MailHog UI | http://localhost:8025 |
+| MySQL | localhost:3306 / db `bjdb` / user `root` / no password |
 
-# Email
-mail.host=localhost
-mail.port=1025
+### Key configuration (`.env` or `application.yml`)
 
-# reCAPTCHA
-google.recaptcha.enabled=true
-
-# Authentication
-auth.register.auto-login=false
-auth.login.remember-me-key=your-secret-key
-
-# Token expiration
+```properties
+google.recaptcha.enabled=false      # disable reCAPTCHA during local dev
+game.deck-scenario=RANDOM           # change to a DeckScenario enum value for fixed hands
 auth.activation-token.expires-after-minutes=60
 auth.forgot-password-token.expires-after-minutes=30
 ```
 
-```shell
-docker container rm -f $(docker container ls -aq)
-```
+---
 
-### Testing
-### Test Accounts
-After registration, users need to confirm their email address before logging in (unless auto-login is enabled).
+## Endpoints
 
-### Email Testing
-- Use MailHog UI (port 8025) to view all sent emails
-- No real SMTP server required for development
+| Visibility | Path | Description |
+|-----------|------|-------------|
+| Public | `/` | Lobby |
+| Public | `/auth/login` | Login |
+| Public | `/auth/register` | Registration |
+| Public | `/auth/reset` | Password reset request |
+| Public | `/rules` | Game rules |
+| Protected | `/play/**` | Blackjack gameplay |
+| Protected | `/credit-card/**` | Deposit / cash-out |
+| Protected | `/auth/activation` | Account activation |
+| Protected | `/auth/reset_pass` | Password reset |
 
-### Game Testing
-- Minimum bet: $10
-- Maximum bet: $1000
-- Register a credit card before depositing funds
-- Use test card numbers (follow Luhn algorithm)
+---
 
-### Security Considerations
-- Passwords are BCrypt-encoded
-- SQL injection prevention using JPA/Hibernate
-- CSRF protection enabled
-- XSS prevention through Thymeleaf auto-escaping
-- Session fixation protection
-- Secure remember-me token storage
+## Icons
 
-### Future Enhancements
-Potential improvements:
-
-- Multi-table Blackjack support
-- Tournament mode
-- Leaderboards and achievements
-- Mobile-responsive design optimization
-- WebSocket for real-time updates
-- Caching for improved performance
-- API documentation with Swagger/OpenAPI
-- Unit and integration test coverage
-
-### Icons
-
-Navbar icons are sourced from [Tabler Icons](https://tabler.io/icons) — an open-source icon library licensed under the MIT License.
+Navbar SVG icons are from [Tabler Icons](https://tabler.io/icons) (MIT License).
 
 | Icon | Tabler name |
 |------|-------------|
@@ -381,8 +280,12 @@ Navbar icons are sourced from [Tabler Icons](https://tabler.io/icons) — an ope
 | Cash out (banknote) | `cash-banknote` |
 | Play (playing cards) | `cards` |
 
-The Rules (spade) icon is a custom hand-crafted SVG.
+Game decision button icons — the Auto Play button composes two Tabler icons: `rotate-clockwise` (circular arrow) + `player-play` (filled triangle).
 
-### License
-This project is for educational purposes. Use responsibly.
+The Rules (spade) icon is a custom SVG.
 
+---
+
+## License
+
+Educational portfolio project. Use responsibly.

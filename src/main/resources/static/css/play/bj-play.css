@@ -320,8 +320,8 @@ body {
 .btn-stand     { background-image: url('../../images/decision/stand.png'); }
 .btn-hit       { background-image: url('../../images/decision/hit.png'); }
 .btn-deal      { background-image: url('../../images/decision/deal.png'); }
-.btn-auto-finalize { background-image: url('../../images/decision/auto-play.svg?v=2'); background-color: #6a1fa8; background-size: 68%; background-repeat: no-repeat; background-position: center; }
-.btn-auto-play     { background-image: url('../../images/decision/auto-play.svg?v=2'); background-color: #6a1fa8; background-size: 68%; background-repeat: no-repeat; background-position: center; }
+.btn-auto-finalize { background-image: url('../../images/decision/auto-play.svg?v=3'); background-color: #6a1fa8; background-size: 68%; background-repeat: no-repeat; background-position: center; }
+.btn-auto-play     { background-image: url('../../images/decision/auto-play.svg?v=3'); background-color: #6a1fa8; background-size: 68%; background-repeat: no-repeat; background-position: center; }
 
 /* ── Chip tray ───────────────────────────────────────── */
 .chip-box-wrapper {
