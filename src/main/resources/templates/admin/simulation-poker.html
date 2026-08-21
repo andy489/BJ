@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Simulation — Texas Hold'em (Coming Soon)</title>
+    <th:block th:insert="~{fragment/common::head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/admin/simulation.css}"/>
+</head>
+<body class="body-simulation">
+
+<header th:replace="~{fragment/common::navbar}"></header>
+
+<main class="sim-main">
+    <div class="sim-container">
+
+        <h1 class="sim-title">Texas Hold'em RTP Simulator</h1>
+
+        <div class="sim-strategy-box">
+            <div class="sim-strategy-label">Status</div>
+            <div class="sim-strategy-text">
+                Texas Hold'em simulation is not yet implemented.
+                The engine and strategy models are under development.
+            </div>
+        </div>
+
+        <div class="sim-coming-soon-badge">COMING SOON</div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragment/common::footer}"></footer>
+
+</body>
+</html>

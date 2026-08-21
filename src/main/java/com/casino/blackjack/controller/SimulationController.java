@@ -39,4 +39,14 @@ public class SimulationController extends BaseController {
         mav.addObject("result", result);
         return super.view("admin/simulation", mav);
     }
+
+    @GetMapping("/baccarat")
+    public ModelAndView baccarat(ModelAndView mav) {
+        return super.view("admin/simulation-baccarat", mav);
+    }
+
+    @GetMapping("/poker")
+    public ModelAndView poker(ModelAndView mav) {
+        return super.view("admin/simulation-poker", mav);
+    }
 }

@@ -22,13 +22,15 @@
             </div>
         </div>
 
-        <form class="sim-form" th:action="@{/admin/simulation}" method="post">
+        <form class="sim-form" th:action="@{/admin/simulation}" method="post" id="simForm">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <input type="hidden" name="spins" id="spinsHidden" value="100000"/>
 
             <div class="sim-form-row">
-                <label class="sim-label" for="spins">Number of hands (1 – 10,000,000)</label>
-                <input class="sim-input" type="number" id="spins" name="spins"
-                       min="1" max="10000000" value="100000" required/>
+                <label class="sim-label" for="spinsDisplay">Number of hands (1 – 10,000,000)</label>
+                <input class="sim-input" type="text" id="spinsDisplay"
+                       inputmode="numeric" autocomplete="off" value="100,000"/>
+                <div class="sim-error" id="spinsError" style="display:none"></div>
             </div>
 
             <div th:if="${error}" class="sim-error" th:text="${error}"></div>
@@ -89,6 +91,61 @@
 </main>
 
 <footer th:replace="~{fragment/common::footer}"></footer>
+
+<script>
+(function () {
+    var display = document.getElementById('spinsDisplay');
+    var hidden  = document.getElementById('spinsHidden');
+    var errEl   = document.getElementById('spinsError');
+    var form    = document.getElementById('simForm');
+    var MIN = 1, MAX = 10000000;
+
+    function fmt(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function parse(s) {
+        return parseInt(s.replace(/,/g, ''), 10);
+    }
+
+    function validate(n) {
+        if (isNaN(n) || n < MIN) return 'Enter a number between 1 and 10,000,000.';
+        if (n > MAX)             return 'Maximum is 10,000,000.';
+        return '';
+    }
+
+    display.addEventListener('input', function () {
+        var raw   = display.value.replace(/,/g, '').replace(/[^\d]/g, '');
+        var n     = parseInt(raw, 10);
+        var err   = validate(n);
+        errEl.textContent = err;
+        errEl.style.display = err ? '' : 'none';
+        hidden.value = isNaN(n) ? '' : n;
+        // Reformat with commas, preserving cursor position
+        if (raw.length > 0) {
+            var pos   = display.selectionStart;
+            var oldLen = display.value.length;
+            display.value = isNaN(n) ? raw : fmt(n);
+            var newLen = display.value.length;
+            var newPos = Math.max(0, pos + (newLen - oldLen));
+            display.setSelectionRange(newPos, newPos);
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        var n   = parse(display.value);
+        var err = validate(n);
+        if (err) {
+            e.preventDefault();
+            errEl.textContent = err;
+            errEl.style.display = '';
+            display.focus();
+        } else {
+            hidden.value = n;
+        }
+    });
+})();
+</script>
 
 </body>
 </html>

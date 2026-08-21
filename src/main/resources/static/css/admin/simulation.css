@@ -103,6 +103,13 @@
     transition: border-color .2s;
     width: 100%;
     max-width: 320px;
+    -moz-appearance: textfield;
+}
+
+.sim-input::-webkit-outer-spin-button,
+.sim-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .sim-input:focus {
@@ -215,6 +222,26 @@
     background: rgba(120, 90, 0, 0.15);
     border-color: #7a5c00;
     color: #4a3700;
+}
+
+.sim-coming-soon-badge {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.6rem 2rem;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255, 211, 71, 0.4);
+    background: rgba(255, 211, 71, 0.08);
+    color: var(--gold);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+[data-theme="light"] .sim-coming-soon-badge {
+    border-color: rgba(120, 90, 0, 0.4);
+    background: rgba(120, 90, 0, 0.07);
+    color: #7a5c00;
 }
 
 /* ── Light theme ── */
