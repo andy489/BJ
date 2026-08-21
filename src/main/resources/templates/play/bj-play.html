@@ -365,10 +365,10 @@
                 </div>
                 <div class="decision dec-apl"
                      th:with="hasAutoPlay=${#lists.contains(game.availableChoices, game.availableChoicesCodeMap.get('CHOICE_AUTO_PLAY'))},
-                               hasAutoFin=${#lists.contains(game.availableChoices, game.availableChoicesCodeMap.get('CHOICE_AUTO_FINALIZE'))}"
-                     th:classappend="${hasAutoPlay or hasAutoFin ? '' : 'd-none'}">
+                               hasAutoFin=${#lists.contains(game.availableChoices, game.availableChoicesCodeMap.get('CHOICE_AUTO_FINALIZE'))}">
                     <form th:action="${hasAutoPlay ? '/play/auto-play' : '/play/auto-finalize'}" th:method="post">
-                        <button type="submit" class="btn btn-decision btn-auto-play"></button>
+                        <button type="submit" class="btn btn-decision btn-auto-play"
+                                th:classappend="${hasAutoPlay or hasAutoFin ? '' : 'disabled'}"></button>
                         <div class="btn-cmd" th:text="#{dec.autoPlay}">Auto Play</div>
                     </form>
                 </div>

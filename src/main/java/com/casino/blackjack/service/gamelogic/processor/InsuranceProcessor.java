@@ -2,8 +2,10 @@ package com.casino.blackjack.service.gamelogic.processor;
 
 import com.casino.blackjack.service.gamelogic.dto.Game;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_FINALIZE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN;
@@ -45,7 +47,8 @@ public class InsuranceProcessor implements GameStateProcessor {
             return ctx;
         }
 
-        game.setAvailableChoices(List.of(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN));
+        List<Integer> choices = new ArrayList<>(List.of(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN, CHOICE_AUTO_FINALIZE));
+        game.setAvailableChoices(choices);
 
         if (game.isPair()) {
             game.getAvailableChoices().add(CHOICE_SPLIT);

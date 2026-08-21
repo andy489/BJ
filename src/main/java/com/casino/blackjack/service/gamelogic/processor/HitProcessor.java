@@ -71,7 +71,7 @@ public class HitProcessor implements GameStateProcessor {
             return ctx;
         }
 
-        game.setAvailableChoices(List.of(CHOICE_STAND, CHOICE_HIT));
+        game.setAvailableChoices(new java.util.ArrayList<>(List.of(CHOICE_STAND, CHOICE_HIT, CHOICE_AUTO_FINALIZE)));
         return ctx;
     }
 }

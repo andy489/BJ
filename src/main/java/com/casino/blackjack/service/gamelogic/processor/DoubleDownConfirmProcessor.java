@@ -7,6 +7,7 @@ import com.casino.blackjack.service.gamelogic.dto.Wallet;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_FINALIZE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN;
@@ -78,6 +79,7 @@ public class DoubleDownConfirmProcessor implements GameStateProcessor {
         choices.add(CHOICE_STAND);
         choices.add(CHOICE_HIT);
         choices.add(CHOICE_DOUBLE_DOWN);
+        choices.add(CHOICE_AUTO_FINALIZE);
         if (game.isPair()) {
             choices.add(CHOICE_SPLIT);
         }
