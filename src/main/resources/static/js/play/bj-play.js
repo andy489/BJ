@@ -11,6 +11,12 @@ const CHIP_3XL = 100.0
 $(document).ready(function () {
     $('.btn-err-ok').click(function () {
         $('.err-modal-wrapper').addClass("d-none")
+        $('.modal-overlay').removeClass('active')
+    })
+
+    $('#btn-no-funds-ok').click(function () {
+        $('#no-funds-modal').addClass('d-none')
+        $('.modal-overlay').removeClass('active')
     })
 
     /* Surrender confirm modal */
@@ -152,6 +158,8 @@ function calcChip(chipValue, doubleChip) {
     let amountBalance = parseFloat(balanceElem.innerText.replace(/[^0-9]/g, '')) || 0.0
 
     if (amountBalance === 0.0) {
+        $('#no-funds-modal').removeClass('d-none')
+        $('.modal-overlay').addClass('active')
         return
     }
 

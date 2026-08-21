@@ -260,6 +260,22 @@
         </div>
         <!--  EO: CONFIRM MODAL: SURRENDER -->
 
+        <!--  MODAL: NO FUNDS — client-side only, shown when balance is 0 and chip clicked -->
+        <div id="no-funds-modal" class="err-modal-wrapper row d-none err-modal-wrapper-dep-link">
+            <div class="modal-title col-12" th:text="#{err.code.0}">INSUFFICIENT FUNDS!</div>
+            <div class="choice-box">
+                <button type="button" id="btn-no-funds-ok" class="btn btn-err btn-err-ok btn-err-smaller">
+                    <i class="fa-solid fa-check fa-xl"></i>
+                </button>
+            </div>
+            <div class="choice-box">
+                <a th:href="@{/credit-card/deposit}" class="go-to-link btn btn-outline-success"
+                   th:with="go_to_deposit=#{link.deposit}"
+                   th:text="${#strings.toUpperCase(go_to_deposit)}">GO TO DEPOSIT</a>
+            </div>
+        </div>
+        <!--  EO: MODAL: NO FUNDS -->
+
         <!--  CONFIRM MODAL: HIT ON {score}? (client-side only) -->
         <div id="hit-hard17-confirm-modal" class="choice-modal-wrapper row d-none">
             <div class="modal-title col-12">
