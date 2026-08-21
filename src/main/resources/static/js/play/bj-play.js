@@ -114,6 +114,14 @@ $(document).ready(function () {
         calcChip(null, true)
     })
 
+    /* Repeat last bet — adds lastBet to the current staged bet, same as placing chips */
+    $('.form-repeat').on('submit', function (e) {
+        var lastBet = (typeof BJ_LAST_BET !== 'undefined') ? parseFloat(BJ_LAST_BET) : 0
+        if (isNaN(lastBet) || lastBet <= 0) return  // no last bet — let server handle/error
+        e.preventDefault()
+        calcChip(lastBet, false)
+    })
+
     /* Allow clear when chips are staged, or when a game has been played (reset after hand) */
     $('.form-clear').on('submit', function (e) {
         var betVal = parseFloat($('.curr-bet-value').val())

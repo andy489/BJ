@@ -414,7 +414,7 @@
                 </div>
                 <div class="bet-actions-wrapper">
                 <div class="bet-action">
-                    <form th:action="@{/play/repeat-last-bet}" th:method="post">
+                    <form class="form-repeat" th:action="@{/play/repeat-last-bet}" th:method="post">
                         <button type="submit" class="btn btn-bet">
                             <i class="fas fa-redo-alt fa-lg"></i>
                         </button>
@@ -572,6 +572,7 @@
     var BJ_GAME_DEALT     = /*[[${game.dealt}]]*/ false;
     var BJ_SPLIT_ACTIVE   = /*[[${game.splitActive}]]*/ false;
     var BJ_SPLIT_DD       = /*[[${game.splitActive and game.doubleDown}]]*/ false;
+    var BJ_LAST_BET       = /*[[${game.wallet.lastBet}]]*/ 0;
 </script>
 <script>
     (function () {
