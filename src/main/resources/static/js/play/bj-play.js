@@ -153,9 +153,9 @@ function calcChip(chipValue, doubleChip) {
     let balanceElem = $('.balance')[0]
 
     // Read current bet from hidden field (always accurate decimal) and
-    // balance from display (now integer-only: strip currency symbol + commas).
+    // balance from display (strip £ and commas only, keep decimal point).
     let amountBet     = parseFloat(hiddenBetField.value) || 0.0
-    let amountBalance = parseFloat(balanceElem.innerText.replace(/[^0-9]/g, '')) || 0.0
+    let amountBalance = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
 
     if (amountBalance === 0.0) {
         $('#no-funds-modal').removeClass('d-none')
@@ -194,9 +194,9 @@ function calcChip(chipValue, doubleChip) {
         currBetElem.classList.remove('low-bet')
     }
 
-    // Display as integer pounds (no decimals), comma-separated thousands.
-    currBetElem.innerText = '£' + Math.round(newBet).toLocaleString('en-GB')
-    balanceElem.innerText = '£' + Math.round(newBalance).toLocaleString('en-GB')
+    // Display as decimal pounds (2dp), comma-separated thousands.
+    currBetElem.innerText = '£' + newBet.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+    balanceElem.innerText = '£' + newBalance.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
     hiddenBetField.value  = newBet
 
     refreshDealButton()
