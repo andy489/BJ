@@ -871,12 +871,12 @@ body {
 [data-theme="light"] {
     --electric: #b8600a;
     --electric-glow: rgba(184, 96, 10, 0.45);
-    --glass-bg: rgba(255, 248, 235, 0.88);
+    --glass-bg: rgba(255, 248, 235, 0.72);
     --glass-border: rgba(80, 60, 0, 0.28);
 }
 
 [data-theme="light"] .decision-box-wrapper {
-    background: rgba(255, 248, 235, 0.88);
+    background: rgba(255, 248, 235, 0.72);
     border-color: rgba(80, 60, 0, 0.22);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
     backdrop-filter: blur(12px);
@@ -884,7 +884,7 @@ body {
 }
 
 [data-theme="light"] .chip-box-wrapper {
-    background: rgba(255, 248, 235, 0.88);
+    background: rgba(255, 248, 235, 0.72);
     border-color: rgba(80, 60, 0, 0.18);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(12px);
@@ -910,7 +910,7 @@ body {
 }
 
 [data-theme="light"] .score-box {
-    background: rgba(255, 248, 235, 0.88);
+    background: rgba(255, 248, 235, 0.72);
     border-color: rgba(80, 60, 0, 0.22);
     color: #1a1100;
 }
@@ -926,7 +926,7 @@ body {
 }
 
 [data-theme="light"] .balance-box-wrapper {
-    background: rgba(255, 248, 235, 0.88);
+    background: rgba(255, 248, 235, 0.72);
     border-color: rgba(80, 60, 0, 0.22);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(12px);
@@ -955,7 +955,7 @@ body {
 [data-theme="light"] .game-info { color: rgba(80, 60, 0, 0.75); }
 
 [data-theme="light"] .game-metadata-wrapper {
-    background: rgba(255, 248, 235, 0.88);
+    background: rgba(255, 248, 235, 0.72);
     border-color: rgba(80, 60, 0, 0.22);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(12px);
@@ -973,13 +973,13 @@ body {
 }
 
 [data-theme="light"] .history-toggle-btn {
-    background: rgba(255, 248, 235, 0.88);
+    background: rgba(255, 248, 235, 0.72);
     border-color: rgba(80, 60, 0, 0.22);
     color: #7a5c00;
 }
 
 [data-theme="light"] .history-panel {
-    background: rgba(255, 248, 235, 0.90);
+    background: rgba(255, 248, 235, 0.74);
     border-color: rgba(80, 60, 0, 0.18);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
