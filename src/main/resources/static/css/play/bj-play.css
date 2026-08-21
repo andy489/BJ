@@ -142,6 +142,7 @@ body {
 /* ── Card table area ─────────────────────────────────── */
 .play-card-wrapper, .play-card {
     height: 10em;
+    width: 7.14em;
     position: relative;
     justify-content: center;
 }
@@ -169,10 +170,17 @@ body {
 .dealer-cards, .player-cards {
     height: 14em;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .player-cards-box, .dealer-cards-box {
     min-width: 35em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* ── Card deal + flip animation ──────────────────────── */
@@ -312,8 +320,8 @@ body {
 .btn-stand     { background-image: url('../../images/decision/stand.png'); }
 .btn-hit       { background-image: url('../../images/decision/hit.png'); }
 .btn-deal      { background-image: url('../../images/decision/deal.png'); }
-.btn-auto-finalize { background-image: url('../../images/decision/deal.png'); filter: hue-rotate(160deg) brightness(1.1); }
-.btn-auto-play     { background-image: url('../../images/decision/deal.png'); filter: hue-rotate(90deg) brightness(1.15); }
+.btn-auto-finalize { background-image: url('../../images/decision/auto-play.svg?v=2'); background-color: #6a1fa8; background-size: 68%; background-repeat: no-repeat; background-position: center; }
+.btn-auto-play     { background-image: url('../../images/decision/auto-play.svg?v=2'); background-color: #6a1fa8; background-size: 68%; background-repeat: no-repeat; background-position: center; }
 
 /* ── Chip tray ───────────────────────────────────────── */
 .chip-box-wrapper {
@@ -857,3 +865,92 @@ body {
     .hist-card { font-size: 0.7rem; padding: 1px 4px; }
     .hist-row-cards { gap: 8px; }
 }
+
+/* ── Light theme: play page ──────────────────────────── */
+[data-theme="light"] {
+    --electric: #a07800;
+    --electric-glow: rgba(160, 120, 0, 0.55);
+    --glass-bg: rgba(255, 255, 255, 0.35);
+    --glass-border: rgba(80, 60, 0, 0.25);
+}
+
+[data-theme="light"] .decision-box-wrapper,
+[data-theme="light"] .chip-box-wrapper,
+[data-theme="light"] .bet-actions-wrapper,
+[data-theme="light"] .controls-panel {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(80, 60, 0, 0.2);
+}
+
+[data-theme="light"] .btn-decision:not(.disabled) {
+    outline-color: rgba(160, 120, 0, 0.4);
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(160, 120, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="light"] .btn-cmd,
+[data-theme="light"] .bet-action span {
+    color: rgba(20, 15, 0, 0.55);
+}
+
+[data-theme="light"] .score-box {
+    background: rgba(255, 255, 255, 0.45);
+    border-color: rgba(80, 60, 0, 0.2);
+    color: #1a1100;
+}
+
+[data-theme="light"] .balance-box-wrapper {
+    background: rgba(255, 255, 255, 0.45);
+    border-color: rgba(80, 60, 0, 0.22);
+}
+
+[data-theme="light"] .balance-box-value,
+[data-theme="light"] .last-bet-box-value,
+[data-theme="light"] .curr-bet-box-value {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(120, 90, 0, 0.3);
+    color: #1a1100;
+}
+
+[data-theme="light"] .balance { color: #7a5c00; }
+
+[data-theme="light"] .bet-legend { color: rgba(20, 15, 0, 0.5); }
+
+[data-theme="light"] .history-toggle-btn {
+    background: rgba(255, 255, 255, 0.45);
+    border-color: rgba(80, 60, 0, 0.22);
+    color: #7a5c00;
+}
+
+[data-theme="light"] .history-panel {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(80, 60, 0, 0.18);
+}
+
+[data-theme="light"] .hist-row {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+[data-theme="light"] .hist-row.hist-win  { background: rgba(40, 140, 60, 0.12); border-left-color: #28a745; }
+[data-theme="light"] .hist-row.hist-push { background: rgba(180, 140, 0, 0.10); border-left-color: #a07800; }
+[data-theme="light"] .hist-row.hist-loss { background: rgba(180, 40, 40, 0.10); border-left-color: #c0392b; }
+
+[data-theme="light"] .hist-row-num,
+[data-theme="light"] .hist-row-time,
+[data-theme="light"] .hist-row-amounts { color: rgba(20, 15, 0, 0.75); }
+
+[data-theme="light"] .hist-card { background: #fff; color: #1a1100; border-color: rgba(0,0,0,0.15); }
+[data-theme="light"] .hist-card-red { color: #c0392b; }
+
+[data-theme="light"] .hist-hand-label { color: rgba(20, 15, 0, 0.5); }
+
+[data-theme="light"] .hist-action-tag {
+    background: rgba(0, 0, 0, 0.07);
+    color: rgba(20, 15, 0, 0.65);
+}
+
+[data-theme="light"] .hist-tag-dd   { background: rgba(40, 100, 200, 0.15); color: #1a5aaa; }
+[data-theme="light"] .hist-tag-split { background: rgba(160, 100, 0, 0.15); color: #7a5c00; }
+[data-theme="light"] .hist-tag-ins  { background: rgba(40, 140, 60, 0.15); color: #1a6e30; }

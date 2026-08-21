@@ -8,7 +8,7 @@
 
 /* ── Header shell ──────────────────────────────────────── */
 .container-header {
-    margin: auto;
+    margin: 0;
     background-color: rgba(0, 0, 0, 0.4);
     font-weight: bold;
     border: 2px solid var(--dark-gray);
@@ -20,10 +20,48 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    padding: 1px 6px;
+    padding: 4px 10px;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 }
+
+/* ── Brand logo ─────────────────────────────────────────── */
+.nav-brand {
+    display: inline-flex;
+    align-items: baseline;
+    text-decoration: none;
+    line-height: 1;
+    padding: 6px 14px 6px 10px;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+}
+
+.nav-brand__word {
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    text-transform: lowercase;
+}
+
+.nav-brand__num {
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: var(--gold);
+    font-family: Arial, sans-serif;
+}
+
+.nav-brand:hover .nav-brand__word { color: #e8e8e8; }
+.nav-brand:hover .nav-brand__num  { color: #ffe680; }
+
+[data-theme="light"] .nav-brand__word {
+    color: #3a2a00;
+}
+[data-theme="light"] .nav-brand__num {
+    color: #b8860b;
+}
+[data-theme="light"] .nav-brand:hover .nav-brand__word { color: #1a1100; }
+[data-theme="light"] .nav-brand:hover .nav-brand__num  { color: #8b6914; }
 
 .container-header-left {
     display: flex;
@@ -42,10 +80,10 @@
 a.nav-link {
     color: whitesmoke !important;
     float: left;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     font-weight: bolder;
     transition: color .2s;
-    padding: 4px 6px;
+    padding: 6px 8px;
 }
 
 a.nav-link:hover {
@@ -282,8 +320,8 @@ ul.navbar-nav { float: right; }
 }
 
 [data-theme="light"] .nav-svg {
-    color: #2d6a4f;
-    filter: drop-shadow(0 0 2px rgba(45, 106, 79, 0.35));
+    color: #b8860b;
+    filter: drop-shadow(0 0 2px rgba(184, 134, 11, 0.35));
 }
 
 [data-theme="light"] a.nav-link:hover {
@@ -292,13 +330,18 @@ ul.navbar-nav { float: right; }
 }
 
 [data-theme="light"] a.nav-link:hover .nav-svg {
-    color: #1a7a3a;
-    filter: drop-shadow(0 0 6px rgba(26, 122, 58, 0.8));
+    color: #8b6914;
+    filter: drop-shadow(0 0 6px rgba(184, 134, 11, 0.7));
 }
 
 [data-theme="light"] .nav-settings-gear {
     color: #b8860b;
     filter: none;
+}
+
+[data-theme="light"] .nav-theme-opt.nav-theme-active {
+    color: #b8860b;
+    background: rgba(184, 134, 11, 0.15);
 }
 
 [data-theme="light"] .nav-hamburger span {

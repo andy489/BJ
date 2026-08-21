@@ -33,9 +33,9 @@
                  class="card-shuffler-layer"
                  th:src="@{'./../images/background/card-shuffler.png'}"
                  alt="" aria-hidden="true"/>
-            <div class="row dealer-cards">
+            <div class="dealer-cards">
                 <div class="dealer-cards-box">
-                    <div class="col-12 play-card-wrapper" th:if="${game.dealerCards.size == 1}"
+                    <div class="play-card-wrapper" th:if="${game.dealerCards.size == 1}"
                          th:with="card=${game.dealerCards.get(0)}">
                         <img th:src="@{'./../images/playing_card/' + ${card.rank} + '-' + ${card.suit} +'.png'}"
                              alt="" class="play-card"
@@ -44,7 +44,7 @@
                              alt="" class="play-card"
                              th:classappend="'d-' + *{dealerCardsOdd} + '-7'"/>
                     </div>
-                    <div class="col-12 play-card-wrapper" th:unless="${game.dealerCards.size == 1}">
+                    <div class="play-card-wrapper" th:unless="${game.dealerCards.size == 1}">
                         <img th:each="c, i : *{dealerCards}"
                              th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
                              alt="" class="play-card"
@@ -58,18 +58,18 @@
                 </div>
             </div>
 
-            <div class="row player-cards">
+            <div class="player-cards">
 
                 <!-- ── Normal (non-split) player hand ── -->
                 <div class="player-cards-box" th:unless="*{splitActive} or not *{#lists.isEmpty(splitHands)}">
-                    <div class="col-12 play-card-wrapper" th:unless="*{doubleDown}">
+                    <div class="play-card-wrapper" th:unless="*{doubleDown}">
                         <img th:each="c, iStat : *{playerCards}"
                              th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
                              alt="" class="play-card"
                              th:classappend="'d-' + *{playerCardsEven} + '-' + ${game.dPlayerCards + iStat.index}"/>
                     </div>
 
-                    <div class="col-12 play-card-wrapper double-down-wrapper" th:if="*{doubleDown}">
+                    <div class="play-card-wrapper double-down-wrapper" th:if="*{doubleDown}">
                         <img th:each="c, iStat : *{playerCards}"
                              th:unless="${iStat.index == iStat.size - 1}"
                              th:src="@{'./../images/playing_card/' + ${c.rank} + '-' + ${c.suit} +'.png'}"
