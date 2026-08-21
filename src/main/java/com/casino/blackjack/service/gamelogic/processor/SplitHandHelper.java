@@ -47,7 +47,13 @@ final class SplitHandHelper {
         boolean moreHands = game.advanceSplitHand(multiplier, wasDouble);
 
         if (moreHands) {
-            SplitBetProcessor.setChoicesForActiveHand(game, game.getSplitAces(), maxSplits, canAffordSplit);
+            // If the next hand is already 21 after the initial deal, auto-advance it too
+            Count nextCount = game.getCount(game.getActiveHandCards());
+            if (nextCount.getRight().equals(BJ_CNT)) {
+                advanceOrFinalize(game, 0.0, false, maxSplits, canAffordSplit);
+            } else {
+                SplitBetProcessor.setChoicesForActiveHand(game, game.getSplitAces(), maxSplits, canAffordSplit);
+            }
         } else {
             game.dealerPlayUntilSoft17Public();
             resolveAllSplitHands(game);

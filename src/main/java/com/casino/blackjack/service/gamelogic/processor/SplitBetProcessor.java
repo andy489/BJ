@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ACE_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_CNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_FINALIZE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_HIT;
@@ -72,7 +73,14 @@ public class SplitBetProcessor implements GameStateProcessor {
 
         // Can afford a re-split only if remaining balance >= handBet
         boolean canAffordSplit = wallet.getBalance().compareTo(additionalBet) >= 0;
-        setChoicesForActiveHand(game, isAces, maxSplits, canAffordSplit);
+
+        // If the first active hand is already 21 after the deal, auto-advance
+        int activeScore = game.getCount(game.getActiveHandCards()).getRight();
+        if (!isAces && activeScore == BJ_CNT) {
+            SplitHandHelper.advanceOrFinalize(ctx, 0.0, false, maxSplits);
+        } else {
+            setChoicesForActiveHand(game, isAces, maxSplits, canAffordSplit);
+        }
 
         ctx.lastGameRepo().save(GameEntity.map(gameEntity, game, ctx.om()));
         return ctx;

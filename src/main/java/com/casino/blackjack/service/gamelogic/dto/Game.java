@@ -352,6 +352,15 @@ public class Game {
             return BJ_DISPLAY_CNT;
         }
 
+        return scoreWithoutBJ(cards);
+    }
+
+    /** Score display for split hands — 2-card 21 shows "21", not "BJ". */
+    public String getScoreForSplitHand(List<Card> cards) {
+        return scoreWithoutBJ(cards);
+    }
+
+    private String scoreWithoutBJ(List<Card> cards) {
         Count count = getCount(cards);
 
         Integer left = count.getLeft();
