@@ -16,13 +16,13 @@ html, body {
 }
 
 body {
-    background: fixed center/cover url('./../../images/background/09-play-bj-bg-red.png');
+    background: fixed center/cover url('./../../images/background/08-play-bj-bg-green.png');
     font-family: "Source Sans Pro", sans-serif;
     font-size: 15px;
 }
 
 [data-theme="light"] body {
-    background: fixed center/cover url('./../../images/background/08-play-bj-bg-green.png');
+    background: fixed center/cover url('./../../images/background/09-play-bj-bg-red.png');
 }
 
 /* remove Bootstrap mb-5 from the shared navbar on this page */
