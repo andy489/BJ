@@ -19,6 +19,32 @@ $(document).ready(function () {
         $('.modal-overlay').removeClass('active')
     })
 
+    /* Split — show weak-pair warning when pair nominal < dealer nominal */
+    $('#btn-split-trigger').click(function () {
+        if ($(this).hasClass('disabled')) return
+        var pair   = (typeof BJ_PAIR_NOMINAL   !== 'undefined') ? BJ_PAIR_NOMINAL   : 0
+        var dealer = (typeof BJ_DEALER_NOMINAL !== 'undefined') ? BJ_DEALER_NOMINAL : 0
+        if (pair > 0 && dealer > 0 && pair < dealer) {
+            $('#split-pair-value').text(pair)
+            $('#split-dealer-value').text(dealer)
+            $('#split-weak-pair-modal').removeClass('d-none')
+            $('.modal-overlay').addClass('active')
+        } else {
+            $('#form-split').submit()
+        }
+    })
+
+    $('#btn-split-weak-yes').click(function () {
+        $('#split-weak-pair-modal').addClass('d-none')
+        $('.modal-overlay').removeClass('active')
+        $('#form-split').submit()
+    })
+
+    $('#btn-split-weak-no').click(function () {
+        $('#split-weak-pair-modal').addClass('d-none')
+        $('.modal-overlay').removeClass('active')
+    })
+
     /* Surrender confirm modal */
     $('#btn-surrender-trigger').click(function () {
         if ($(this).hasClass('disabled')) return

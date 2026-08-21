@@ -633,6 +633,10 @@ public class Game {
 
     public void playerHit() {
         hit(playerCards);
+        if (Boolean.TRUE.equals(splitActive) && activeSplitHandIndex != null
+                && activeSplitHandIndex >= 0 && activeSplitHandIndex < splitHands.size()) {
+            splitHands.set(activeSplitHandIndex, new ArrayList<>(playerCards));
+        }
     }
 
     private void dealerPlayUntilSoft17() {
@@ -772,6 +776,24 @@ public class Game {
 
     public boolean dealerFirstCardCannotMakeBJ() {
         return dealerCannotMakeBJ();
+    }
+
+    /** Point value of dealer's face-up card (Ace=11, 10/J/Q/K=10, others=face). */
+    public int dealerFirstCardNominal() {
+        if (dealerCards == null || dealerCards.isEmpty()) return 0;
+        int r = dealerCards.get(0).getRank();
+        if (r == ACE_RANK) return 11;
+        if (r >= TEN_RANK) return 10;
+        return r;
+    }
+
+    /** Point value of the player's pair card (Ace=11, 10/J/Q/K=10, others=face). */
+    public int playerPairNominal() {
+        if (playerCards == null || playerCards.isEmpty()) return 0;
+        int r = playerCards.get(0).getRank();
+        if (r == ACE_RANK) return 11;
+        if (r >= TEN_RANK) return 10;
+        return r;
     }
 
     public Integer compareHands(List<Card> dealer, List<Card> player) {

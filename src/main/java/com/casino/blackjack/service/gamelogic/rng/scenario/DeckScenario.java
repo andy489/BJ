@@ -223,6 +223,23 @@ public enum DeckScenario {
           Card.of(HEARTS_SUIT, EIGHT_RANK)     // dealer hit → 15+8 = 23 bust
       );
     }
+  },
+
+  // Player 5+5 vs dealer Queen — split: hand0 draws K→15, hand1 draws 7→12 then hits→22 bust
+  PLAYER_PAIR_5_DEALER_QUEEN("Player 5+5 vs dealer Queen — split, hit on hand0") {
+    @Override
+    public CardSource source() {
+      return new FixedCardSource(
+          Card.of(CLUBS_SUIT, QUEEN_RANK),     // dealer visible
+          Card.of(HEARTS_SUIT, TEN_RANK),      // dealer hidden → 20
+          Card.of(SPADES_SUIT, FIVE_RANK),     // player card 0
+          Card.of(DIAMONDS_SUIT, FIVE_RANK),   // player card 1 → pair 5s
+          Card.of(CLUBS_SUIT, KING_RANK),      // hand1 (active first) draws → 5+K = 15
+          Card.of(HEARTS_SUIT, SEVEN_RANK),    // hand0 draws → 5+7 = 12
+          Card.of(SPADES_SUIT, THREE_RANK),    // hand0 hit → 12+3 = 15
+          Card.of(DIAMONDS_SUIT, TEN_RANK)     // hand0 hit → 15+10 = 25 bust
+      );
+    }
   };
 
   final String description;

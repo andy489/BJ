@@ -307,6 +307,20 @@
         </div>
         <!--  EO: CONFIRM MODAL: STAND ON 11 OR LOWER -->
 
+        <!--  CONFIRM MODAL: SPLIT WEAK PAIR (pair nominal < dealer nominal) -->
+        <div id="split-weak-pair-modal" class="choice-modal-wrapper row d-none">
+            <div class="modal-title col-12">SPLIT <span id="split-pair-value">?</span>s vs <span id="split-dealer-value">?</span>?</div>
+            <div class="col-6 choice-box">
+                <button type="button" id="btn-split-weak-yes" class="btn btn-decision btn-split"></button>
+                <div class="btn-cmd" th:with="yes=#{dec.yes}" th:text="${#strings.toUpperCase(yes)}">YES</div>
+            </div>
+            <div class="col-6 choice-box">
+                <button type="button" id="btn-split-weak-no" class="btn btn-decision btn-hit"></button>
+                <div class="btn-cmd" th:with="no=#{dec.no}" th:text="${#strings.toUpperCase(no)}">NO</div>
+            </div>
+        </div>
+        <!--  EO: CONFIRM MODAL: SPLIT WEAK PAIR -->
+
         </div>
         <!-- ── EO: Modal overlay ── -->
 
@@ -322,8 +336,8 @@
                     </form>
                 </div>
                 <div class="decision dec-spl">
-                    <form th:action="@{/play/split}" th:method="post">
-                        <button type="submit" class="btn btn-decision btn-split"
+                    <form id="form-split" th:action="@{/play/split}" th:method="post">
+                        <button type="button" id="btn-split-trigger" class="btn btn-decision btn-split"
                                 th:classappend="${#lists.contains(game.availableChoices,
                                 game.availableChoicesCodeMap.get('CHOICE_SPLIT')) ? '' : 'disabled'}"></button>
                         <div class="btn-cmd" th:text="#{dec.split}">Split</div>
@@ -573,6 +587,8 @@
     var BJ_SPLIT_ACTIVE   = /*[[${game.splitActive}]]*/ false;
     var BJ_SPLIT_DD       = /*[[${game.splitActive and game.doubleDown}]]*/ false;
     var BJ_LAST_BET       = /*[[${game.wallet.lastBet}]]*/ 0;
+    var BJ_DEALER_NOMINAL = /*[[${game.dealerFirstCardNominal()}]]*/ 0;
+    var BJ_PAIR_NOMINAL   = /*[[${game.playerPairNominal()}]]*/ 0;
 </script>
 <script>
     (function () {
