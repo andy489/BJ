@@ -867,55 +867,75 @@ body {
 }
 
 /* ── Light theme: play page ──────────────────────────── */
-/* Light theme (♥ hearts / red bg): keep panels dark for contrast against the red background */
+/* Light theme (♥ hearts / red bg): bright frosted panels matching login/register card style */
 [data-theme="light"] {
-    --electric: #ffd347;
-    --electric-glow: rgba(255, 211, 71, 0.6);
-    --glass-bg: rgba(0, 0, 0, 0.38);
-    --glass-border: rgba(255, 211, 71, 0.22);
+    --electric: #7a5c00;
+    --electric-glow: rgba(120, 90, 0, 0.45);
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-border: rgba(80, 60, 0, 0.22);
 }
 
 [data-theme="light"] .decision-box-wrapper {
-    background: rgba(0, 0, 0, 0.30);
-    border-color: rgba(255, 211, 71, 0.15);
+    background: rgba(255, 255, 255, 0.50);
+    border-color: rgba(80, 60, 0, 0.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 [data-theme="light"] .chip-box-wrapper {
-    background: rgba(0, 0, 0, 0.25);
-    border-color: rgba(255, 211, 71, 0.12);
+    background: rgba(255, 255, 255, 0.50);
+    border-color: rgba(80, 60, 0, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 [data-theme="light"] .bet-actions-wrapper {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(255, 211, 71, 0.18);
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(80, 60, 0, 0.20);
 }
 
 [data-theme="light"] .btn-cmd,
 [data-theme="light"] .bet-action span {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(40, 30, 0, 0.65);
+}
+
+[data-theme="light"] .btn-decision:not(.disabled) {
+    outline-color: rgba(120, 90, 0, 0.35);
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.18),
+        0 0 0 1px rgba(120, 90, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 [data-theme="light"] .score-box {
-    background: rgba(0, 0, 0, 0.45);
-    border-color: rgba(255, 211, 71, 0.2);
-    color: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.50);
+    border-color: rgba(80, 60, 0, 0.20);
+    color: #1a1100;
 }
 
 [data-theme="light"] .curr-result-user {
-    color: rgba(255, 211, 71, 0.75);
+    color: rgba(80, 60, 0, 0.75);
+}
+
+[data-theme="light"] .curr-result-box {
+    color: #1a1100;
+    border-color: rgba(80, 60, 0, 0.30);
+    text-shadow: none;
 }
 
 [data-theme="light"] .balance-box-wrapper {
-    background: rgba(0, 0, 0, 0.38);
-    border-color: rgba(255, 211, 71, 0.22);
+    background: rgba(255, 255, 255, 0.50);
+    border-color: rgba(80, 60, 0, 0.22);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 [data-theme="light"] .balance-box-value,
 [data-theme="light"] .last-bet-box-value,
 [data-theme="light"] .curr-bet-box-value {
-    background: rgba(0, 0, 0, 0.55);
-    border-color: rgba(255, 211, 71, 0.25);
-    color: whitesmoke;
+    background: rgba(255, 255, 255, 0.65);
+    border-color: rgba(80, 60, 0, 0.25);
+    color: #1a1100;
 }
 
 [data-theme="light"] .balance { color: var(--electric); font-weight: 700; }
@@ -924,56 +944,65 @@ body {
 [data-theme="light"] .last-bet-box-title,
 [data-theme="light"] .curr-bet-box-title {
     color: var(--electric);
-    text-shadow: 0 0 8px var(--electric-glow);
+    text-shadow: 0 0 6px var(--electric-glow);
 }
 
-[data-theme="light"] .bet-legend { color: rgba(255, 255, 255, 0.6); }
+[data-theme="light"] .bet-legend { color: rgba(40, 30, 0, 0.55); }
 
-[data-theme="light"] .game-info { color: rgba(255, 211, 71, 0.7); }
+[data-theme="light"] .game-info { color: rgba(80, 60, 0, 0.75); }
 
 [data-theme="light"] .game-metadata-wrapper {
-    background: rgba(0, 0, 0, 0.35);
-    border-color: rgba(255, 211, 71, 0.15);
+    background: rgba(255, 255, 255, 0.50);
+    border-color: rgba(80, 60, 0, 0.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 [data-theme="light"] .game-metadata {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(255, 211, 71, 0.25);
-    color: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(80, 60, 0, 0.22);
+    color: #1a1100;
+}
+
+[data-theme="light"] .deli {
+    background: rgba(80, 60, 0, 0.20);
 }
 
 [data-theme="light"] .history-toggle-btn {
-    background: rgba(0, 0, 0, 0.35);
-    border-color: rgba(255, 211, 71, 0.25);
-    color: rgba(255, 211, 71, 0.85);
+    background: rgba(255, 255, 255, 0.50);
+    border-color: rgba(80, 60, 0, 0.22);
+    color: #7a5c00;
 }
 
 [data-theme="light"] .history-panel {
-    background: rgba(0, 0, 0, 0.40);
-    border-color: rgba(255, 211, 71, 0.18);
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(80, 60, 0, 0.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
-[data-theme="light"] .hist-row { background: rgba(255, 255, 255, 0.04); }
+[data-theme="light"] .hist-row { background: rgba(255, 255, 255, 0.30); }
 
-[data-theme="light"] .hist-row.hist-win  { background: rgba(0, 180, 80, 0.10);  border-left-color: rgba(0, 200, 80, 0.55); }
-[data-theme="light"] .hist-row.hist-push { background: rgba(255, 211, 71, 0.08); border-left-color: rgba(255, 211, 71, 0.55); }
-[data-theme="light"] .hist-row.hist-loss { background: rgba(200, 30, 30, 0.10);  border-left-color: rgba(220, 50, 50, 0.55); }
+[data-theme="light"] .hist-row.hist-win  { background: rgba(40, 140, 60, 0.12); border-left-color: #28a745; }
+[data-theme="light"] .hist-row.hist-push { background: rgba(180, 140, 0, 0.10); border-left-color: #a07800; }
+[data-theme="light"] .hist-row.hist-loss { background: rgba(180, 40, 40, 0.10); border-left-color: #c0392b; }
 
-[data-theme="light"] .hist-row-num { color: rgba(255, 211, 71, 0.75); }
-[data-theme="light"] .hist-row-time { color: rgba(255, 255, 255, 0.45); }
-[data-theme="light"] .hist-row-amounts { color: rgba(255, 255, 255, 0.7); }
-[data-theme="light"] .hist-row-header { color: rgba(255, 255, 255, 0.85); }
+[data-theme="light"] .hist-row-num { color: #7a5c00; }
+[data-theme="light"] .hist-row-time { color: rgba(40, 30, 0, 0.50); }
+[data-theme="light"] .hist-row-amounts { color: rgba(40, 30, 0, 0.80); }
+[data-theme="light"] .hist-row-header { color: rgba(40, 30, 0, 0.85); }
 
-[data-theme="light"] .hist-card { background: rgba(255, 255, 255, 0.9); color: #1a1a1a; }
-[data-theme="light"] .hist-card-red { color: #c00; }
+[data-theme="light"] .hist-card { background: #fff; color: #1a1100; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+[data-theme="light"] .hist-card-red { color: #c0392b; }
 
-[data-theme="light"] .hist-hand-label { color: rgba(255, 211, 71, 0.6); }
+[data-theme="light"] .hist-hand-label { color: rgba(80, 60, 0, 0.65); }
 
 [data-theme="light"] .hist-action-tag {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.65);
+    background: rgba(0, 0, 0, 0.07);
+    border-color: rgba(80, 60, 0, 0.15);
+    color: rgba(40, 30, 0, 0.70);
 }
 
-[data-theme="light"] .hist-tag-dd    { background: rgba(80, 160, 255, 0.2);  color: #7ec8ff; }
-[data-theme="light"] .hist-tag-split { background: rgba(180, 100, 255, 0.2); color: #d4a0ff; }
-[data-theme="light"] .hist-tag-ins   { background: rgba(255, 160, 50, 0.2);  color: #ffca7a; }
+[data-theme="light"] .hist-tag-dd    { background: rgba(40, 100, 200, 0.15); color: #1a5aaa; }
+[data-theme="light"] .hist-tag-split { background: rgba(160, 100, 0, 0.15);  color: #7a5c00; }
+[data-theme="light"] .hist-tag-ins   { background: rgba(40, 140, 60, 0.15);  color: #1a6e30; }
