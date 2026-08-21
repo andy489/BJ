@@ -92,6 +92,7 @@
                 <div class="split-hands-wrapper" th:if="*{splitActive} or not *{#lists.isEmpty(splitHands)}">
                     <div th:each="hand, hStat : *{splitHands}"
                          class="split-hand-box"
+                         th:attr="data-hand-index=${hStat.index}"
                          th:classappend="${hStat.index == game.activeSplitHandIndex} ? 'active-hand' : ''">
                         <div class="split-hand-label"
                              th:text="#{game.hand} + ' ' + ${hStat.size - hStat.index}">Hand 1</div>
@@ -294,7 +295,7 @@
 
         <!--  CONFIRM MODAL: STAND ON 11 OR LOWER (client-side only) -->
         <div id="stand-low-confirm-modal" class="choice-modal-wrapper row d-none">
-            <div class="modal-title col-12" th:text="#{dec.stand.low}">STAND ON 11 OR LOWER?</div>
+            <div class="modal-title col-12">STAND ON <span id="stand-low-score">?</span>?</div>
             <div class="col-6 choice-box">
                 <button type="button" id="btn-stand-low-yes" class="btn btn-decision btn-stand"></button>
                 <div class="btn-cmd" th:with="yes=#{dec.yes}" th:text="${#strings.toUpperCase(yes)}">YES</div>
@@ -613,13 +614,33 @@
             }, totalDuration);
         } else if (isCardDealing) {
             /* only the last card is new — suppress animation on all others.
-               In split mode the new card is the last card of the active hand box.
-               If the game just finalized (no active-hand class), fall back to the
-               box with the most cards (the one that received the last hit). */
-            var activeHandBox = document.querySelector('.split-hand-box.active-hand');
-            if (!activeHandBox && BJ_SPLIT_ACTIVE === false) {
-                var splitBoxes = Array.from(document.querySelectorAll('.split-hand-box'));
-                if (splitBoxes.length > 0) {
+               In split mode: find the box that received the card.
+               - If still active (no auto-advance), it has .active-hand.
+               - If hand auto-advanced (21/bust), .active-hand moved to next hand;
+                 the dealt box is the one with the most cards. */
+            var splitBoxes = Array.from(document.querySelectorAll('.split-hand-box'));
+            var activeHandBox = null;
+            if (splitBoxes.length > 0) {
+                var activeBox = document.querySelector('.split-hand-box.active-hand');
+                if (activeBox) {
+                    /* Check if active box has more cards than all others — if so, the
+                       hit stayed on this hand. Otherwise the hit went to a different box. */
+                    var activeCount = activeBox.querySelectorAll('.play-card:not(.double-down-card)').length;
+                    var maxOtherCount = 0;
+                    splitBoxes.forEach(function (b) {
+                        if (b !== activeBox) {
+                            var c = b.querySelectorAll('.play-card:not(.double-down-card)').length;
+                            if (c > maxOtherCount) maxOtherCount = c;
+                        }
+                    });
+                    activeHandBox = (activeCount >= maxOtherCount) ? activeBox
+                        : splitBoxes.reduce(function (best, box) {
+                            return box.querySelectorAll('.play-card:not(.double-down-card)').length >
+                                   best.querySelectorAll('.play-card:not(.double-down-card)').length
+                                   ? box : best;
+                          }, splitBoxes[0]);
+                } else {
+                    /* No active hand (finalized or non-split) — use the box with most cards */
                     activeHandBox = splitBoxes.reduce(function (best, box) {
                         return box.querySelectorAll('.play-card:not(.double-down-card)').length >
                                best.querySelectorAll('.play-card:not(.double-down-card)').length

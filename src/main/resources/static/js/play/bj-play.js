@@ -67,6 +67,7 @@ $(document).ready(function () {
     $('#btn-stand-trigger').click(function () {
         if ($(this).hasClass('disabled')) return
         if (typeof BJ_PLAYER_HARD !== 'undefined' && BJ_PLAYER_HARD <= 11 && !BJ_PLAYER_IS_SOFT) {
+            $('#stand-low-score').text(BJ_PLAYER_HARD)
             $('#stand-low-confirm-modal').removeClass('d-none')
             $('.modal-overlay').addClass('active')
         } else {
