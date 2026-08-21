@@ -54,6 +54,46 @@ Settings panel open (language + theme toggle):
 
 ---
 
+### Hand History Panel
+
+The collapsible **Last 10 Hands** panel shows every completed hand in reverse chronological order — cards dealt, action taken, bet staked, and payout received, colour-coded by outcome (green = win, red = loss, neutral = push).
+
+![Hand History Panel](assets/screenshots/2026-08/play-history-panel.png)
+
+---
+
+### RTP Simulator
+
+The admin **Blackjack RTP Simulator** runs up to 10 million hands in parallel (up to 4 threads) and reports Return-to-Player, house edge, win/loss/push/blackjack counts, and elapsed time. Two strategies are available.
+
+#### Dealer Mirror — ~94.8% RTP
+
+Copies the dealer rule exactly: hit ≤ 16, stand ≥ 17 (including soft 17). No doubles, splits, or surrender. The missing player edge from skipping these moves produces a ~5.5% house advantage.
+
+![Dealer Mirror Simulation](assets/screenshots/2026-08/sim-dealer-mirror.png)
+
+#### Basic Strategy — ~99.7% RTP
+
+Mathematically optimal multi-deck S17 decisions for every player hand vs every dealer upcard — correct soft-hand play, double-downs on 9/10/11, and all pair splits. Reduces the house edge to ~0.5%.
+
+![Basic Strategy Simulation](assets/screenshots/2026-08/sim-basic-strategy.png)
+
+#### Strategy Comparison Modal
+
+Click the ⓘ button next to **Player strategy** to open a side-by-side comparison of both strategies, including typical decision differences and expected RTP.
+
+![Strategy Comparison Modal](assets/screenshots/2026-08/sim-strategy-modal.png)
+
+---
+
+### Original Design (June 2025)
+
+The first version of the site had a different visual identity before the current casino-dark redesign.
+
+![Original Lobby Design](assets/screenshots/2025-06/01-lobby.png)
+
+---
+
 ## Features
 
 ### Game
@@ -64,7 +104,15 @@ Settings panel open (language + theme toggle):
 - Basic Strategy advisor with deviation confirmation prompt
 - Auto-play button to let the dealer resolve the hand
 - Persistent game state — unfinished games resume on next visit
-- Game history with bet records
+- Collapsible **Last 10 Hands** history panel with cards, actions, bets, and payouts
+
+### RTP Simulator (Admin)
+- Simulates up to 10 million hands with configurable bet size (£0.10 – £10,000)
+- Multi-threaded execution (1 – 4 threads) using a `FixedThreadPool`
+- Thread-safe RNG via `ThreadLocal<MersenneTwister>`
+- Strategies: **Dealer Mirror** (~94.5% RTP) and **Basic Strategy** (~99.5% RTP)
+- Reports: RTP, total wagered/returned, wins, losses, pushes, blackjacks, elapsed time
+- Loading skeleton animation while simulation runs; results fade in on completion
 
 ### User Management
 - Registration with email verification (activation link, 60 min expiry)
@@ -266,6 +314,7 @@ auth.forgot-password-token.expires-after-minutes=30
 | Protected | `/credit-card/**` | Deposit / cash-out |
 | Protected | `/auth/activation` | Account activation |
 | Protected | `/auth/reset_pass` | Password reset |
+| Admin | `/admin/simulation` | RTP Simulator |
 
 ---
 
