@@ -30,7 +30,7 @@ spring:
         enabled: true
 
 google.recaptcha:
-  enabled: true
+  enabled: ${RECAPTCHA_ENABLED:true}
   site: ${RECAPTCHA_SITE_KEY:6LftLZQpAAAAABngcJW_QJ-hZ3XCfb8GqAisD0s5}
   secret: ${RECAPTCHA_SITE_SECRET:6LftLZQpAAAAAOo1uLD7ocJ_TudnvG578TfkAGK3}
 
