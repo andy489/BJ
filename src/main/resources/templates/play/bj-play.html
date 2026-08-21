@@ -613,9 +613,20 @@
             }, totalDuration);
         } else if (isCardDealing) {
             /* only the last card is new — suppress animation on all others.
-               In split mode the new card is the last card of the active hand box,
-               not necessarily the last card in document order. */
+               In split mode the new card is the last card of the active hand box.
+               If the game just finalized (no active-hand class), fall back to the
+               box with the most cards (the one that received the last hit). */
             var activeHandBox = document.querySelector('.split-hand-box.active-hand');
+            if (!activeHandBox && BJ_SPLIT_ACTIVE === false) {
+                var splitBoxes = Array.from(document.querySelectorAll('.split-hand-box'));
+                if (splitBoxes.length > 0) {
+                    activeHandBox = splitBoxes.reduce(function (best, box) {
+                        return box.querySelectorAll('.play-card:not(.double-down-card)').length >
+                               best.querySelectorAll('.play-card:not(.double-down-card)').length
+                               ? box : best;
+                    }, splitBoxes[0]);
+                }
+            }
             var activeHandCards = activeHandBox
                 ? Array.from(activeHandBox.querySelectorAll('.play-card:not(.double-down-card)'))
                 : null;
