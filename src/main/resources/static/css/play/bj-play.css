@@ -867,125 +867,45 @@ body {
 }
 
 /* ── Light theme: play page ──────────────────────────── */
-/* Light theme (♥ hearts / red bg): bright frosted panels matching login/register card style */
 [data-theme="light"] {
-    --electric: #b8600a;
-    --electric-glow: rgba(184, 96, 10, 0.45);
-    --glass-bg: rgba(255, 248, 235, 0.72);
-    --glass-border: rgba(80, 60, 0, 0.28);
+    --electric: #ffd347;
+    --electric-glow: rgba(255, 211, 71, 0.6);
+    --glass-bg: rgba(0, 0, 0, 0.16);
+    --glass-border: rgba(255, 211, 71, 0.22);
 }
 
 [data-theme="light"] .decision-box-wrapper {
-    background: rgba(255, 248, 235, 0.72);
-    border-color: rgba(80, 60, 0, 0.22);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.16);
+    border-color: rgba(255, 211, 71, 0.12);
 }
 
 [data-theme="light"] .chip-box-wrapper {
-    background: rgba(255, 248, 235, 0.72);
-    border-color: rgba(80, 60, 0, 0.18);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-[data-theme="light"] .bet-actions-wrapper {
-    background: rgba(255, 243, 215, 0.75);
-    border-color: rgba(80, 60, 0, 0.22);
-}
-
-[data-theme="light"] .btn-cmd,
-[data-theme="light"] .bet-action span {
-    color: rgba(40, 30, 0, 0.65);
-}
-
-[data-theme="light"] .btn-decision:not(.disabled) {
-    outline-color: rgba(120, 90, 0, 0.35);
-    box-shadow:
-        0 3px 12px rgba(0, 0, 0, 0.18),
-        0 0 0 1px rgba(120, 90, 0, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-[data-theme="light"] .score-box {
-    background: rgba(255, 248, 235, 0.72);
-    border-color: rgba(80, 60, 0, 0.22);
-    color: #1a1100;
-}
-
-[data-theme="light"] .curr-result-user {
-    color: rgba(80, 60, 0, 0.75);
-}
-
-[data-theme="light"] .curr-result-box {
-    color: #1a1100;
-    border-color: rgba(80, 60, 0, 0.30);
-    text-shadow: none;
+    background: rgba(0, 0, 0, 0.16);
+    border-color: rgba(255, 211, 71, 0.12);
 }
 
 [data-theme="light"] .balance-box-wrapper {
-    background: rgba(255, 248, 235, 0.72);
-    border-color: rgba(80, 60, 0, 0.22);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-[data-theme="light"] .balance-box-value,
-[data-theme="light"] .last-bet-box-value,
-[data-theme="light"] .curr-bet-box-value {
-    background: rgba(255, 255, 255, 0.80);
-    border-color: rgba(80, 60, 0, 0.25);
-    color: #1a1100;
-}
-
-[data-theme="light"] .balance { color: #b8600a; font-weight: 700; }
-
-[data-theme="light"] .balance-box-title,
-[data-theme="light"] .last-bet-box-title,
-[data-theme="light"] .curr-bet-box-title {
-    color: #5a3500;
-    text-shadow: none;
-}
-
-[data-theme="light"] .bet-legend { color: rgba(40, 30, 0, 0.55); }
-
-[data-theme="light"] .game-info { color: rgba(80, 60, 0, 0.75); }
-
-[data-theme="light"] .game-metadata-wrapper {
-    background: rgba(255, 248, 235, 0.72);
-    border-color: rgba(80, 60, 0, 0.22);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-[data-theme="light"] .game-metadata {
-    background: rgba(255, 255, 255, 0.70);
-    border-color: rgba(80, 60, 0, 0.22);
-    color: #1a1100;
-}
-
-[data-theme="light"] .deli {
-    background: rgba(80, 60, 0, 0.20);
+    background: rgba(0, 0, 0, 0.16);
+    border-color: rgba(255, 211, 71, 0.12);
 }
 
 [data-theme="light"] .history-toggle-btn {
-    background: rgba(255, 248, 235, 0.72);
-    border-color: rgba(80, 60, 0, 0.22);
-    color: #7a5c00;
+    background: rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 211, 71, 0.25);
+    color: rgba(255, 211, 71, 0.85);
 }
 
 [data-theme="light"] .history-panel {
-    background: rgba(255, 248, 235, 0.74);
-    border-color: rgba(80, 60, 0, 0.18);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 211, 71, 0.18);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 
-[data-theme="light"] .hist-row { background: rgba(255, 255, 255, 0.40); }
+[data-theme="light"] .game-metadata-wrapper {
+    background: rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 211, 71, 0.15);
+}
 
 [data-theme="light"] .hist-row.hist-win  { background: rgba(40, 140, 60, 0.12); border-left-color: #28a745; }
 [data-theme="light"] .hist-row.hist-push { background: rgba(180, 140, 0, 0.10); border-left-color: #a07800; }
