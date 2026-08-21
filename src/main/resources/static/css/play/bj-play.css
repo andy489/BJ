@@ -869,29 +869,31 @@ body {
 /* ── Light theme: play page ──────────────────────────── */
 /* Light theme (♥ hearts / red bg): bright frosted panels matching login/register card style */
 [data-theme="light"] {
-    --electric: #7a5c00;
-    --electric-glow: rgba(120, 90, 0, 0.45);
-    --glass-bg: rgba(255, 255, 255, 0.55);
-    --glass-border: rgba(80, 60, 0, 0.22);
+    --electric: #b8600a;
+    --electric-glow: rgba(184, 96, 10, 0.45);
+    --glass-bg: rgba(255, 248, 235, 0.88);
+    --glass-border: rgba(80, 60, 0, 0.28);
 }
 
 [data-theme="light"] .decision-box-wrapper {
-    background: rgba(255, 255, 255, 0.50);
-    border-color: rgba(80, 60, 0, 0.18);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 248, 235, 0.88);
+    border-color: rgba(80, 60, 0, 0.22);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 [data-theme="light"] .chip-box-wrapper {
-    background: rgba(255, 255, 255, 0.50);
-    border-color: rgba(80, 60, 0, 0.15);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 248, 235, 0.88);
+    border-color: rgba(80, 60, 0, 0.18);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 [data-theme="light"] .bet-actions-wrapper {
-    background: rgba(255, 255, 255, 0.35);
-    border-color: rgba(80, 60, 0, 0.20);
+    background: rgba(255, 243, 215, 0.75);
+    border-color: rgba(80, 60, 0, 0.22);
 }
 
 [data-theme="light"] .btn-cmd,
@@ -908,8 +910,8 @@ body {
 }
 
 [data-theme="light"] .score-box {
-    background: rgba(255, 255, 255, 0.50);
-    border-color: rgba(80, 60, 0, 0.20);
+    background: rgba(255, 248, 235, 0.88);
+    border-color: rgba(80, 60, 0, 0.22);
     color: #1a1100;
 }
 
@@ -924,27 +926,28 @@ body {
 }
 
 [data-theme="light"] .balance-box-wrapper {
-    background: rgba(255, 255, 255, 0.50);
+    background: rgba(255, 248, 235, 0.88);
     border-color: rgba(80, 60, 0, 0.22);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 [data-theme="light"] .balance-box-value,
 [data-theme="light"] .last-bet-box-value,
 [data-theme="light"] .curr-bet-box-value {
-    background: rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.80);
     border-color: rgba(80, 60, 0, 0.25);
     color: #1a1100;
 }
 
-[data-theme="light"] .balance { color: var(--electric); font-weight: 700; }
+[data-theme="light"] .balance { color: #b8600a; font-weight: 700; }
 
 [data-theme="light"] .balance-box-title,
 [data-theme="light"] .last-bet-box-title,
 [data-theme="light"] .curr-bet-box-title {
-    color: var(--electric);
-    text-shadow: 0 0 6px var(--electric-glow);
+    color: #5a3500;
+    text-shadow: none;
 }
 
 [data-theme="light"] .bet-legend { color: rgba(40, 30, 0, 0.55); }
@@ -952,14 +955,15 @@ body {
 [data-theme="light"] .game-info { color: rgba(80, 60, 0, 0.75); }
 
 [data-theme="light"] .game-metadata-wrapper {
-    background: rgba(255, 255, 255, 0.50);
-    border-color: rgba(80, 60, 0, 0.18);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 248, 235, 0.88);
+    border-color: rgba(80, 60, 0, 0.22);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 [data-theme="light"] .game-metadata {
-    background: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.70);
     border-color: rgba(80, 60, 0, 0.22);
     color: #1a1100;
 }
@@ -969,19 +973,19 @@ body {
 }
 
 [data-theme="light"] .history-toggle-btn {
-    background: rgba(255, 255, 255, 0.50);
+    background: rgba(255, 248, 235, 0.88);
     border-color: rgba(80, 60, 0, 0.22);
     color: #7a5c00;
 }
 
 [data-theme="light"] .history-panel {
-    background: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 248, 235, 0.90);
     border-color: rgba(80, 60, 0, 0.18);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
-[data-theme="light"] .hist-row { background: rgba(255, 255, 255, 0.30); }
+[data-theme="light"] .hist-row { background: rgba(255, 255, 255, 0.40); }
 
 [data-theme="light"] .hist-row.hist-win  { background: rgba(40, 140, 60, 0.12); border-left-color: #28a745; }
 [data-theme="light"] .hist-row.hist-push { background: rgba(180, 140, 0, 0.10); border-left-color: #a07800; }
