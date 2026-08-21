@@ -64,6 +64,7 @@ public class SecurityConfig {
                                     "/credit-card/**",
                                     "/play/**"
                             ).authenticated()
+                            .requestMatchers("/admin/**").hasAuthority("ADMIN")
                             .requestMatchers(HttpMethod.POST, "/auth/logout").authenticated()
                             .requestMatchers(HttpMethod.POST, "/auth/**")
                             .anonymous()

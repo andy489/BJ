@@ -18,7 +18,7 @@
     <!-- Theme: apply before paint to avoid flash -->
     <script>
         (function () {
-            var t = localStorage.getItem('bj-theme') || 'dark';
+            var t = localStorage.getItem('bj-theme') || 'light';
             document.documentElement.setAttribute('data-theme', t);
         })();
     </script>
@@ -60,7 +60,7 @@
                 });
             }
 
-            // Settings dropdown
+            // Settings dropdown (authenticated)
             var settingsBtn  = document.getElementById('navSettingsBtn');
             var settingsMenu = document.getElementById('navSettingsMenu');
             if (settingsBtn) {
@@ -70,30 +70,47 @@
                 });
             }
 
+            // Settings dropdown (anonymous)
+            var settingsBtnAnon  = document.getElementById('navSettingsBtnAnon');
+            var settingsMenuAnon = document.getElementById('navSettingsMenuAnon');
+            if (settingsBtnAnon) {
+                settingsBtnAnon.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    settingsMenuAnon.classList.toggle('open');
+                });
+            }
+
             // Theme toggle
             function applyTheme(t) {
                 document.documentElement.setAttribute('data-theme', t);
                 localStorage.setItem('bj-theme', t);
-                var light = document.getElementById('navThemeLight');
-                var dark  = document.getElementById('navThemeDark');
-                if (light) light.classList.toggle('nav-theme-active', t === 'light');
-                if (dark)  dark.classList.toggle('nav-theme-active',  t === 'dark');
-            }
-            applyTheme(localStorage.getItem('bj-theme') || 'dark');
-
-            var themeToggle = document.getElementById('navThemeToggle');
-            if (themeToggle) {
-                themeToggle.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    var cur = document.documentElement.getAttribute('data-theme');
-                    applyTheme(cur === 'dark' ? 'light' : 'dark');
+                ['navThemeLight', 'navThemeLightAnon'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) el.classList.toggle('nav-theme-active', t === 'light');
+                });
+                ['navThemeDark', 'navThemeDarkAnon'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) el.classList.toggle('nav-theme-active', t === 'dark');
                 });
             }
+            applyTheme(localStorage.getItem('bj-theme') || 'light');
+
+            ['navThemeToggle', 'navThemeToggleAnon'].forEach(function(id) {
+                var toggle = document.getElementById(id);
+                if (toggle) {
+                    toggle.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        var cur = document.documentElement.getAttribute('data-theme');
+                        applyTheme(cur === 'dark' ? 'light' : 'dark');
+                    });
+                }
+            });
 
             // Close all dropdowns on outside click
             document.addEventListener('click', function () {
                 if (dd) dd.classList.remove('open');
                 if (settingsMenu) settingsMenu.classList.remove('open');
+                if (settingsMenuAnon) settingsMenuAnon.classList.remove('open');
                 if (hamburger) {
                     hamburger.classList.remove('open');
                     hamburger.setAttribute('aria-expanded', 'false');
@@ -107,6 +124,11 @@
 <body>
 
 <header th:fragment="navbar" class="container-header p-0 mb-5">
+
+    <!-- Brand logo -->
+    <a class="nav-brand" th:href="@{/}">
+        <span class="nav-brand__word">push</span><span class="nav-brand__num">365</span>
+    </a>
 
     <!-- Hamburger toggle — visible only on mobile -->
     <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
@@ -204,6 +226,17 @@
                 </a>
             </div>
         </div>
+
+        <!-- Simulation — ADMIN only -->
+        <a sec:authorize="hasAuthority('ADMIN')" class="nav-link active mb-0" th:href="@{/admin/simulation}">
+            <span class="nav-icon align-middle">
+                <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3v18h18"/>
+                    <path d="M7 16l4 -7l4 4l3 -6"/>
+                </svg>
+            </span>
+            <span class="nav-func align-middle">Simulation</span>
+        </a>
     </div>
 
     <div class="container-header-right d-flex align-items-center" id="navRight">
@@ -235,9 +268,9 @@
                 <div class="nav-settings-divider"></div>
                 <!-- Light / Dark mode -->
                 <div class="nav-settings-row">
-                    <span class="nav-settings-label">♠♣</span>
+                    <span class="nav-settings-label">♠♥</span>
                     <button class="nav-theme-toggle" id="navThemeToggle" type="button">
-                        <span class="nav-theme-opt" id="navThemeLight">♣</span>
+                        <span class="nav-theme-opt" id="navThemeLight">♥</span>
                         <span class="nav-theme-opt" id="navThemeDark">♠</span>
                     </button>
                 </div>
@@ -252,8 +285,36 @@
             </div>
         </div>
 
-        <!-- Not authenticated: login / register links -->
-        <div sec:authorize="!isAuthenticated()">
+        <!-- Not authenticated: settings (lang + theme) + login / register links -->
+        <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center gap-2">
+            <div class="nav-settings-dropdown" id="navSettingsDropdownAnon">
+                <button class="nav-settings-btn" id="navSettingsBtnAnon" aria-label="Settings">
+                    <i class="fas fa-gear nav-settings-gear"></i>
+                </button>
+                <div class="nav-settings-menu" id="navSettingsMenuAnon">
+                    <!-- Language -->
+                    <div class="nav-settings-row">
+                        <span class="nav-settings-label"><i class="fas fa-globe"></i></span>
+                        <div class="lang-switcher-inline">
+                            <button th:each="l : ${T(com.casino.blackjack.model.enumerated.LocaleEnum).values()}"
+                                    th:text="${l.getDisplayName()}"
+                                    th:classappend="${l.getBaseLocaleId().startsWith(#locale.language)} ? 'lang-opt-inline lang-opt-active' : 'lang-opt-inline'"
+                                    th:attrappend="localeBaseId=${l.getBaseLocaleId()}"
+                                    th:onclick="|goto('lang', this.getAttribute('localeBaseId'))|">
+                            </button>
+                        </div>
+                    </div>
+                    <div class="nav-settings-divider"></div>
+                    <!-- Light / Dark mode -->
+                    <div class="nav-settings-row">
+                        <span class="nav-settings-label">♠♥</span>
+                        <button class="nav-theme-toggle" id="navThemeToggleAnon" type="button">
+                            <span class="nav-theme-opt" id="navThemeLightAnon">♥</span>
+                            <span class="nav-theme-opt" id="navThemeDarkAnon">♠</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
             <a class="nav-link active align-middle"
                th:href="@{/auth/login}"
                th:text="#{nav.login}">Login</a>
@@ -289,7 +350,10 @@
 
     <div class="footer-copy">
         © <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2024</span>
-        &nbsp;<span th:text="#{footer.bj.proj}">Blackjack — Spring Boot Project</span>
+        &nbsp;<span th:text="#{footer.bj.proj}">Push365 Casino — Spring Boot Project</span>
+        &nbsp;·&nbsp;
+        <span th:text="#{footer.developed.by}">Developed by</span>
+        <a class="footer-dev-link" target="_blank" th:href="@{https://github.com/andy489}">andy489</a>
     </div>
 
     <link rel="stylesheet" th:href="@{/css/fragment/footer.css}"/>

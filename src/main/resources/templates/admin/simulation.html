@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Simulation — Admin</title>
+    <th:block th:insert="~{fragment/common::head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/admin/simulation.css}"/>
+</head>
+<body class="body-simulation">
+
+<header th:replace="~{fragment/common::navbar}"></header>
+
+<main class="sim-main">
+    <div class="sim-container">
+
+        <h1 class="sim-title">Blackjack RTP Simulator</h1>
+
+        <div class="sim-strategy-box">
+            <div class="sim-strategy-label">Player strategy</div>
+            <div class="sim-strategy-text">
+                Mirror dealer rule — hit on soft/hard ≤&nbsp;16, stand on hard ≥&nbsp;17.
+                No splits, double-down, insurance, or surrender.
+            </div>
+        </div>
+
+        <form class="sim-form" th:action="@{/admin/simulation}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="sim-form-row">
+                <label class="sim-label" for="spins">Number of hands (1 – 10,000,000)</label>
+                <input class="sim-input" type="number" id="spins" name="spins"
+                       min="1" max="10000000" value="100000" required/>
+            </div>
+
+            <div th:if="${error}" class="sim-error" th:text="${error}"></div>
+
+            <button class="sim-btn" type="submit">Run Simulation</button>
+        </form>
+
+        <div th:if="${result}" class="sim-results">
+
+            <h2 class="sim-results-title">Results</h2>
+
+            <div class="sim-stat-grid">
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Hands Played</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.hands(), 0, 'COMMA')}">0</div>
+                </div>
+                <div class="sim-stat sim-stat--rtp">
+                    <div class="sim-stat-label">RTP</div>
+                    <div class="sim-stat-value"
+                         th:text="${#numbers.formatDecimal(result.rtp(), 1, 4)} + '%'">0.0000%</div>
+                </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Total Wagered</div>
+                    <div class="sim-stat-value"
+                         th:text="'£' + ${#numbers.formatDecimal(result.totalWagered(), 1, 2)}">£0.00</div>
+                </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Total Returned</div>
+                    <div class="sim-stat-value"
+                         th:text="'£' + ${#numbers.formatDecimal(result.totalReturned(), 1, 2)}">£0.00</div>
+                </div>
+                <div class="sim-stat sim-stat--win">
+                    <div class="sim-stat-label">Wins</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.wins(), 0, 'COMMA')}">0</div>
+                </div>
+                <div class="sim-stat sim-stat--loss">
+                    <div class="sim-stat-label">Losses</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.losses(), 0, 'COMMA')}">0</div>
+                </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Pushes</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.pushes(), 0, 'COMMA')}">0</div>
+                </div>
+                <div class="sim-stat sim-stat--bj">
+                    <div class="sim-stat-label">Blackjacks</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.blackjacks(), 0, 'COMMA')}">0</div>
+                </div>
+            </div>
+
+            <div class="sim-strategy-box sim-strategy-box--result">
+                <span class="sim-strategy-label">Strategy used: </span>
+                <span class="sim-strategy-text" th:text="${result.strategy()}"></span>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragment/common::footer}"></footer>
+
+</body>
+</html>

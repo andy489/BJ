@@ -1,0 +1,229 @@
+:root {
+    --gold: #ffd347;
+    --gold-glow: rgba(255, 211, 71, 0.3);
+    --glass-bg: rgba(0, 0, 0, 0.45);
+    --glass-border: rgba(255, 211, 71, 0.25);
+    --card-radius: 18px;
+}
+
+.body-simulation {
+    background-image: url('../images/background/02-bj-table.png');
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.sim-main {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 3rem;
+}
+
+.sim-container {
+    width: 100%;
+    max-width: 760px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+    padding: 2rem 2.5rem;
+    color: whitesmoke;
+}
+
+.sim-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--gold);
+    text-shadow: 0 0 16px var(--gold-glow);
+    margin-bottom: 1.25rem;
+    text-align: center;
+}
+
+/* ── Strategy description ── */
+.sim-strategy-box {
+    background: rgba(255, 211, 71, 0.06);
+    border: 1px solid rgba(255, 211, 71, 0.18);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.88rem;
+}
+
+.sim-strategy-label {
+    color: rgba(255, 211, 71, 0.7);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.sim-strategy-text {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+}
+
+/* ── Form ── */
+.sim-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.sim-form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.sim-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 600;
+}
+
+.sim-input {
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255, 211, 71, 0.3);
+    background: rgba(255, 255, 255, 0.07);
+    color: whitesmoke;
+    font-size: 1.1rem;
+    font-weight: 700;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+    max-width: 320px;
+}
+
+.sim-input:focus {
+    border-color: rgba(255, 211, 71, 0.7);
+}
+
+.sim-btn {
+    align-self: flex-start;
+    padding: 0.65rem 2rem;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255, 211, 71, 0.5);
+    background: rgba(255, 211, 71, 0.15);
+    color: var(--gold);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s, border-color .2s, color .2s;
+    letter-spacing: 0.04em;
+}
+
+.sim-btn:hover {
+    background: rgba(255, 211, 71, 0.28);
+    border-color: var(--gold);
+    color: #fff8d0;
+}
+
+.sim-error {
+    color: #ff7b7b;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* ── Results ── */
+.sim-results-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+
+.sim-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.sim-stat {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.sim-stat--rtp {
+    background: rgba(255, 211, 71, 0.1);
+    border-color: rgba(255, 211, 71, 0.3);
+}
+
+.sim-stat--win {
+    background: rgba(0, 180, 80, 0.1);
+    border-color: rgba(0, 200, 80, 0.3);
+}
+
+.sim-stat--loss {
+    background: rgba(200, 30, 30, 0.1);
+    border-color: rgba(220, 50, 50, 0.3);
+}
+
+.sim-stat--bj {
+    background: rgba(100, 160, 255, 0.1);
+    border-color: rgba(100, 160, 255, 0.3);
+}
+
+.sim-stat-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.sim-stat-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: whitesmoke;
+    font-variant-numeric: tabular-nums;
+}
+
+.sim-stat--rtp .sim-stat-value { color: var(--gold); font-size: 1.5rem; }
+.sim-stat--win .sim-stat-value  { color: #6eff9e; }
+.sim-stat--loss .sim-stat-value { color: #ff7b7b; }
+.sim-stat--bj .sim-stat-value   { color: #8ec8ff; }
+
+.sim-strategy-box--result {
+    margin-bottom: 0;
+    margin-top: 0.5rem;
+}
+
+/* ── Light theme ── */
+[data-theme="light"] .body-simulation {
+    background-image: url('../images/background/04-bj-table.png');
+}
+
+[data-theme="light"] .sim-container {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(80, 60, 0, 0.22);
+    color: #1a1100;
+}
+
+[data-theme="light"] .sim-title { color: #a07800; }
+[data-theme="light"] .sim-label { color: rgba(20, 15, 0, 0.75); }
+[data-theme="light"] .sim-input {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(120,90,0,0.35);
+    color: #1a1100;
+}
+[data-theme="light"] .sim-stat-label { color: rgba(20,15,0,0.5); }
+[data-theme="light"] .sim-stat-value { color: #1a1100; }
+[data-theme="light"] .sim-stat--rtp .sim-stat-value { color: #8b6914; }
+[data-theme="light"] .sim-strategy-text { color: rgba(20,15,0,0.75); }
