@@ -32,6 +32,9 @@ public class HitProcessor implements GameStateProcessor {
         if (game.getSplitActive()) {
             if (playerCount.getLeft() > BJ_CNT) {
                 SplitHandHelper.advanceOrFinalize(ctx, ZERO_MULTI, game.getDoubleDown(), ctx.maxSplits());
+            } else if (playerCount.getRight().equals(BJ_CNT)) {
+                // 21 — auto-advance; split 21 pays 1:1 (resolved later in computeMultiplier)
+                SplitHandHelper.advanceOrFinalize(ctx, 0.0, game.getDoubleDown(), ctx.maxSplits());
             } else {
                 boolean canAffordSplit = ctx.walletEntity().getBalance()
                         .compareTo(ctx.walletEntity().getHandBet()) >= 0;
