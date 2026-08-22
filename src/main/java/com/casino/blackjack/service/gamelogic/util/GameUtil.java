@@ -43,7 +43,7 @@ public class GameUtil {
     public static final Integer CHOICE_PLACE_21_3 = 23;
     public static final Integer CHOICE_PLACE_DEALER_PP = 24;
 
-    public static final BigDecimal SIDE_BET_MIN = new BigDecimal("1.00");
+    public static final BigDecimal SIDE_BET_MIN = new BigDecimal("5.00");
     public static final BigDecimal SIDE_BET_MAX = new BigDecimal("25.00");
 
     public static final Integer CLUBS_SUIT = 0;

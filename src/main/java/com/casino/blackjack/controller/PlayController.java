@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.math.BigDecimal;
+
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.SIDE_BET_MIN;
+
 
 @Controller
 @RequestMapping("/play")
@@ -52,13 +56,13 @@ public class PlayController extends BaseController {
                              @RequestParam(required = false) String ppBetStr,
                              @RequestParam(required = false) String t3BetStr,
                              @RequestParam(required = false) String dppBetStr) {
-        if (ppBetStr != null && !ppBetStr.isBlank() && !ppBetStr.equals("0")) {
+        if (ppBetStr != null && !ppBetStr.isBlank() && !ppBetStr.equals("0") && isValidSideBet(ppBetStr)) {
             gameService.placePerfectPairsBet(ppBetStr);
         }
-        if (t3BetStr != null && !t3BetStr.isBlank() && !t3BetStr.equals("0")) {
+        if (t3BetStr != null && !t3BetStr.isBlank() && !t3BetStr.equals("0") && isValidSideBet(t3BetStr)) {
             gameService.place21_3Bet(t3BetStr);
         }
-        if (dppBetStr != null && !dppBetStr.isBlank() && !dppBetStr.equals("0")) {
+        if (dppBetStr != null && !dppBetStr.isBlank() && !dppBetStr.equals("0") && isValidSideBet(dppBetStr)) {
             gameService.placeDealerPerfectPairsBet(dppBetStr);
         }
         gameService.deal(betStr);
@@ -170,5 +174,13 @@ public class PlayController extends BaseController {
     public ModelAndView placeDealerPerfectPairsBet(@RequestParam(required = false) String betStr) {
         gameService.placeDealerPerfectPairsBet(betStr);
         return super.redirect("/play");
+    }
+
+    private boolean isValidSideBet(String betStr) {
+        try {
+            return new BigDecimal(betStr).compareTo(SIDE_BET_MIN) >= 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

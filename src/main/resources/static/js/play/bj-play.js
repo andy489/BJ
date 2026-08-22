@@ -1,5 +1,6 @@
 const MIN_BET = 10.0
 const MAX_BET = 1000.0
+const SIDE_BET_MIN = 5.0
 const SIDE_BET_MAX = 25.0
 
 const CHIP_S = 2.5
