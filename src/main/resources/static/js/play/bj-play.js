@@ -68,6 +68,16 @@ $(document).ready(function () {
         $('.modal-overlay').removeClass('active')
     })
 
+    /* Low bet — show modal when deal is clicked with bet > 0 but < MIN_BET */
+    $('.btn-deal').click(function () {
+        if (!$(this).hasClass('disabled')) return
+        var betVal = parseFloat($('.curr-bet-value').val()) || 0.0
+        if (betVal > 0 && betVal < MIN_BET) {
+            $('#low-bet-modal').removeClass('d-none')
+            $('.modal-overlay').addClass('active')
+        }
+    })
+
     /* Split — show weak-pair warning when pair nominal < dealer nominal */
     $('#btn-split-trigger').click(function () {
         if ($(this).hasClass('disabled')) return

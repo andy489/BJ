@@ -334,6 +334,19 @@
         </div>
         <!--  EO: MODAL: NO FUNDS -->
 
+        <!--  MODAL: LOW BET — client-side only, shown when deal is attempted with bet < MIN_BET -->
+        <div id="low-bet-modal" class="err-modal-wrapper row d-none">
+            <div class="modal-title col-12" th:text="#{err.bet.low.title}">BET TOO LOW!</div>
+            <div class="modal-subtitle col-12"
+                 th:text="${#messages.msg('err.bet.low.msg', '£' + #numbers.formatDecimal(10, 1, 'COMMA', 2, 'POINT'))}">Minimum bet is £10.00. Add chips to reach the minimum before dealing.</div>
+            <div class="choice-box">
+                <button type="button" id="btn-low-bet-ok" class="btn btn-err btn-err-ok btn-err-smaller">
+                    <i class="fa-solid fa-check fa-xl"></i>
+                </button>
+            </div>
+        </div>
+        <!--  EO: MODAL: LOW BET -->
+
         <!--  CONFIRM MODAL: HIT ON {score}? (client-side only) -->
         <div id="hit-hard17-confirm-modal" class="choice-modal-wrapper row d-none">
             <div class="modal-title col-12">
