@@ -1020,8 +1020,8 @@ body {
 
 /* Dealer Perfect Pairs circle — distinct colour (blue-teal) */
 .bet-circle--dpp {
-    width: 3.5em;
-    height: 3.5em;
+    width: 4em;
+    height: 4em;
     background: rgba(0, 20, 40, 0.55);
     border: 2px solid rgba(64, 180, 255, 0.45);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -1192,7 +1192,7 @@ body {
     .bet-circles-row--player { gap: 0.7em; }
     .bet-circle--main { width: 4.4em; height: 4.4em; }
     .bet-circle--side { width: 3.4em; height: 3.4em; }
-    .bet-circle--dpp  { width: 3em;   height: 3em; }
+    .bet-circle--dpp  { width: 3.4em; height: 3.4em; }
 }
 
 @media (max-width: 430px) {
@@ -1202,7 +1202,7 @@ body {
     .bet-circles-row--player { gap: 0.5em; }
     .bet-circle--main { width: 4em; height: 4em; }
     .bet-circle--side { width: 3em; height: 3em; }
-    .bet-circle--dpp  { width: 2.7em; height: 2.7em; }
+    .bet-circle--dpp  { width: 3em; height: 3em; }
 }
 
 /* ── Light theme: play page ──────────────────────────── */
