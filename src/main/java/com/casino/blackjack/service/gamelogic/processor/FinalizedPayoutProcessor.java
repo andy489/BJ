@@ -3,8 +3,12 @@ package com.casino.blackjack.service.gamelogic.processor;
 import com.casino.blackjack.model.entity.BetHistoryEntity;
 import com.casino.blackjack.model.entity.GameEntity;
 import com.casino.blackjack.model.entity.PlayedGameEntity;
+import com.casino.blackjack.service.gamelogic.SideBetEvaluator;
+import com.casino.blackjack.service.gamelogic.dto.Card;
 import com.casino.blackjack.service.gamelogic.dto.Game;
 import com.casino.blackjack.service.gamelogic.dto.Wallet;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,6 +22,9 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
  *
  * For split hands, each split hand (including the main hand stored at splitHands[0])
  * pays out handBet * its multiplier. The total is accumulated into lastWin.
+ *
+ * Side bets (Perfect Pairs, 21+3) are settled here regardless of the main hand outcome.
+ * They are evaluated on the initial two player cards and dealer up-card stored at deal time.
  */
 public class FinalizedPayoutProcessor implements GameStateProcessor {
 
@@ -39,7 +46,6 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         BigDecimal totalBetAmount;
 
         if (game.getSplitActive() == null || !game.getSplitActive()) {
-            // Normal (non-split) or split already resolved
             if (game.getSplitHands() != null && !game.getSplitHands().isEmpty()) {
                 totalBetAmount = paySplitHands(ctx, game);
             } else {
@@ -50,6 +56,9 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
             totalBetAmount = ctx.walletEntity().payBet(
                     game.getHandMultiplier(), game.getInsuranceMultiplier());
         }
+
+        // Settle side bets (independent of main hand outcome)
+        settleSideBets(ctx, gameEntity);
 
         ctx.walletRepo().save(ctx.walletEntity());
 
@@ -71,6 +80,51 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 ctx.betHistoryService(), ctx.basicStrategy(), ctx.clock(), ctx.om(), ctx.maxSplits());
     }
 
+    private void settleSideBets(GameContext ctx, GameEntity gameEntity) {
+        BigDecimal ppBet = ctx.walletEntity().getPerfectPairsBet();
+        BigDecimal t3Bet = ctx.walletEntity().getTwentyOneThreeBet();
+
+        boolean hasPP = ppBet != null && ppBet.compareTo(BigDecimal.ZERO) > 0;
+        boolean hasT3 = t3Bet != null && t3Bet.compareTo(BigDecimal.ZERO) > 0;
+
+        if (!hasPP && !hasT3) return;
+
+        String initialPlayerCardsJson = gameEntity.getInitialPlayerCards();
+        String initialDealerUpCardJson = gameEntity.getInitialDealerUpCard();
+
+        if (initialPlayerCardsJson == null || initialDealerUpCardJson == null) {
+            // No initial cards stored — forfeit side bets silently
+            ctx.walletEntity().setPerfectPairsBet(BigDecimal.ZERO);
+            ctx.walletEntity().setTwentyOneThreeBet(BigDecimal.ZERO);
+            return;
+        }
+
+        try {
+            List<Card> initialPlayerCards = ctx.om().readValue(initialPlayerCardsJson, new TypeReference<>() {});
+            Card dealerUpCard = ctx.om().readValue(initialDealerUpCardJson, Card.class);
+
+            if (initialPlayerCards.size() < 2) return;
+            Card p0 = initialPlayerCards.get(0);
+            Card p1 = initialPlayerCards.get(1);
+
+            if (hasPP) {
+                double multi = SideBetEvaluator.evalPerfectPairs(p0, p1);
+                BigDecimal ppReturn = ppBet.multiply(BigDecimal.valueOf(multi));
+                ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(ppReturn));
+                ctx.walletEntity().setPerfectPairsBet(BigDecimal.ZERO);
+            }
+
+            if (hasT3) {
+                double multi = SideBetEvaluator.eval21_3(p0, p1, dealerUpCard);
+                BigDecimal t3Return = t3Bet.multiply(BigDecimal.valueOf(multi));
+                ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(t3Return));
+                ctx.walletEntity().setTwentyOneThreeBet(BigDecimal.ZERO);
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Pay out all split hands. splitHands[0] = main hand, splitHands[1+] = split hands.
      * Each hand pays handBet * multiplier. Returns total amount wagered.
@@ -89,12 +143,10 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
             totalWin = totalWin.add(betForHand.multiply(BigDecimal.valueOf(multipliers.get(i))));
         }
 
-        // Also add insurance if applicable
         BigDecimal insuranceBet = ctx.walletEntity().getInsuranceBet();
         BigDecimal insuranceWin = insuranceBet
                 .multiply(BigDecimal.valueOf(game.getInsuranceMultiplier()));
         totalWin = totalWin.add(insuranceWin);
-        BigDecimal totalCost = totalBet.add(insuranceBet);
 
         ctx.walletEntity().setLastBet(ctx.walletEntity().getCurrentBet());
         ctx.walletEntity().setLastWin(totalWin.max(BigDecimal.ZERO));
@@ -104,6 +156,8 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         ctx.walletEntity().setDoubleBet(BigDecimal.ZERO);
         ctx.walletEntity().setInsuranceBet(BigDecimal.ZERO);
         ctx.walletEntity().setSplitBet(BigDecimal.ZERO);
+        ctx.walletEntity().setPerfectPairsBet(BigDecimal.ZERO);
+        ctx.walletEntity().setTwentyOneThreeBet(BigDecimal.ZERO);
 
         return totalBet.add(insuranceBet);
     }

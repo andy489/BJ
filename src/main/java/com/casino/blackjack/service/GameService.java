@@ -48,6 +48,8 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_INVA
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_LOW_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.MAX_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.MIN_BET;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_PLACE_PERFECT_PAIRS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_PLACE_21_3;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_CURR_GAME_ERR;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_WALLET_FOUND;
 
@@ -159,6 +161,15 @@ public class GameService {
                 ? GameEntity.of(game, om, userService.getCurrentLoggedUser())
                 : GameEntity.map(currGameEntity.get(), game, om);
 
+        // Persist the initial deal cards for side bet evaluation (survives splits)
+        try {
+            gameEntity.setInitialPlayerCards(om.writeValueAsString(game.getPlayerCards()));
+            // dealer up-card is dealerCards[0] (before hide)
+            gameEntity.setInitialDealerUpCard(om.writeValueAsString(game.getDealerCards().get(0)));
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         GameContext ctx = buildContext(game, gameEntity, walletEntity);
         processorChain.process(ctx);
 
@@ -175,6 +186,14 @@ public class GameService {
 
     public void split() {
         choiceNoOption(CHOICE_SPLIT);
+    }
+
+    public void placePerfectPairsBet() {
+        sideBetChoice(CHOICE_PLACE_PERFECT_PAIRS);
+    }
+
+    public void place21_3Bet() {
+        sideBetChoice(CHOICE_PLACE_21_3);
     }
 
     public void surrender() {
@@ -315,6 +334,28 @@ public class GameService {
         }
 
         throw new IllegalStateException(NO_CURR_GAME_ERR);
+    }
+
+    /**
+     * Side bet placement — fires before the deal; no availableChoices guard needed
+     * since the processor itself validates the pre-deal state.
+     */
+    private void sideBetChoice(Integer choice) {
+        Optional<GameEntity> currGameEntity = extractLastGame();
+
+        WalletEntity walletEntity = extractWallet()
+                .orElseThrow(() -> new IllegalStateException(NO_WALLET_FOUND));
+
+        Game game = new Game()
+                .makeChoice(choice)
+                .setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
+
+        GameEntity gameEntity = currGameEntity.isEmpty()
+                ? GameEntity.of(game, om, userService.getCurrentLoggedUser())
+                : GameEntity.map(currGameEntity.get(), game, om);
+
+        GameContext ctx = buildContext(game, gameEntity, walletEntity);
+        processorChain.process(ctx);
     }
 
     private void choiceOption(Boolean yes, Integer yesChoice, Integer noChoice) {

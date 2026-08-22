@@ -456,6 +456,41 @@
         </div>
         <!--  EO:BET CHIP  -->
 
+        <!--  SIDE BETS  -->
+        <div class="side-bets-wrapper"
+             th:classappend="${#lists.contains(game.availableChoices,
+             game.availableChoicesCodeMap.get('CHOICE_CHIP_OPERATIONS')) ? '' : 'd-none'}">
+            <div class="side-bets-inner">
+                <!-- Perfect Pairs -->
+                <div class="side-bet-slot"
+                     th:classappend="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0} ? 'side-bet-active' : ''">
+                    <form th:action="@{/play/side-bet/pp}" th:method="post">
+                        <button type="submit" class="btn side-bet-btn" aria-label="Perfect Pairs">
+                            <span class="side-bet-label" th:text="#{play.side.bet.pp}">Perfect Pairs</span>
+                            <span class="side-bet-badge"
+                                  th:if="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0}"
+                                  th:text="'£' + ${#numbers.formatDecimal(game.wallet.perfectPairsBet, 1, 'COMMA', 2, 'POINT')}">£1.00</span>
+                        </button>
+                    </form>
+                    <div class="side-bet-paytable" th:text="#{play.side.bet.pp.paytable}">Mixed 7:1 · Coloured 12:1 · Perfect 25:1</div>
+                </div>
+                <!-- 21+3 -->
+                <div class="side-bet-slot"
+                     th:classappend="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0} ? 'side-bet-active' : ''">
+                    <form th:action="@{/play/side-bet/21-3}" th:method="post">
+                        <button type="submit" class="btn side-bet-btn" aria-label="21+3">
+                            <span class="side-bet-label" th:text="#{play.side.bet.21.3}">21+3</span>
+                            <span class="side-bet-badge"
+                                  th:if="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0}"
+                                  th:text="'£' + ${#numbers.formatDecimal(game.wallet.twentyOneThreeBet, 1, 'COMMA', 2, 'POINT')}">£1.00</span>
+                        </button>
+                    </form>
+                    <div class="side-bet-paytable" th:text="#{play.side.bet.21.3.paytable}">Flush 5:1 · Straight 10:1 · 3-of-a-kind 30:1</div>
+                </div>
+            </div>
+        </div>
+        <!--  EO: SIDE BETS  -->
+
         <!--  BALANCE  -->
         <div class="balance-box-wrapper">
             <div class="cash-stat">

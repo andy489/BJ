@@ -76,6 +76,10 @@ public class GameEntity extends BaseEntity implements Serializable {
 
     private Boolean splitAces;
 
+    private String initialPlayerCards;
+
+    private String initialDealerUpCard;
+
     @OneToOne
     private UserEntity owner;
 
@@ -132,6 +136,7 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setActiveSplitHandIndex(game.getActiveSplitHandIndex())
                 .setSplitCount(game.getSplitCount())
                 .setSplitAces(game.getSplitAces());
+        // initialPlayerCards and initialDealerUpCard are set once at deal time — never overwritten by map()
     }
 
     private static String[] extractSplitProperties(Game game, ObjectMapper om) {

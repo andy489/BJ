@@ -141,4 +141,16 @@ public class PlayController extends BaseController {
 
         return super.redirect("/play");
     }
+
+    @PostMapping("/side-bet/pp")
+    public ModelAndView placePerfectPairsBet() {
+        gameService.placePerfectPairsBet();
+        return super.redirect("/play");
+    }
+
+    @PostMapping("/side-bet/21-3")
+    public ModelAndView place21_3Bet() {
+        gameService.place21_3Bet();
+        return super.redirect("/play");
+    }
 }

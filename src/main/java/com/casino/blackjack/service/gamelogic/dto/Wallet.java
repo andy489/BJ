@@ -30,6 +30,10 @@ public class Wallet {
 
     private BigDecimal splitBet;
 
+    private BigDecimal perfectPairsBet;
+
+    private BigDecimal twentyOneThreeBet;
+
     public Wallet() {
         balance = BigDecimal.ZERO;
         lastWin = BigDecimal.ZERO;
@@ -39,6 +43,8 @@ public class Wallet {
         doubleBet = BigDecimal.ZERO;
         insuranceBet = BigDecimal.ZERO;
         splitBet = BigDecimal.ZERO;
+        perfectPairsBet = BigDecimal.ZERO;
+        twentyOneThreeBet = BigDecimal.ZERO;
     }
 
     public static Wallet of(WalletEntity walletEntity) {
@@ -50,7 +56,9 @@ public class Wallet {
                 .setHandBet(walletEntity.getHandBet())
                 .setInsuranceBet(walletEntity.getInsuranceBet())
                 .setDoubleBet(walletEntity.getDoubleBet())
-                .setSplitBet(walletEntity.getSplitBet());
+                .setSplitBet(walletEntity.getSplitBet())
+                .setPerfectPairsBet(walletEntity.getPerfectPairsBet())
+                .setTwentyOneThreeBet(walletEntity.getTwentyOneThreeBet());
     }
 
     public static WalletEntity map(WalletEntity walletEntity, Wallet wallet) {
@@ -62,7 +70,9 @@ public class Wallet {
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())
                 .setInsuranceBet(wallet.getInsuranceBet())
-                .setSplitBet(wallet.getSplitBet());
+                .setSplitBet(wallet.getSplitBet())
+                .setPerfectPairsBet(wallet.getPerfectPairsBet())
+                .setTwentyOneThreeBet(wallet.getTwentyOneThreeBet());
     }
 
     public Wallet deposit(BigDecimal depositSum) {
