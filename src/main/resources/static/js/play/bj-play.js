@@ -55,6 +55,7 @@ $(document).ready(function () {
     updateSideCircleDisplay('pp',  ppStagedBet)
     updateSideCircleDisplay('213', t3StagedBet)
     updateSideCircleDisplay('dpp', dppStagedBet)
+    updateTotalStakeDisplay()
 
     $('.btn-err-ok').click(function () {
         $('.err-modal-wrapper').addClass("d-none")
@@ -172,6 +173,10 @@ $(document).ready(function () {
         setChipTarget(chipTarget === 'dpp' ? 'main' : 'dpp')
     })
 
+    $('#bet-circle-main').click(function () {
+        setChipTarget('main')
+    })
+
     /* Chips */
     $('.chip-250').click(function ()  { handleChip(CHIP_S,   false) })
     $('.chip-500').click(function ()  { handleChip(CHIP_M,   false) })
@@ -209,6 +214,7 @@ $(document).ready(function () {
         sessionStorage.setItem('bj-pp-staged',  '0')
         sessionStorage.setItem('bj-t3-staged',  '0')
         sessionStorage.setItem('bj-dpp-staged', '0')
+        updateTotalStakeDisplay()
         setChipTarget('main')
     })
 
@@ -242,6 +248,7 @@ function setChipTarget(target) {
 }
 
 function applyChipTargetStyle(target) {
+    $('#bet-circle-main').toggleClass('bet-circle--selected', target === 'main')
     $('#bet-circle-pp').toggleClass('bet-circle--selected', target === 'pp')
     $('#bet-circle-213').toggleClass('bet-circle--selected', target === '213')
     $('#bet-circle-dpp').toggleClass('bet-circle--selected', target === 'dpp')
@@ -315,9 +322,16 @@ function calcSideChip(target, chipValue) {
 
     balanceElem.innerText = '£' + newBalance.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
     updateSideCircleDisplay(target, newTotal)
+    updateTotalStakeDisplay()
 }
 
 /* ── Main bet chip calculation ───────────────────────────────────────────── */
+function updateTotalStakeDisplay() {
+    var handBet = parseFloat($('.curr-bet-value').val()) || 0.0
+    var total = handBet + ppStagedBet + t3StagedBet + dppStagedBet
+    $('.total-stake').text('£' + total.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2}))
+}
+
 function refreshDealButton() {
     var betVal = parseFloat($('.curr-bet-value').val())
     var dealBtn = $('.btn-deal')
@@ -378,5 +392,6 @@ function calcChip(chipValue, doubleChip) {
     balanceElem.innerText = '£' + newBalance.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
     hiddenBetField.value  = newBet
 
+    updateTotalStakeDisplay()
     refreshDealButton()
 }
