@@ -493,10 +493,17 @@ body {
 /* ── Active-hand bet breakdown ───────────────────────────────────────────── */
 .bet-breakdown {
     display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.bet-breakdown-row {
+    display: flex;
     flex-wrap: wrap;
     gap: 3px 5px;
     justify-content: center;
-    margin-top: 5px;
 }
 
 .bet-breakdown-item {
@@ -509,6 +516,12 @@ body {
     padding: 1px 5px;
     font-size: 0.62rem;
     white-space: nowrap;
+}
+
+.bet-breakdown-item--main {
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    border-color: rgba(255, 211, 71, 0.32);
 }
 
 .bet-breakdown-label {
