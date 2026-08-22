@@ -64,6 +64,11 @@ public class Game {
     @ToString.Exclude
     private transient CardSource cardSource = new RngCardSource();
 
+    /** Transient: carries side bet amount from controller to processor; never persisted. */
+    @ToString.Exclude
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private transient String sideBetAmountStr;
+
     private String hash;
 
     private Boolean dealt;
@@ -182,7 +187,11 @@ public class Game {
                 .setCurrentBet(walletEntity.getCurrentBet())
                 .setHandBet(walletEntity.getHandBet())
                 .setInsuranceBet(walletEntity.getInsuranceBet())
-                .setDoubleBet(walletEntity.getDoubleBet());
+                .setDoubleBet(walletEntity.getDoubleBet())
+                .setSplitBet(walletEntity.getSplitBet())
+                .setPerfectPairsBet(walletEntity.getPerfectPairsBet())
+                .setTwentyOneThreeBet(walletEntity.getTwentyOneThreeBet())
+                .setDealerPerfectPairsBet(walletEntity.getDealerPerfectPairsBet());
 
         return game.setWallet(wallet);
     }
