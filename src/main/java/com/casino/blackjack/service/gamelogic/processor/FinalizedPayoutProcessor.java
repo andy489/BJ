@@ -89,7 +89,12 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         boolean hasT3  = t3Bet  != null && t3Bet.compareTo(BigDecimal.ZERO)  > 0;
         boolean hasDPP = dppBet != null && dppBet.compareTo(BigDecimal.ZERO) > 0;
 
-        if (!hasPP && !hasT3 && !hasDPP) return;
+        if (!hasPP && !hasT3 && !hasDPP) {
+            ctx.walletEntity().setLastPpWin(BigDecimal.ZERO);
+            ctx.walletEntity().setLastT3Win(BigDecimal.ZERO);
+            ctx.walletEntity().setLastDppWin(BigDecimal.ZERO);
+            return;
+        }
 
         String initialPlayerCardsJson = gameEntity.getInitialPlayerCards();
         String initialDealerUpCardJson = gameEntity.getInitialDealerUpCard();
@@ -114,15 +119,23 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
             if (hasPP) {
                 double multi = SideBetEvaluator.evalPerfectPairs(p0, p1);
                 BigDecimal ppReturn = ppBet.multiply(BigDecimal.valueOf(multi));
+                BigDecimal ppNet = ppReturn.subtract(ppBet).max(BigDecimal.ZERO);
                 ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(ppReturn));
+                ctx.walletEntity().setLastPpWin(ppNet);
                 ctx.walletEntity().setPerfectPairsBet(BigDecimal.ZERO);
+            } else {
+                ctx.walletEntity().setLastPpWin(BigDecimal.ZERO);
             }
 
             if (hasT3) {
                 double multi = SideBetEvaluator.eval21_3(p0, p1, dealerUpCard);
                 BigDecimal t3Return = t3Bet.multiply(BigDecimal.valueOf(multi));
+                BigDecimal t3Net = t3Return.subtract(t3Bet).max(BigDecimal.ZERO);
                 ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(t3Return));
+                ctx.walletEntity().setLastT3Win(t3Net);
                 ctx.walletEntity().setTwentyOneThreeBet(BigDecimal.ZERO);
+            } else {
+                ctx.walletEntity().setLastT3Win(BigDecimal.ZERO);
             }
 
             if (hasDPP && initialDealerCardsJson != null) {
@@ -130,9 +143,13 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 if (initialDealerCards.size() >= 2) {
                     double multi = SideBetEvaluator.evalPerfectPairs(initialDealerCards.get(0), initialDealerCards.get(1));
                     BigDecimal dppReturn = dppBet.multiply(BigDecimal.valueOf(multi));
+                    BigDecimal dppNet = dppReturn.subtract(dppBet).max(BigDecimal.ZERO);
                     ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(dppReturn));
+                    ctx.walletEntity().setLastDppWin(dppNet);
                 }
                 ctx.walletEntity().setDealerPerfectPairsBet(BigDecimal.ZERO);
+            } else {
+                ctx.walletEntity().setLastDppWin(BigDecimal.ZERO);
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

@@ -37,7 +37,7 @@
             <!-- ── Bet circles overlay (visible before deal) ── -->
             <div class="bet-circles-wrapper"
                  th:classappend="${#lists.contains(game.availableChoices,
-                 game.availableChoicesCodeMap.get('CHOICE_CHIP_OPERATIONS')) ? '' : 'd-none'}">
+                 game.availableChoicesCodeMap.get('CHOICE_CHIP_OPERATIONS')) ? '' : 'bet-circles-wrapper--locked'}">
                 <!-- Dealer Perfect Pairs circle (dealer row) -->
                 <div class="bet-circles-row bet-circles-row--dealer">
                     <form class="side-bet-form" id="form-side-dpp" th:action="@{/play/side-bet/dpp}" th:method="post">
@@ -531,6 +531,26 @@
                 <div class="last-bet-box-title" th:text="#{bet.last.win} + ':'">Last Win</div>
                 <div class="last-bet-box-value">
                     <span th:text="'£' + ${#numbers.formatDecimal(game.wallet.lastWin, 1, 'COMMA', 2, 'POINT')}">£1</span>
+                </div>
+                <!-- Win breakdown: show side-bet wins when any were non-zero -->
+                <div class="bet-breakdown win-breakdown"
+                     th:if="${(game.wallet.lastPpWin != null and game.wallet.lastPpWin > 0) or (game.wallet.lastT3Win != null and game.wallet.lastT3Win > 0) or (game.wallet.lastDppWin != null and game.wallet.lastDppWin > 0)}">
+                    <span class="bet-breakdown-item" th:if="${game.wallet.lastWin != null and game.wallet.lastWin > 0}">
+                        <span class="bet-breakdown-label" th:text="#{bet.hand}">Hand</span>
+                        <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.lastWin, 1, 'COMMA', 2, 'POINT')}">£10</span>
+                    </span>
+                    <span class="bet-breakdown-item" th:if="${game.wallet.lastPpWin != null and game.wallet.lastPpWin > 0}">
+                        <span class="bet-breakdown-label">PP</span>
+                        <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.lastPpWin, 1, 'COMMA', 2, 'POINT')}">£5</span>
+                    </span>
+                    <span class="bet-breakdown-item" th:if="${game.wallet.lastT3Win != null and game.wallet.lastT3Win > 0}">
+                        <span class="bet-breakdown-label">21+3</span>
+                        <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.lastT3Win, 1, 'COMMA', 2, 'POINT')}">£5</span>
+                    </span>
+                    <span class="bet-breakdown-item" th:if="${game.wallet.lastDppWin != null and game.wallet.lastDppWin > 0}">
+                        <span class="bet-breakdown-label">DPP</span>
+                        <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.lastDppWin, 1, 'COMMA', 2, 'POINT')}">£5</span>
+                    </span>
                 </div>
             </div>
             <div class="cash-stat">

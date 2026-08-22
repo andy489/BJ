@@ -500,6 +500,14 @@ body {
     max-width: 160px;
 }
 
+.win-breakdown {
+    max-width: 100%;
+}
+
+.win-breakdown .bet-breakdown-value {
+    color: #7aff7a;
+}
+
 .bet-breakdown-item {
     display: flex;
     align-items: center;
@@ -912,6 +920,11 @@ body {
     gap: 0.5em;
     z-index: 3;
     pointer-events: auto;
+}
+
+.bet-circles-wrapper--locked {
+    pointer-events: none;
+    opacity: 0.6;
 }
 
 /* Dealer row (DPP) — sits above the player row */
