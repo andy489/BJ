@@ -80,6 +80,8 @@ public class GameEntity extends BaseEntity implements Serializable {
 
     private String initialDealerUpCard;
 
+    private String initialDealerCards;
+
     @OneToOne
     private UserEntity owner;
 

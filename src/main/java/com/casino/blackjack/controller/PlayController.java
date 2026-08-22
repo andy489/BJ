@@ -48,7 +48,19 @@ public class PlayController extends BaseController {
     }
 
     @PostMapping("/deal")
-    public ModelAndView deal(@RequestParam(required = false) String betStr) {
+    public ModelAndView deal(@RequestParam(required = false) String betStr,
+                             @RequestParam(required = false) String ppBetStr,
+                             @RequestParam(required = false) String t3BetStr,
+                             @RequestParam(required = false) String dppBetStr) {
+        if (ppBetStr != null && !ppBetStr.isBlank() && !ppBetStr.equals("0")) {
+            gameService.placePerfectPairsBet(ppBetStr);
+        }
+        if (t3BetStr != null && !t3BetStr.isBlank() && !t3BetStr.equals("0")) {
+            gameService.place21_3Bet(t3BetStr);
+        }
+        if (dppBetStr != null && !dppBetStr.isBlank() && !dppBetStr.equals("0")) {
+            gameService.placeDealerPerfectPairsBet(dppBetStr);
+        }
         gameService.deal(betStr);
         return super.redirect("/play");
     }
@@ -143,14 +155,20 @@ public class PlayController extends BaseController {
     }
 
     @PostMapping("/side-bet/pp")
-    public ModelAndView placePerfectPairsBet() {
-        gameService.placePerfectPairsBet();
+    public ModelAndView placePerfectPairsBet(@RequestParam(required = false) String betStr) {
+        gameService.placePerfectPairsBet(betStr);
         return super.redirect("/play");
     }
 
     @PostMapping("/side-bet/21-3")
-    public ModelAndView place21_3Bet() {
-        gameService.place21_3Bet();
+    public ModelAndView place21_3Bet(@RequestParam(required = false) String betStr) {
+        gameService.place21_3Bet(betStr);
+        return super.redirect("/play");
+    }
+
+    @PostMapping("/side-bet/dpp")
+    public ModelAndView placeDealerPerfectPairsBet(@RequestParam(required = false) String betStr) {
+        gameService.placeDealerPerfectPairsBet(betStr);
         return super.redirect("/play");
     }
 }

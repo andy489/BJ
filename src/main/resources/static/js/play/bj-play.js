@@ -1,5 +1,6 @@
 const MIN_BET = 10.0
 const MAX_BET = 1000.0
+const SIDE_BET_MAX = 25.0
 
 const CHIP_S = 2.5
 const CHIP_M = 5.0
@@ -8,7 +9,53 @@ const CHIP_XL = 25.0
 const CHIP_2XL = 50.0
 const CHIP_3XL = 100.0
 
+/* ── Side bet chip routing ───────────────────────────────────────────────────
+   'main' = main bet (default)
+   'pp'   = Perfect Pairs
+   '213'  = 21+3
+   Clicking a side-bet circle selects it; clicking again deselects.
+   chipTarget persists across PRG reloads via sessionStorage.
+────────────────────────────────────────────────────────────────────────────── */
+var chipTarget = sessionStorage.getItem('bj-chip-target') || 'main'
+
+/* Client-side staged side bet amounts (submitted at Deal time) */
+var ppStagedBet  = 0.0
+var t3StagedBet  = 0.0
+var dppStagedBet = 0.0
+
 $(document).ready(function () {
+    // Restore chipTarget visual state on page load
+    applyChipTargetStyle(chipTarget)
+
+    // Restore staged side bet amounts from sessionStorage (survive PRG reload)
+    ppStagedBet  = parseFloat(sessionStorage.getItem('bj-pp-staged')  || '0') || 0.0
+    t3StagedBet  = parseFloat(sessionStorage.getItem('bj-t3-staged')  || '0') || 0.0
+    dppStagedBet = parseFloat(sessionStorage.getItem('bj-dpp-staged') || '0') || 0.0
+
+    // On page load, if there are already committed server-side amounts but no
+    // staged amounts, seed staged from server values so balance is consistent.
+    var serverPP  = (typeof BJ_PP_BET  !== 'undefined') ? parseFloat(BJ_PP_BET)  : 0
+    var serverT3  = (typeof BJ_213_BET !== 'undefined') ? parseFloat(BJ_213_BET) : 0
+    var serverDPP = (typeof BJ_DPP_BET !== 'undefined') ? parseFloat(BJ_DPP_BET) : 0
+
+    // Only seed from server if sessionStorage had nothing (fresh load)
+    if (ppStagedBet === 0 && serverPP > 0) {
+        ppStagedBet = serverPP
+        sessionStorage.setItem('bj-pp-staged', ppStagedBet)
+    }
+    if (t3StagedBet === 0 && serverT3 > 0) {
+        t3StagedBet = serverT3
+        sessionStorage.setItem('bj-t3-staged', t3StagedBet)
+    }
+    if (dppStagedBet === 0 && serverDPP > 0) {
+        dppStagedBet = serverDPP
+        sessionStorage.setItem('bj-dpp-staged', dppStagedBet)
+    }
+
+    updateSideCircleDisplay('pp',  ppStagedBet)
+    updateSideCircleDisplay('213', t3StagedBet)
+    updateSideCircleDisplay('dpp', dppStagedBet)
+
     $('.btn-err-ok').click(function () {
         $('.err-modal-wrapper').addClass("d-none")
         $('.modal-overlay').removeClass('active')
@@ -63,7 +110,7 @@ $(document).ready(function () {
         $('.modal-overlay').removeClass('active')
     })
 
-    /* Hit on {score} confirm modal (covers both hard 17 and soft 17+, e.g. soft 19 = hard 9 + 10) */
+    /* Hit on {score} confirm modal */
     $('#btn-hit-trigger').click(function () {
         if ($(this).hasClass('disabled')) return
         var effectiveScore = (typeof BJ_PLAYER_IS_SOFT !== 'undefined' && BJ_PLAYER_IS_SOFT)
@@ -112,65 +159,165 @@ $(document).ready(function () {
         $('.modal-overlay').removeClass('active')
     })
 
-    $('.chip-250').click(function () {
-        calcChip(CHIP_S, false)
+    /* ── Side bet circles on the table ── */
+    $('#bet-circle-pp').click(function () {
+        setChipTarget(chipTarget === 'pp' ? 'main' : 'pp')
     })
 
-    $('.chip-500').click(function () {
-        calcChip(CHIP_M, false)
+    $('#bet-circle-213').click(function () {
+        setChipTarget(chipTarget === '213' ? 'main' : '213')
     })
 
-    $('.chip-1000').click(function () {
-        calcChip(CHIP_L, false)
+    $('#bet-circle-dpp').click(function () {
+        setChipTarget(chipTarget === 'dpp' ? 'main' : 'dpp')
     })
 
-    $('.chip-2500').click(function () {
-        calcChip(CHIP_XL, false)
-    })
+    /* Chips */
+    $('.chip-250').click(function ()  { handleChip(CHIP_S,   false) })
+    $('.chip-500').click(function ()  { handleChip(CHIP_M,   false) })
+    $('.chip-1000').click(function () { handleChip(CHIP_L,   false) })
+    $('.chip-2500').click(function () { handleChip(CHIP_XL,  false) })
+    $('.chip-5000').click(function () { handleChip(CHIP_2XL, false) })
+    $('.chip-10000').click(function () { handleChip(CHIP_3XL, false) })
+    $('.btn-chip-double').click(function () { handleChip(null, true) })
 
-    $('.chip-5000').click(function () {
-        calcChip(CHIP_2XL, false)
-    })
-
-    $('.chip-10000').click(function () {
-        calcChip(CHIP_3XL, false)
-    })
-
-    $('.btn-chip-double').click(function () {
-        calcChip(null, true)
-    })
-
-    /* Repeat last bet — adds lastBet to the current staged bet, same as placing chips */
+    /* Repeat last bet — always adds to main */
     $('.form-repeat').on('submit', function (e) {
         var lastBet = (typeof BJ_LAST_BET !== 'undefined') ? parseFloat(BJ_LAST_BET) : 0
-        if (isNaN(lastBet) || lastBet <= 0) return  // no last bet — let server handle/error
+        if (isNaN(lastBet) || lastBet <= 0) return
         e.preventDefault()
         calcChip(lastBet, false)
     })
 
-    /* Allow clear when chips are staged, or when a game has been played (reset after hand) */
+    /* Clear — resets main bet, staged side bets, deselects target */
     $('.form-clear').on('submit', function (e) {
         var betVal = parseFloat($('.curr-bet-value').val())
-        var hasStaged = !isNaN(betVal) && betVal > 0
+        var hasStaged = (!isNaN(betVal) && betVal > 0) || ppStagedBet > 0 || t3StagedBet > 0 || dppStagedBet > 0
         if (!hasStaged && !BJ_GAME_DEALT) {
             e.preventDefault()
             return false
         }
+        // Refund staged side bet amounts back to displayed balance
+        var balanceElem = $('.balance')[0]
+        var bal = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
+        bal += ppStagedBet + t3StagedBet + dppStagedBet
+        balanceElem.innerText = '£' + bal.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+
+        ppStagedBet  = 0.0
+        t3StagedBet  = 0.0
+        dppStagedBet = 0.0
+        sessionStorage.setItem('bj-pp-staged',  '0')
+        sessionStorage.setItem('bj-t3-staged',  '0')
+        sessionStorage.setItem('bj-dpp-staged', '0')
+        setChipTarget('main')
     })
 
-    /* Prevent deal submission when bet is below minimum */
+    /* Deal — populate hidden side bet fields and clear sessionStorage */
     $('.form-deal').on('submit', function (e) {
         var betVal = parseFloat($('.curr-bet-value').val())
         if (isNaN(betVal) || betVal < MIN_BET) {
             e.preventDefault()
             return false
         }
+        // Populate side bet hidden fields
+        $('#deal-pp-bet').val(ppStagedBet > 0 ? ppStagedBet.toFixed(2) : '0')
+        $('#deal-213-bet').val(t3StagedBet > 0 ? t3StagedBet.toFixed(2) : '0')
+        $('#deal-dpp-bet').val(dppStagedBet > 0 ? dppStagedBet.toFixed(2) : '0')
+        // Clear staged state — server now owns these amounts
+        sessionStorage.removeItem('bj-pp-staged')
+        sessionStorage.removeItem('bj-t3-staged')
+        sessionStorage.removeItem('bj-dpp-staged')
+        sessionStorage.removeItem('bj-chip-target')
     })
 
-    /* Keep deal button appearance in sync with current bet */
     refreshDealButton()
 })
 
+/* ── Side bet target management ─────────────────────────────────────────── */
+
+function setChipTarget(target) {
+    chipTarget = target
+    sessionStorage.setItem('bj-chip-target', target)
+    applyChipTargetStyle(target)
+}
+
+function applyChipTargetStyle(target) {
+    $('#bet-circle-pp').toggleClass('bet-circle--selected', target === 'pp')
+    $('#bet-circle-213').toggleClass('bet-circle--selected', target === '213')
+    $('#bet-circle-dpp').toggleClass('bet-circle--selected', target === 'dpp')
+}
+
+function updateSideCircleDisplay(target, amount) {
+    var circleId = target === 'pp' ? 'bet-circle-pp' : (target === 'dpp' ? 'bet-circle-dpp' : 'bet-circle-213')
+    var circle   = document.getElementById(circleId)
+    if (!circle) return
+
+    var amountSpan = circle.querySelector('.bet-circle-amount')
+    if (amount > 0) {
+        if (!amountSpan) {
+            amountSpan = document.createElement('span')
+            amountSpan.className = 'bet-circle-amount'
+            circle.appendChild(amountSpan)
+        }
+        amountSpan.textContent = '£' + amount.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+        circle.classList.add('bet-circle--active')
+    } else {
+        if (amountSpan) amountSpan.remove()
+        circle.classList.remove('bet-circle--active')
+    }
+}
+
+/* ── Chip handler — routes to main or side bet ───────────────────────── */
+function handleChip(chipValue, doubleChip) {
+    if (chipTarget === 'pp' || chipTarget === '213' || chipTarget === 'dpp') {
+        // Side bets don't support double-chip — treat as no-op
+        if (doubleChip) return
+        calcSideChip(chipTarget, chipValue)
+    } else {
+        calcChip(chipValue, doubleChip)
+    }
+}
+
+/* ── Add chip to a side bet slot (client-side staging only) ── */
+function calcSideChip(target, chipValue) {
+    var balanceElem = $('.balance')[0]
+    var amountBalance = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
+
+    if (amountBalance === 0.0) {
+        $('#no-funds-modal').removeClass('d-none')
+        $('.modal-overlay').addClass('active')
+        return
+    }
+
+    var current = (target === 'pp') ? ppStagedBet : (target === 'dpp' ? dppStagedBet : t3StagedBet)
+
+    // How much room is left before the cap?
+    var room = SIDE_BET_MAX - current
+    if (room <= 0) return
+
+    // Clamp chip to available room and available balance
+    var toAdd = Math.min(chipValue, room, amountBalance)
+    if (toAdd <= 0) return
+
+    var newTotal  = current + toAdd
+    var newBalance = amountBalance - toAdd
+
+    if (target === 'pp') {
+        ppStagedBet = newTotal
+        sessionStorage.setItem('bj-pp-staged', ppStagedBet)
+    } else if (target === 'dpp') {
+        dppStagedBet = newTotal
+        sessionStorage.setItem('bj-dpp-staged', dppStagedBet)
+    } else {
+        t3StagedBet = newTotal
+        sessionStorage.setItem('bj-t3-staged', t3StagedBet)
+    }
+
+    balanceElem.innerText = '£' + newBalance.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+    updateSideCircleDisplay(target, newTotal)
+}
+
+/* ── Main bet chip calculation ───────────────────────────────────────────── */
 function refreshDealButton() {
     var betVal = parseFloat($('.curr-bet-value').val())
     var dealBtn = $('.btn-deal')
@@ -187,8 +334,6 @@ function calcChip(chipValue, doubleChip) {
     let currBetElem = $('.curr-bet')[0]
     let balanceElem = $('.balance')[0]
 
-    // Read current bet from hidden field (always accurate decimal) and
-    // balance from display (strip £ and commas only, keep decimal point).
     let amountBet     = parseFloat(hiddenBetField.value) || 0.0
     let amountBalance = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
 
@@ -229,11 +374,9 @@ function calcChip(chipValue, doubleChip) {
         currBetElem.classList.remove('low-bet')
     }
 
-    // Display as decimal pounds (2dp), comma-separated thousands.
     currBetElem.innerText = '£' + newBet.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
     balanceElem.innerText = '£' + newBalance.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
     hiddenBetField.value  = newBet
 
     refreshDealButton()
 }
-

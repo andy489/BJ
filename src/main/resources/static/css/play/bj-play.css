@@ -866,6 +866,158 @@ body {
     .hist-row-cards { gap: 8px; }
 }
 
+/* ── Bet circles on the table ────────────────────────── */
+.bet-circles-wrapper {
+    position: absolute;
+    bottom: 0.5em;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+    z-index: 3;
+    pointer-events: auto;
+}
+
+/* Dealer row (DPP) — sits above the player row */
+.bet-circles-row--dealer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7em;
+}
+
+/* Player row (PP, main, 21+3) */
+.bet-circles-row--player {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 1em;
+}
+
+.bet-circle {
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Main bet circle — larger */
+.bet-circle--main {
+    width: 5.2em;
+    height: 5.2em;
+    background: rgba(0, 0, 0, 0.55);
+    border: 2px solid rgba(255, 211, 71, 0.5);
+    box-shadow:
+        0 0 0 4px rgba(255, 211, 71, 0.1),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    pointer-events: none;
+}
+
+/* Player side bet circles (PP, 21+3) */
+.bet-circle--side {
+    width: 4em;
+    height: 4em;
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    outline: none;
+}
+
+.bet-circle--side:hover {
+    transform: scale(1.07) translateY(-2px);
+    border-color: rgba(255, 211, 71, 0.5);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 211, 71, 0.25);
+}
+
+.bet-circle--side.bet-circle--active {
+    border-color: rgba(255, 211, 71, 0.75);
+    background: rgba(255, 211, 71, 0.1);
+    box-shadow:
+        0 0 0 3px rgba(255, 211, 71, 0.2),
+        0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+/* Glowing ring when this circle is the selected chip target */
+.bet-circle--side.bet-circle--selected {
+    border-color: rgba(255, 211, 71, 0.95);
+    box-shadow:
+        0 0 0 3px rgba(255, 211, 71, 0.35),
+        0 0 12px rgba(255, 211, 71, 0.4),
+        0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+/* Dealer Perfect Pairs circle — distinct colour (blue-teal) */
+.bet-circle--dpp {
+    width: 3.5em;
+    height: 3.5em;
+    background: rgba(0, 20, 40, 0.55);
+    border: 2px solid rgba(64, 180, 255, 0.45);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    outline: none;
+}
+
+.bet-circle--dpp:hover {
+    transform: scale(1.07) translateY(-2px);
+    border-color: rgba(64, 180, 255, 0.8);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(64, 180, 255, 0.25);
+}
+
+.bet-circle--dpp.bet-circle--active {
+    border-color: rgba(64, 180, 255, 0.9);
+    background: rgba(64, 180, 255, 0.12);
+    box-shadow:
+        0 0 0 3px rgba(64, 180, 255, 0.2),
+        0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.bet-circle--dpp.bet-circle--selected {
+    border-color: rgba(64, 180, 255, 1);
+    box-shadow:
+        0 0 0 3px rgba(64, 180, 255, 0.35),
+        0 0 12px rgba(64, 180, 255, 0.45),
+        0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.bet-circle--dpp .bet-circle-label {
+    color: rgba(100, 200, 255, 0.9);
+}
+
+.bet-circle-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 211, 71, 0.8);
+    line-height: 1;
+    pointer-events: none;
+}
+
+.bet-circle--main .bet-circle-label {
+    color: rgba(255, 211, 71, 0.7);
+    font-size: 0.58rem;
+}
+
+.bet-circle-amount {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+    pointer-events: none;
+}
+
+.bet-circle--main .bet-circle-amount {
+    font-size: 0.9rem;
+}
+
 /* ── Side Bets ───────────────────────────────────────── */
 .side-bets-wrapper {
     width: 100%;
@@ -902,6 +1054,13 @@ body {
     box-shadow: 0 0 10px rgba(255, 211, 71, 0.2);
 }
 
+/* Selected (chip target) state for side bet slot */
+.side-bet-slot.side-bet-selected {
+    border-color: rgba(255, 211, 71, 0.9);
+    background: rgba(255, 211, 71, 0.1);
+    box-shadow: 0 0 14px rgba(255, 211, 71, 0.35);
+}
+
 .side-bet-btn {
     display: flex;
     flex-direction: column;
@@ -935,7 +1094,8 @@ body {
     outline-color: transparent;
 }
 
-.side-bet-active .side-bet-btn {
+.side-bet-active .side-bet-btn,
+.side-bet-selected .side-bet-btn {
     background: linear-gradient(160deg, #075f2a 0%, #044020 100%);
     outline-color: rgba(255, 211, 71, 0.6);
 }
@@ -959,25 +1119,26 @@ body {
     letter-spacing: 0.02em;
 }
 
-.side-bet-paytable {
-    font-size: 0.62rem;
-    color: rgba(255, 255, 255, 0.42);
-    text-align: center;
-    letter-spacing: 0.02em;
-    line-height: 1.4;
-}
-
 @media (max-width: 600px) {
     .side-bets-inner { gap: 7px; padding: 0.35em 0.4em; }
     .side-bet-slot { min-width: 7em; padding: 0.4em 0.5em; }
     .side-bet-label { font-size: 0.68rem; }
     .side-bet-badge { font-size: 0.65rem; }
-    .side-bet-paytable { font-size: 0.58rem; }
+    .bet-circles-wrapper { gap: 0.4em; }
+    .bet-circles-row--player { gap: 0.7em; }
+    .bet-circle--main { width: 4.4em; height: 4.4em; }
+    .bet-circle--side { width: 3.4em; height: 3.4em; }
+    .bet-circle--dpp  { width: 3em;   height: 3em; }
 }
 
 @media (max-width: 430px) {
     .side-bets-inner { gap: 5px; padding: 0.3em 0.35em; }
     .side-bet-slot { min-width: 6em; padding: 0.35em 0.4em; }
+    .bet-circles-wrapper { gap: 0.3em; }
+    .bet-circles-row--player { gap: 0.5em; }
+    .bet-circle--main { width: 4em; height: 4em; }
+    .bet-circle--side { width: 3em; height: 3em; }
+    .bet-circle--dpp  { width: 2.7em; height: 2.7em; }
 }
 
 /* ── Light theme: play page ──────────────────────────── */

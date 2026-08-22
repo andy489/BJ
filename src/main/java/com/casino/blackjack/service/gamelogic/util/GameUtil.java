@@ -41,6 +41,7 @@ public class GameUtil {
     public static final Integer CHOICE_SPLIT_DD_ADVANCE = 21;
     public static final Integer CHOICE_PLACE_PERFECT_PAIRS = 22;
     public static final Integer CHOICE_PLACE_21_3 = 23;
+    public static final Integer CHOICE_PLACE_DEALER_PP = 24;
 
     public static final BigDecimal SIDE_BET_MIN = new BigDecimal("1.00");
     public static final BigDecimal SIDE_BET_MAX = new BigDecimal("25.00");
@@ -144,6 +145,7 @@ public class GameUtil {
         CHOICES.put("CHOICE_SPLIT_DD_ADVANCE",               CHOICE_SPLIT_DD_ADVANCE);
         CHOICES.put("CHOICE_PLACE_PERFECT_PAIRS",            CHOICE_PLACE_PERFECT_PAIRS);
         CHOICES.put("CHOICE_PLACE_21_3",                     CHOICE_PLACE_21_3);
+        CHOICES.put("CHOICE_PLACE_DEALER_PP",                CHOICE_PLACE_DEALER_PP);
 
         ERRORS = new LinkedHashMap<>();
         ERRORS.put("ERR_CODE_INSUFFICIENT_FUNDS", ERR_CODE_INSUFFICIENT_FUNDS);

@@ -50,6 +50,7 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.MAX_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.MIN_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_PLACE_PERFECT_PAIRS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_PLACE_21_3;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_PLACE_DEALER_PP;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_CURR_GAME_ERR;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_WALLET_FOUND;
 
@@ -166,6 +167,8 @@ public class GameService {
             gameEntity.setInitialPlayerCards(om.writeValueAsString(game.getPlayerCards()));
             // dealer up-card is dealerCards[0] (before hide)
             gameEntity.setInitialDealerUpCard(om.writeValueAsString(game.getDealerCards().get(0)));
+            // all dealer initial cards for Dealer Perfect Pairs evaluation
+            gameEntity.setInitialDealerCards(om.writeValueAsString(game.getDealerCards()));
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -188,12 +191,16 @@ public class GameService {
         choiceNoOption(CHOICE_SPLIT);
     }
 
-    public void placePerfectPairsBet() {
-        sideBetChoice(CHOICE_PLACE_PERFECT_PAIRS);
+    public void placePerfectPairsBet(String betStr) {
+        sideBetChoice(CHOICE_PLACE_PERFECT_PAIRS, betStr);
     }
 
-    public void place21_3Bet() {
-        sideBetChoice(CHOICE_PLACE_21_3);
+    public void place21_3Bet(String betStr) {
+        sideBetChoice(CHOICE_PLACE_21_3, betStr);
+    }
+
+    public void placeDealerPerfectPairsBet(String betStr) {
+        sideBetChoice(CHOICE_PLACE_DEALER_PP, betStr);
     }
 
     public void surrender() {
@@ -340,7 +347,7 @@ public class GameService {
      * Side bet placement — fires before the deal; no availableChoices guard needed
      * since the processor itself validates the pre-deal state.
      */
-    private void sideBetChoice(Integer choice) {
+    private void sideBetChoice(Integer choice, String betStr) {
         Optional<GameEntity> currGameEntity = extractLastGame();
 
         WalletEntity walletEntity = extractWallet()
@@ -348,6 +355,7 @@ public class GameService {
 
         Game game = new Game()
                 .makeChoice(choice)
+                .setSideBetAmountStr(betStr)
                 .setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
 
         GameEntity gameEntity = currGameEntity.isEmpty()

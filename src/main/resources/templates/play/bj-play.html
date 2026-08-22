@@ -33,6 +33,63 @@
                  class="card-shuffler-layer"
                  th:src="@{'./../images/background/card-shuffler.png'}"
                  alt="" aria-hidden="true"/>
+
+            <!-- ── Bet circles overlay (visible before deal) ── -->
+            <div class="bet-circles-wrapper"
+                 th:classappend="${#lists.contains(game.availableChoices,
+                 game.availableChoicesCodeMap.get('CHOICE_CHIP_OPERATIONS')) ? '' : 'd-none'}">
+                <!-- Dealer Perfect Pairs circle (dealer row) -->
+                <div class="bet-circles-row bet-circles-row--dealer">
+                    <form class="side-bet-form" id="form-side-dpp" th:action="@{/play/side-bet/dpp}" th:method="post">
+                        <input type="hidden" name="betStr" id="side-dpp-bet-str" value="0">
+                        <button type="button" class="bet-circle bet-circle--side bet-circle--dpp"
+                                id="bet-circle-dpp"
+                                th:classappend="${game.wallet.dealerPerfectPairsBet != null and game.wallet.dealerPerfectPairsBet > 0} ? 'bet-circle--active' : ''"
+                                aria-label="Dealer Perfect Pairs bet">
+                            <span class="bet-circle-label">DPP</span>
+                            <span class="bet-circle-amount"
+                                  th:if="${game.wallet.dealerPerfectPairsBet != null and game.wallet.dealerPerfectPairsBet > 0}"
+                                  th:text="'£' + ${#numbers.formatDecimal(game.wallet.dealerPerfectPairsBet, 1, 'COMMA', 2, 'POINT')}">£1</span>
+                        </button>
+                    </form>
+                </div>
+                <!-- Player row: Perfect Pairs (left), main bet (center), 21+3 (right) -->
+                <div class="bet-circles-row bet-circles-row--player">
+                    <!-- Perfect Pairs circle (left) -->
+                    <form class="side-bet-form" id="form-side-pp" th:action="@{/play/side-bet/pp}" th:method="post">
+                        <input type="hidden" name="betStr" id="side-pp-bet-str" value="0">
+                        <button type="button" class="bet-circle bet-circle--side"
+                                id="bet-circle-pp"
+                                th:classappend="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0} ? 'bet-circle--active' : ''"
+                                aria-label="Perfect Pairs bet">
+                            <span class="bet-circle-label">PP</span>
+                            <span class="bet-circle-amount"
+                                  th:if="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0}"
+                                  th:text="'£' + ${#numbers.formatDecimal(game.wallet.perfectPairsBet, 1, 'COMMA', 2, 'POINT')}">£1</span>
+                        </button>
+                    </form>
+                    <!-- Main bet circle (center) -->
+                    <div class="bet-circle bet-circle--main" id="bet-circle-main"
+                         aria-label="Main bet">
+                        <span class="bet-circle-label" th:text="#{bet.curr}">Bet</span>
+                        <span class="bet-circle-amount curr-bet"
+                              th:text="'£' + ${#numbers.formatDecimal(game.wallet.currentBet, 1, 'COMMA', 2, 'POINT')}">£0</span>
+                    </div>
+                    <!-- 21+3 circle (right) -->
+                    <form class="side-bet-form" id="form-side-213" th:action="@{/play/side-bet/21-3}" th:method="post">
+                        <input type="hidden" name="betStr" id="side-213-bet-str" value="0">
+                        <button type="button" class="bet-circle bet-circle--side"
+                                id="bet-circle-213"
+                                th:classappend="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0} ? 'bet-circle--active' : ''"
+                                aria-label="21+3 bet">
+                            <span class="bet-circle-label">21+3</span>
+                            <span class="bet-circle-amount"
+                                  th:if="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0}"
+                                  th:text="'£' + ${#numbers.formatDecimal(game.wallet.twentyOneThreeBet, 1, 'COMMA', 2, 'POINT')}">£1</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
             <div class="dealer-cards">
                 <div class="dealer-cards-box">
                     <div class="play-card-wrapper" th:if="${game.dealerCards.size == 1}"
@@ -372,6 +429,9 @@
                     <form class="form-deal" th:action="@{/play/deal}" th:method="post">
                         <input class="curr-bet-value" type="hidden" name="betStr"
                                th:value="${game.wallet.currentBet}">
+                        <input type="hidden" id="deal-pp-bet"  name="ppBetStr"  value="0">
+                        <input type="hidden" id="deal-213-bet" name="t3BetStr"  value="0">
+                        <input type="hidden" id="deal-dpp-bet" name="dppBetStr" value="0">
                         <button type="submit" class="btn btn-decision btn-deal"
                                 th:classappend="${#lists.contains(game.availableChoices,
                                 game.availableChoicesCodeMap.get('CHOICE_DEAL')) ? '' : 'disabled'}"></button>
@@ -457,38 +517,6 @@
         <!--  EO:BET CHIP  -->
 
         <!--  SIDE BETS  -->
-        <div class="side-bets-wrapper"
-             th:classappend="${#lists.contains(game.availableChoices,
-             game.availableChoicesCodeMap.get('CHOICE_CHIP_OPERATIONS')) ? '' : 'd-none'}">
-            <div class="side-bets-inner">
-                <!-- Perfect Pairs -->
-                <div class="side-bet-slot"
-                     th:classappend="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0} ? 'side-bet-active' : ''">
-                    <form th:action="@{/play/side-bet/pp}" th:method="post">
-                        <button type="submit" class="btn side-bet-btn" aria-label="Perfect Pairs">
-                            <span class="side-bet-label" th:text="#{play.side.bet.pp}">Perfect Pairs</span>
-                            <span class="side-bet-badge"
-                                  th:if="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0}"
-                                  th:text="'£' + ${#numbers.formatDecimal(game.wallet.perfectPairsBet, 1, 'COMMA', 2, 'POINT')}">£1.00</span>
-                        </button>
-                    </form>
-                    <div class="side-bet-paytable" th:text="#{play.side.bet.pp.paytable}">Mixed 7:1 · Coloured 12:1 · Perfect 25:1</div>
-                </div>
-                <!-- 21+3 -->
-                <div class="side-bet-slot"
-                     th:classappend="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0} ? 'side-bet-active' : ''">
-                    <form th:action="@{/play/side-bet/21-3}" th:method="post">
-                        <button type="submit" class="btn side-bet-btn" aria-label="21+3">
-                            <span class="side-bet-label" th:text="#{play.side.bet.21.3}">21+3</span>
-                            <span class="side-bet-badge"
-                                  th:if="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0}"
-                                  th:text="'£' + ${#numbers.formatDecimal(game.wallet.twentyOneThreeBet, 1, 'COMMA', 2, 'POINT')}">£1.00</span>
-                        </button>
-                    </form>
-                    <div class="side-bet-paytable" th:text="#{play.side.bet.21.3.paytable}">Flush 5:1 · Straight 10:1 · 3-of-a-kind 30:1</div>
-                </div>
-            </div>
-        </div>
         <!--  EO: SIDE BETS  -->
 
         <!--  BALANCE  -->
@@ -624,6 +652,9 @@
     var BJ_LAST_BET       = /*[[${game.wallet.lastBet}]]*/ 0;
     var BJ_DEALER_NOMINAL = /*[[${game.dealerFirstCardNominal()}]]*/ 0;
     var BJ_PAIR_NOMINAL   = /*[[${game.playerPairNominal()}]]*/ 0;
+    var BJ_PP_BET         = /*[[${game.wallet.perfectPairsBet}]]*/ 0;
+    var BJ_213_BET        = /*[[${game.wallet.twentyOneThreeBet}]]*/ 0;
+    var BJ_DPP_BET        = /*[[${game.wallet.dealerPerfectPairsBet}]]*/ 0;
 </script>
 <script>
     (function () {
