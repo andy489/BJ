@@ -207,8 +207,8 @@ $(document).ready(function () {
 
     /* Clear — clears the selected bet area client-side; POSTs to server only when there are real cards */
     $('.form-clear').on('submit', function (e) {
-        // Cards are on the table only when dealt and the last action was an actual game move (1–15)
-        var hasCards = BJ_GAME_DEALT && BJ_LAST_CHOICE >= 1 && BJ_LAST_CHOICE <= 15
+        // Cards are on the table only when dealt, not yet finalized, and the last action was an actual game move (1–15)
+        var hasCards = BJ_GAME_DEALT && !BJ_FINALIZED && BJ_LAST_CHOICE >= 1 && BJ_LAST_CHOICE <= 15
         if (hasCards) return  // let the POST through to clear server-side cards
 
         e.preventDefault()
