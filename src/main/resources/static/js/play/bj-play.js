@@ -195,31 +195,46 @@ $(document).ready(function () {
         calcChip(lastBet, false)
     })
 
-    /* Clear — resets main bet, staged side bets, deselects target */
+    /* Clear — clears only the currently selected bet area, or cards if hand is dealt */
     $('.form-clear').on('submit', function (e) {
-        var betVal = parseFloat($('.curr-bet-value').val())
-        var hasStaged = (!isNaN(betVal) && betVal > 0) || ppStagedBet > 0 || t3StagedBet > 0 || dppStagedBet > 0
-        if (!hasStaged && !BJ_GAME_DEALT) {
-            e.preventDefault()
-            return false
-        }
-        // Refund staged side bet amounts back to displayed balance
+        // If a hand is active/finalized, let the POST through to clear cards
+        if (BJ_GAME_DEALT) return
+
+        e.preventDefault()
+
         var balanceElem = $('.balance')[0]
         var bal = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
-        bal += ppStagedBet + t3StagedBet + dppStagedBet
-        balanceElem.innerText = '£' + bal.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
 
-        ppStagedBet  = 0.0
-        t3StagedBet  = 0.0
-        dppStagedBet = 0.0
-        sessionStorage.setItem('bj-pp-staged',  '0')
-        sessionStorage.setItem('bj-t3-staged',  '0')
-        sessionStorage.setItem('bj-dpp-staged', '0')
-        updateSideCircleDisplay('pp',  0)
-        updateSideCircleDisplay('213', 0)
-        updateSideCircleDisplay('dpp', 0)
+        if (chipTarget === 'pp' && ppStagedBet > 0) {
+            bal += ppStagedBet
+            ppStagedBet = 0.0
+            sessionStorage.setItem('bj-pp-staged', '0')
+            updateSideCircleDisplay('pp', 0)
+        } else if (chipTarget === '213' && t3StagedBet > 0) {
+            bal += t3StagedBet
+            t3StagedBet = 0.0
+            sessionStorage.setItem('bj-t3-staged', '0')
+            updateSideCircleDisplay('213', 0)
+        } else if (chipTarget === 'dpp' && dppStagedBet > 0) {
+            bal += dppStagedBet
+            dppStagedBet = 0.0
+            sessionStorage.setItem('bj-dpp-staged', '0')
+            updateSideCircleDisplay('dpp', 0)
+        } else if (chipTarget === 'main') {
+            var betVal = parseFloat($('.curr-bet-value').val()) || 0.0
+            if (betVal <= 0) return false
+            bal += betVal
+            $('.curr-bet-value').val('0')
+            var mainCurrBet = $('.curr-bet')[0]
+            mainCurrBet.innerText = '£0.00'
+            mainCurrBet.classList.remove('low-bet')
+            refreshDealButton()
+        } else {
+            return false
+        }
+
+        balanceElem.innerText = '£' + bal.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
         updateTotalStakeDisplay()
-        setChipTarget('main')
     })
 
     /* Deal — populate hidden side bet fields and clear sessionStorage */
