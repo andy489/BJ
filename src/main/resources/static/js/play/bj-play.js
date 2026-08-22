@@ -195,32 +195,33 @@ $(document).ready(function () {
         calcChip(lastBet, false)
     })
 
-    /* Clear — clears only the currently selected bet area, or cards if hand is dealt */
+    /* Clear — clears the selected bet area client-side; POSTs to server only when there are real cards */
     $('.form-clear').on('submit', function (e) {
-        // If a hand is active/finalized, let the POST through to clear cards
-        if (BJ_GAME_DEALT) return
+        // Cards are on the table only when dealt and the last action was an actual game move (1–15)
+        var hasCards = BJ_GAME_DEALT && BJ_LAST_CHOICE >= 1 && BJ_LAST_CHOICE <= 15
+        if (hasCards) return  // let the POST through to clear server-side cards
 
         e.preventDefault()
 
         var balanceElem = $('.balance')[0]
         var bal = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
 
-        if (chipTarget === 'pp' && ppStagedBet > 0) {
+        if (chipTarget === 'pp') {
             bal += ppStagedBet
             ppStagedBet = 0.0
             sessionStorage.setItem('bj-pp-staged', '0')
             updateSideCircleDisplay('pp', 0)
-        } else if (chipTarget === '213' && t3StagedBet > 0) {
+        } else if (chipTarget === '213') {
             bal += t3StagedBet
             t3StagedBet = 0.0
             sessionStorage.setItem('bj-t3-staged', '0')
             updateSideCircleDisplay('213', 0)
-        } else if (chipTarget === 'dpp' && dppStagedBet > 0) {
+        } else if (chipTarget === 'dpp') {
             bal += dppStagedBet
             dppStagedBet = 0.0
             sessionStorage.setItem('bj-dpp-staged', '0')
             updateSideCircleDisplay('dpp', 0)
-        } else if (chipTarget === 'main') {
+        } else {
             var betVal = parseFloat($('.curr-bet-value').val()) || 0.0
             if (betVal <= 0) return false
             bal += betVal
@@ -229,8 +230,6 @@ $(document).ready(function () {
             mainCurrBet.innerText = '£0.00'
             mainCurrBet.classList.remove('low-bet')
             refreshDealButton()
-        } else {
-            return false
         }
 
         balanceElem.innerText = '£' + bal.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
