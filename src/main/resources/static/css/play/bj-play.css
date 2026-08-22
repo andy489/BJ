@@ -869,7 +869,7 @@ body {
 /* ── Bet circles on the table ────────────────────────── */
 .bet-circles-wrapper {
     position: absolute;
-    bottom: 0.5em;
+    bottom: 11%;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
