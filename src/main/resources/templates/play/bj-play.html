@@ -71,7 +71,7 @@
                     <!-- Main bet circle (center) -->
                     <div class="bet-circle bet-circle--main" id="bet-circle-main"
                          aria-label="Main bet">
-                        <span class="bet-circle-label" th:text="#{bet.curr}">Bet</span>
+                        <span class="bet-circle-label" th:text="#{bet.hand}">Hand</span>
                         <span class="bet-circle-amount curr-bet"
                               th:text="'£' + ${#numbers.formatDecimal(game.wallet.currentBet, 1, 'COMMA', 2, 'POINT')}">£0</span>
                     </div>
@@ -542,7 +542,7 @@
             <div class="cash-stat">
                 <div class="curr-bet-box-title" th:text="#{bet.curr} + ':'">Current Bet</div>
                 <div class="curr-bet-box-value">
-                    <span class="curr-bet" th:text="'£' + ${#numbers.formatDecimal(game.wallet.currentBet, 1, 'COMMA', 2, 'POINT')}">£1</span>
+                    <span class="curr-bet" th:text="'£' + ${#numbers.formatDecimal(game.wallet.totalStake(), 1, 'COMMA', 2, 'POINT')}">£1</span>
                 </div>
             </div>
             <div class="bet-legend">

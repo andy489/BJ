@@ -121,4 +121,11 @@ public class Wallet {
         currentBet = currentBet.add(currentBet);
         doubleBet = handBet;
     }
+
+    public BigDecimal totalStake() {
+        BigDecimal pp  = perfectPairsBet  != null ? perfectPairsBet  : BigDecimal.ZERO;
+        BigDecimal t3  = twentyOneThreeBet != null ? twentyOneThreeBet : BigDecimal.ZERO;
+        BigDecimal dpp = dealerPerfectPairsBet != null ? dealerPerfectPairsBet : BigDecimal.ZERO;
+        return currentBet.add(pp).add(t3).add(dpp);
+    }
 }
