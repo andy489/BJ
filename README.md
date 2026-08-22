@@ -24,6 +24,8 @@ Authenticated lobby (dark):
 
 ### Login & Register
 
+![Login flow](assets/screenshots/2026-08/login.gif)
+
 | Login Light | Login Dark | Login Dark Mobile |
 |---|---|---|
 | ![Login Light](assets/screenshots/2026-08/login-light-desktop.png) | ![Login Dark](assets/screenshots/2026-08/login-dark-desktop.png) | ![Login Dark Mobile](assets/screenshots/2026-08/login-dark-mobile.png) |
@@ -31,6 +33,8 @@ Authenticated lobby (dark):
 Settings panel open (language + theme toggle):
 
 ![Settings Open](assets/screenshots/2026-08/login-settings-open.png)
+
+![Register flow](assets/screenshots/2026-08/register.gif)
 
 | Register Light | Register Dark | Register Mobile |
 |---|---|---|
