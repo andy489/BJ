@@ -78,6 +78,12 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 .setPlayedGame(playedGame)
                 .setDoubleDown(game.getDoubleDown())
                 .setSplit(game.getSplitHands() != null && !game.getSplitHands().isEmpty())
+                .setPpBet(ppBetSnapshot)
+                .setT3Bet(t3BetSnapshot)
+                .setDppBet(dppBetSnapshot)
+                .setPpWin(nvl(ctx.walletEntity().getLastPpWin()))
+                .setT3Win(nvl(ctx.walletEntity().getLastT3Win()))
+                .setDppWin(nvl(ctx.walletEntity().getLastDppWin()))
                 .setUser(playedGame.getOwner());
         ctx.betHistoryService().save(betHistory);
 

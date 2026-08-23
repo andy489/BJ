@@ -39,6 +39,24 @@ public class BetHistoryEntity extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal returnAmount;
 
+    @Column(nullable = false)
+    private BigDecimal ppBet = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    private BigDecimal t3Bet = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    private BigDecimal dppBet = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    private BigDecimal ppWin = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    private BigDecimal t3Win = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    private BigDecimal dppWin = BigDecimal.ZERO;
+
     @ManyToOne(cascade = {CascadeType.MERGE})
     private UserEntity user;
 

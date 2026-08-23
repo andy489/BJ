@@ -1,0 +1,39 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Side bet amounts and payouts on bet_history for full hand replay -->
+    <changeSet author="stoevand" id="37">
+        <addColumn tableName="bet_history">
+            <column name="pp_bet"  type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="t3_bet"  type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dpp_bet" type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pp_win"  type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="t3_win"  type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dpp_win" type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Initial deal cards on played_games for side-bet replay context -->
+    <changeSet author="stoevand" id="38">
+        <addColumn tableName="played_games">
+            <column name="initial_player_cards"  type="VARCHAR(255)"/>
+            <column name="initial_dealer_cards"  type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

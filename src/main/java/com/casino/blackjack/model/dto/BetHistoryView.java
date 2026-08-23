@@ -82,6 +82,14 @@ public class BetHistoryView {
     private final List<String> dealerCardLabels;
     private final List<String> actionLabels;
     private final List<SplitHandView> splitHandViews;
+    private final BigDecimal ppBet;
+    private final BigDecimal t3Bet;
+    private final BigDecimal dppBet;
+    private final BigDecimal ppWin;
+    private final BigDecimal t3Win;
+    private final BigDecimal dppWin;
+    private final List<String> initialPlayerCardLabels;
+    private final List<String> initialDealerCardLabels;
 
     private BetHistoryView(BetHistoryEntity h, ObjectMapper om) {
         this.totalBet      = h.getTotalBetAmount();
@@ -90,6 +98,12 @@ public class BetHistoryView {
         this.split         = Boolean.TRUE.equals(h.getSplit());
         this.insurance     = Boolean.TRUE.equals(h.getPlayedGame().getInsurance());
         this.finalizedTime = h.getPlayedGame().getFinalizedTime();
+        this.ppBet  = nvl(h.getPpBet());
+        this.t3Bet  = nvl(h.getT3Bet());
+        this.dppBet = nvl(h.getDppBet());
+        this.ppWin  = nvl(h.getPpWin());
+        this.t3Win  = nvl(h.getT3Win());
+        this.dppWin = nvl(h.getDppWin());
 
         this.playerCardLabels = parseCards(h.getPlayedGame().getPlayerCards(), om);
         this.dealerCardLabels = parseCards(h.getPlayedGame().getDealerCards(), om);
@@ -98,6 +112,8 @@ public class BetHistoryView {
                 h.getPlayedGame().getSplitHands(),
                 h.getPlayedGame().getSplitHandMultipliers(),
                 om);
+        this.initialPlayerCardLabels = parseCards(h.getPlayedGame().getInitialPlayerCards(), om);
+        this.initialDealerCardLabels = parseCards(h.getPlayedGame().getInitialDealerCards(), om);
     }
 
     public static BetHistoryView of(BetHistoryEntity h, ObjectMapper om) {
@@ -163,9 +179,26 @@ public class BetHistoryView {
     public List<String> getDealerCardLabels()    { return dealerCardLabels; }
     public List<String> getActionLabels()        { return actionLabels; }
     public List<SplitHandView> getSplitHandViews() { return splitHandViews; }
+    public BigDecimal getPpBet()                 { return ppBet; }
+    public BigDecimal getT3Bet()                 { return t3Bet; }
+    public BigDecimal getDppBet()                { return dppBet; }
+    public BigDecimal getPpWin()                 { return ppWin; }
+    public BigDecimal getT3Win()                 { return t3Win; }
+    public BigDecimal getDppWin()                { return dppWin; }
+    public List<String> getInitialPlayerCardLabels() { return initialPlayerCardLabels; }
+    public List<String> getInitialDealerCardLabels() { return initialDealerCardLabels; }
+
+    public boolean hasPpBet()  { return ppBet.compareTo(BigDecimal.ZERO)  > 0; }
+    public boolean hasT3Bet()  { return t3Bet.compareTo(BigDecimal.ZERO)  > 0; }
+    public boolean hasDppBet() { return dppBet.compareTo(BigDecimal.ZERO) > 0; }
+    public boolean hasSideBets() { return hasPpBet() || hasT3Bet() || hasDppBet(); }
 
     /** Net result for the whole round: positive = win, zero = push, negative = loss */
     public int resultSign() {
         return returnAmount.compareTo(totalBet);
+    }
+
+    private static BigDecimal nvl(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

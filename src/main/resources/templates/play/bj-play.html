@@ -707,6 +707,54 @@
                         <span th:if="${h.split}"       class="hist-tag hist-tag-split" th:text="#{history.tag.split}">Split</span>
                         <span th:if="${h.insurance}"   class="hist-tag hist-tag-ins"   th:text="#{history.tag.insurance}">Ins</span>
                     </div>
+
+                    <!-- ── Side bets row (only when at least one side bet was placed) ── -->
+                    <div th:if="${h.hasSideBets()}" class="hist-row-sidebets">
+                        <th:block th:if="${h.hasPpBet()}">
+                            <span class="hist-sidebet-label">PP</span>
+                            <span class="hist-sidebet-stake"
+                                  th:text="'£' + ${#numbers.formatDecimal(h.ppBet, 1, 'COMMA', 2, 'POINT')}">£5</span>
+                            <span th:if="${h.ppWin.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                  class="hist-sidebet-win"
+                                  th:text="'+£' + ${#numbers.formatDecimal(h.ppWin, 1, 'COMMA', 2, 'POINT')}">+£25</span>
+                            <span th:unless="${h.ppWin.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                  class="hist-sidebet-loss">-</span>
+                        </th:block>
+                        <th:block th:if="${h.hasT3Bet()}">
+                            <span class="hist-sidebet-label">21+3</span>
+                            <span class="hist-sidebet-stake"
+                                  th:text="'£' + ${#numbers.formatDecimal(h.t3Bet, 1, 'COMMA', 2, 'POINT')}">£5</span>
+                            <span th:if="${h.t3Win.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                  class="hist-sidebet-win"
+                                  th:text="'+£' + ${#numbers.formatDecimal(h.t3Win, 1, 'COMMA', 2, 'POINT')}">+£25</span>
+                            <span th:unless="${h.t3Win.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                  class="hist-sidebet-loss">-</span>
+                        </th:block>
+                        <th:block th:if="${h.hasDppBet()}">
+                            <span class="hist-sidebet-label">DPP</span>
+                            <span class="hist-sidebet-stake"
+                                  th:text="'£' + ${#numbers.formatDecimal(h.dppBet, 1, 'COMMA', 2, 'POINT')}">£5</span>
+                            <span th:if="${h.dppWin.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                  class="hist-sidebet-win"
+                                  th:text="'+£' + ${#numbers.formatDecimal(h.dppWin, 1, 'COMMA', 2, 'POINT')}">+£25</span>
+                            <span th:unless="${h.dppWin.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                  class="hist-sidebet-loss">-</span>
+                        </th:block>
+                    </div>
+
+                    <!-- ── Initial deal cards (for full replay context) ── -->
+                    <th:block th:if="${not #lists.isEmpty(h.initialPlayerCardLabels)}">
+                        <div class="hist-row-initial-deal">
+                            <span class="hist-hand-label" th:text="#{history.deal} + ':'">Deal:</span>
+                            <span th:each="card : ${h.initialPlayerCardLabels}"
+                                  th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red' : 'hist-card'"
+                                  th:text="${card}">A♠</span>
+                            <span class="hist-sidebet-label">vs</span>
+                            <span th:each="card : ${h.initialDealerCardLabels}"
+                                  th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red hist-card-dealer' : 'hist-card hist-card-dealer'"
+                                  th:text="${card}">K♣</span>
+                        </div>
+                    </th:block>
                 </div>
             </div>
         </div>

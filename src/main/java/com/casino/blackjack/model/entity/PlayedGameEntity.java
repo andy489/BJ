@@ -51,6 +51,10 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
 
     private String splitHandMultipliers;
 
+    private String initialPlayerCards;
+
+    private String initialDealerCards;
+
     @ManyToOne(cascade = {CascadeType.MERGE})
     private UserEntity owner;
 
@@ -67,6 +71,8 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
                 .setDealtTime(gameEntity.getDealtTime())
                 .setSplitHands(gameEntity.getSplitHands())
                 .setSplitHandMultipliers(gameEntity.getSplitHandMultipliers())
+                .setInitialPlayerCards(gameEntity.getInitialPlayerCards())
+                .setInitialDealerCards(gameEntity.getInitialDealerCards())
                 .setOwner(gameEntity.getOwner());
     }
 
