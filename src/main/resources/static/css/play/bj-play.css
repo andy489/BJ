@@ -927,6 +927,11 @@ body {
     opacity: 0.6;
 }
 
+.bet-circles-wrapper--in-play .bet-circle-label,
+.bet-circles-wrapper--in-play .bet-circle-amount {
+    visibility: hidden;
+}
+
 /* Dealer row (DPP) — sits above the player row */
 .bet-circles-row--dealer {
     display: flex;
