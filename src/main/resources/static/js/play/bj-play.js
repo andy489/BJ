@@ -33,24 +33,27 @@ $(document).ready(function () {
     t3StagedBet  = parseFloat(sessionStorage.getItem('bj-t3-staged')  || '0') || 0.0
     dppStagedBet = parseFloat(sessionStorage.getItem('bj-dpp-staged') || '0') || 0.0
 
-    // On page load, if there are already committed server-side amounts but no
-    // staged amounts, seed staged from server values so balance is consistent.
+    // Sync staged amounts with server-side committed amounts.
+    // Server is authoritative: if server reports 0 (post-payout or fresh), clear stale staged.
+    // If server has a committed amount and staged is empty, seed from server (mid-hand reload).
     var serverPP  = (typeof BJ_PP_BET  !== 'undefined') ? parseFloat(BJ_PP_BET)  : 0
     var serverT3  = (typeof BJ_213_BET !== 'undefined') ? parseFloat(BJ_213_BET) : 0
     var serverDPP = (typeof BJ_DPP_BET !== 'undefined') ? parseFloat(BJ_DPP_BET) : 0
 
-    // Only seed from server if sessionStorage had nothing (fresh load)
-    if (ppStagedBet === 0 && serverPP > 0) {
-        ppStagedBet = serverPP
-        sessionStorage.setItem('bj-pp-staged', ppStagedBet)
+    if (serverPP === 0) {
+        ppStagedBet = 0.0; sessionStorage.removeItem('bj-pp-staged')
+    } else if (ppStagedBet === 0) {
+        ppStagedBet = serverPP; sessionStorage.setItem('bj-pp-staged', ppStagedBet)
     }
-    if (t3StagedBet === 0 && serverT3 > 0) {
-        t3StagedBet = serverT3
-        sessionStorage.setItem('bj-t3-staged', t3StagedBet)
+    if (serverT3 === 0) {
+        t3StagedBet = 0.0; sessionStorage.removeItem('bj-t3-staged')
+    } else if (t3StagedBet === 0) {
+        t3StagedBet = serverT3; sessionStorage.setItem('bj-t3-staged', t3StagedBet)
     }
-    if (dppStagedBet === 0 && serverDPP > 0) {
-        dppStagedBet = serverDPP
-        sessionStorage.setItem('bj-dpp-staged', dppStagedBet)
+    if (serverDPP === 0) {
+        dppStagedBet = 0.0; sessionStorage.removeItem('bj-dpp-staged')
+    } else if (dppStagedBet === 0) {
+        dppStagedBet = serverDPP; sessionStorage.setItem('bj-dpp-staged', dppStagedBet)
     }
 
     updateSideCircleDisplay('pp',  ppStagedBet)
