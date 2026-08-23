@@ -29,6 +29,10 @@ public class InsuranceBetProcessor implements GameStateProcessor {
         Game game = ctx.game();
         GameEntity gameEntity = ctx.gameEntity();
 
+        if (Boolean.TRUE.equals(game.getInsurance())) {
+            return ctx;
+        }
+
         BigDecimal currentBet = ctx.walletEntity().getCurrentBet();
         BigDecimal halfBet = BigDecimal.valueOf(currentBet.doubleValue())
                 .divide(BigDecimal.valueOf(2), new MathContext(3));

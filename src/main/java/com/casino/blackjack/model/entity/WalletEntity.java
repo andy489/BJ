@@ -138,7 +138,7 @@ public class WalletEntity extends BaseEntity {
                 .add(doubleBet.multiply(new BigDecimal(handMultiplier)))
                 .add(insuranceBet.multiply(new BigDecimal(insuranceMultiplier)));
         lastWin = totalReturn.max(BigDecimal.ZERO);
-        lastBet = new BigDecimal(String.valueOf(currentBet));
+        lastBet = new BigDecimal(String.valueOf(handBet));
 
         balance = balance.add(totalReturn);
         currentBet = BigDecimal.ZERO;

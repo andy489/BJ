@@ -28,6 +28,9 @@ public class SideBetPlacementProcessor implements GameStateProcessor {
         if (ctx.gameEntity() == null || Boolean.TRUE.equals(ctx.gameEntity().getFinalized())) {
             return false;
         }
+        if (ctx.gameEntity().getInitialPlayerCards() != null) {
+            return false;
+        }
         int choice = ctx.game().getLastTakenChoicePublic();
         return choice == CHOICE_PLACE_PERFECT_PAIRS || choice == CHOICE_PLACE_21_3 || choice == CHOICE_PLACE_DEALER_PP;
     }
