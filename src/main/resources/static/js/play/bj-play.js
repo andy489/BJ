@@ -350,101 +350,68 @@ function handleChip(chipValue, doubleChip) {
 /* ── Add chip to a side bet slot (client-side staging only) ── */
 function calcSideChip(target, chipValue) {
     var balanceElem = $('.balance')[0]
-    var amountBalance = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
+    const balance = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
 
-    if (amountBalance === 0.0) {
+    var current = (target === 'pp') ? ppStagedBet : (target === 'dpp' ? dppStagedBet : t3StagedBet)
+    const { newSideBet, newBalance, noFunds, atCap } = BJ_CALC.calcSideChipValues(current, balance, chipValue)
+
+    if (noFunds) {
         $('#no-funds-modal').removeClass('d-none')
         $('.modal-overlay').addClass('active')
         return
     }
-
-    var current = (target === 'pp') ? ppStagedBet : (target === 'dpp' ? dppStagedBet : t3StagedBet)
-
-    // How much room is left before the cap?
-    var room = SIDE_BET_MAX - current
-    if (room <= 0) return
-
-    // Clamp chip to available room and available balance
-    var toAdd = Math.min(chipValue, room, amountBalance)
-    if (toAdd <= 0) return
-
-    var newTotal  = current + toAdd
-    var newBalance = amountBalance - toAdd
+    if (atCap) return
 
     if (target === 'pp') {
-        ppStagedBet = newTotal
+        ppStagedBet = newSideBet
         sessionStorage.setItem('bj-pp-staged', ppStagedBet)
     } else if (target === 'dpp') {
-        dppStagedBet = newTotal
+        dppStagedBet = newSideBet
         sessionStorage.setItem('bj-dpp-staged', dppStagedBet)
     } else {
-        t3StagedBet = newTotal
+        t3StagedBet = newSideBet
         sessionStorage.setItem('bj-t3-staged', t3StagedBet)
     }
 
     balanceElem.innerText = '£' + newBalance.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
-    updateSideCircleDisplay(target, newTotal)
+    updateSideCircleDisplay(target, newSideBet)
     updateTotalStakeDisplay()
 }
 
 /* ── Main bet chip calculation ───────────────────────────────────────────── */
 function updateTotalStakeDisplay() {
     var handBet = parseFloat($('.curr-bet-value').val()) || 0.0
-    var total = handBet + ppStagedBet + t3StagedBet + dppStagedBet
+    var total = BJ_CALC.calcTotalStake(handBet, ppStagedBet, t3StagedBet, dppStagedBet)
     $('.total-stake').text('£' + total.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2}))
 }
 
 function refreshDealButton() {
     var betVal = parseFloat($('.curr-bet-value').val())
     var dealBtn = $('.btn-deal')
-    if (isNaN(betVal) || betVal < MIN_BET) {
-        dealBtn.addClass('disabled')
-    } else {
+    if (BJ_CALC.isDealEnabled(betVal)) {
         dealBtn.removeClass('disabled')
+    } else {
+        dealBtn.addClass('disabled')
     }
 }
 
 function calcChip(chipValue, doubleChip) {
     let hiddenBetField = $('.curr-bet-value')[0]
-
     let currBetElem = $('.curr-bet')[0]
     let balanceElem = $('.balance')[0]
 
-    let amountBet     = parseFloat(hiddenBetField.value) || 0.0
-    let amountBalance = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
+    const currentBet = parseFloat(hiddenBetField.value) || 0.0
+    const balance    = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
 
-    if (amountBalance === 0.0) {
+    const { newBet, newBalance, noFunds } = BJ_CALC.calcChipValues(currentBet, balance, chipValue, doubleChip)
+
+    if (noFunds) {
         $('#no-funds-modal').removeClass('d-none')
         $('.modal-overlay').addClass('active')
         return
     }
 
-    let newBet, newBalance
-    if (doubleChip) {
-        newBet     = amountBet * 2
-        newBalance = amountBalance - amountBet
-    } else {
-        newBet     = amountBet + chipValue
-        newBalance = amountBalance - chipValue
-    }
-
-    if (newBet > MAX_BET) {
-        let diff = newBet - MAX_BET
-        newBet     = MAX_BET
-        newBalance += diff
-    }
-
-    if (newBalance < 0.0) {
-        if (doubleChip) {
-            newBet = amountBet + amountBalance
-        } else {
-            let diff = chipValue + newBalance
-            newBet = amountBet + diff
-        }
-        newBalance = 0.0
-    }
-
-    if (newBet < MIN_BET) {
+    if (newBet < BJ_CALC.MIN_BET) {
         currBetElem.classList.add('low-bet')
     } else {
         currBetElem.classList.remove('low-bet')

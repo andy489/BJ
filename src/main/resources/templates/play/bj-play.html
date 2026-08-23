@@ -47,11 +47,9 @@
                                 id="bet-circle-dpp"
                                 th:classappend="${game.wallet.dealerPerfectPairsBet != null and game.wallet.dealerPerfectPairsBet > 0} ? 'bet-circle--active' : ''"
                                 aria-label="Dealer Perfect Pairs bet">
-                            <span class="bet-circle-label"
-                                  th:style="${game.dealt != null and game.dealt} ? 'visibility:hidden' : ''">DPP</span>
+                            <span class="bet-circle-label">DPP</span>
                             <span class="bet-circle-amount"
                                   th:if="${game.wallet.dealerPerfectPairsBet != null and game.wallet.dealerPerfectPairsBet > 0}"
-                                  th:style="${game.dealt != null and game.dealt} ? 'visibility:hidden' : ''"
                                   th:text="'£' + ${#numbers.formatDecimal(game.wallet.dealerPerfectPairsBet, 1, 'COMMA', 2, 'POINT')}">£1</span>
                         </button>
                     </form>
@@ -65,22 +63,18 @@
                                 id="bet-circle-pp"
                                 th:classappend="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0} ? 'bet-circle--active' : ''"
                                 aria-label="Perfect Pairs bet">
-                            <span class="bet-circle-label"
-                                  th:style="${game.dealt != null and game.dealt} ? 'visibility:hidden' : ''">PP</span>
+                            <span class="bet-circle-label">PP</span>
                             <span class="bet-circle-amount"
                                   th:if="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0}"
-                                  th:style="${game.dealt != null and game.dealt} ? 'visibility:hidden' : ''"
                                   th:text="'£' + ${#numbers.formatDecimal(game.wallet.perfectPairsBet, 1, 'COMMA', 2, 'POINT')}">£1</span>
                         </button>
                     </form>
                     <!-- Main bet circle (center) -->
                     <button type="button" class="bet-circle bet-circle--main" id="bet-circle-main"
                             aria-label="Main bet">
-                        <span class="bet-circle-label" th:text="#{bet.hand}"
-                              th:style="${game.dealt != null and game.dealt} ? 'visibility:hidden' : ''">Hand</span>
+                        <span class="bet-circle-label" th:text="#{bet.hand}">Hand</span>
                         <span class="bet-circle-amount curr-bet"
-                              th:text="'£' + ${#numbers.formatDecimal(game.wallet.currentBet, 1, 'COMMA', 2, 'POINT')}"
-                              th:style="${game.dealt != null and game.dealt} ? 'visibility:hidden' : ''">£0</span>
+                              th:text="'£' + ${#numbers.formatDecimal(game.wallet.currentBet, 1, 'COMMA', 2, 'POINT')}">£0</span>
                     </button>
                     <!-- 21+3 circle (right) -->
                     <form class="side-bet-form" id="form-side-213" th:action="@{/play/side-bet/21-3}" th:method="post">
@@ -89,11 +83,9 @@
                                 id="bet-circle-213"
                                 th:classappend="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0} ? 'bet-circle--active' : ''"
                                 aria-label="21+3 bet">
-                            <span class="bet-circle-label"
-                                  th:style="${game.dealt != null and game.dealt} ? 'visibility:hidden' : ''">21+3</span>
+                            <span class="bet-circle-label">21+3</span>
                             <span class="bet-circle-amount"
                                   th:if="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0}"
-                                  th:style="${game.dealt != null and game.dealt} ? 'visibility:hidden' : ''"
                                   th:text="'£' + ${#numbers.formatDecimal(game.wallet.twentyOneThreeBet, 1, 'COMMA', 2, 'POINT')}">£1</span>
                         </button>
                     </form>
@@ -531,8 +523,9 @@
                     </form>
                 </div>
                 <div class="bet-action">
-                    <form action="">
-                        <button type="button" class="btn btn-bet btn-chip-double">
+                    <form th:action="@{/play/double-bet}" th:method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-bet btn-chip-double">
                             <i class="fas fa-angle-double-up fa-lg"></i>
                         </button>
                         <span th:text="#{bet.double}">Double</span>
@@ -772,6 +765,7 @@
 </div>
 
 <script th:src="@{/js/jquery/jquery.js}"></script>
+<script defer th:src="@{/js/play/bj-play-calc.js}"></script>
 <script defer th:src="@{/js/play/bj-play.js}"></script>
 <script th:inline="javascript">
     var BJ_LAST_CHOICE    = /*[[${game.lastChoice}]]*/ 0;
