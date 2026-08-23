@@ -45,6 +45,11 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
 
         BigDecimal totalBetAmount;
 
+        // Capture side bet totals before payBet() zeroes them
+        BigDecimal ppBetSnapshot  = nvl(ctx.walletEntity().getPerfectPairsBet());
+        BigDecimal t3BetSnapshot  = nvl(ctx.walletEntity().getTwentyOneThreeBet());
+        BigDecimal dppBetSnapshot = nvl(ctx.walletEntity().getDealerPerfectPairsBet());
+
         if (game.getSplitActive() == null || !game.getSplitActive()) {
             if (game.getSplitHands() != null && !game.getSplitHands().isEmpty()) {
                 totalBetAmount = paySplitHands(ctx, game);
@@ -59,6 +64,11 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
 
         // Settle side bets (independent of main hand outcome)
         settleSideBets(ctx, gameEntity);
+
+        // lastBet = main hand bet (for Repeat); lastTotalBet = all bets combined (for display)
+        BigDecimal lastTotalBet = ctx.walletEntity().getLastBet()
+                .add(ppBetSnapshot).add(t3BetSnapshot).add(dppBetSnapshot);
+        ctx.walletEntity().setLastTotalBet(lastTotalBet);
 
         ctx.walletRepo().save(ctx.walletEntity());
 
@@ -180,11 +190,6 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         totalWin = totalWin.add(insuranceWin);
 
         ctx.walletEntity().setLastBet(ctx.walletEntity().getCurrentBet());
-        BigDecimal lastTotalBet = ctx.walletEntity().getCurrentBet()
-                .add(ctx.walletEntity().getPerfectPairsBet())
-                .add(ctx.walletEntity().getTwentyOneThreeBet())
-                .add(ctx.walletEntity().getDealerPerfectPairsBet());
-        ctx.walletEntity().setLastTotalBet(lastTotalBet);
         ctx.walletEntity().setLastWin(totalWin.max(BigDecimal.ZERO));
         ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(totalWin));
         ctx.walletEntity().setCurrentBet(BigDecimal.ZERO);
@@ -197,5 +202,9 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         ctx.walletEntity().setDealerPerfectPairsBet(BigDecimal.ZERO);
 
         return totalBet.add(insuranceBet);
+    }
+
+    private static BigDecimal nvl(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

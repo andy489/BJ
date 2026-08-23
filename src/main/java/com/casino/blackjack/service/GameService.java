@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CLEAR_LAST_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN_NO;
@@ -276,15 +275,8 @@ public class GameService {
         Optional<GameEntity> currGameEntity = extractLastGame();
         Optional<WalletEntity> currWalletEntity = extractWallet();
 
-        Game game = new Game()
-                .makeChoice(CHOICE_CLEAR_LAST_BET)
-                .setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
-
-        GameEntity gameEntity = currGameEntity.isEmpty()
-                ? GameEntity.of(game, om, userService.getCurrentLoggedUser())
-                : GameEntity.map(currGameEntity.get(), game, om);
-
-        lastGameRepository.save(gameEntity);
+        // Delete the game entity so GET /play returns a clean dealt=false state
+        currGameEntity.ifPresent(lastGameRepository::delete);
 
         currWalletEntity.ifPresent(w -> {
             w.setLastBet(BigDecimal.ZERO);
