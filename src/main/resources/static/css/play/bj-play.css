@@ -1096,6 +1096,11 @@ body {
     font-weight: 900;
 }
 
+.bet-circle-amount.low-bet {
+    color: #ff6b6b;
+    text-shadow: 0 0 8px rgba(255, 80, 80, 0.5), 0 1px 4px rgba(0,0,0,1);
+}
+
 /* ── Side Bets ───────────────────────────────────────── */
 .side-bets-wrapper {
     width: 100%;

@@ -58,6 +58,14 @@ $(document).ready(function () {
     updateSideCircleDisplay('dpp', dppStagedBet)
     updateTotalStakeDisplay()
 
+    // Apply low-bet class to main circle amount on initial load
+    var initBet = parseFloat($('.curr-bet-value').val()) || 0.0
+    var mainCurrBet = $('.curr-bet')[0]
+    if (mainCurrBet) {
+        if (initBet > 0 && initBet < MIN_BET) mainCurrBet.classList.add('low-bet')
+        else mainCurrBet.classList.remove('low-bet')
+    }
+
     $('.btn-err-ok').click(function () {
         $('.err-modal-wrapper').addClass("d-none")
         $('.modal-overlay').removeClass('active')
@@ -317,6 +325,7 @@ function updateSideCircleDisplay(target, amount) {
             circle.appendChild(amountSpan)
         }
         amountSpan.textContent = '£' + amount.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+        amountSpan.classList.toggle('low-bet', amount < SIDE_BET_MIN)
         circle.classList.add('bet-circle--active')
     } else {
         if (amountSpan) amountSpan.remove()
