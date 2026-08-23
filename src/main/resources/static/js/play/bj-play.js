@@ -213,12 +213,12 @@ $(document).ready(function () {
         calcChip(lastBet, false)
     })
 
-    /* Clear — clears the selected bet area client-side; POSTs to server only when there are real cards.
+    /* Clear — clears the selected bet area client-side; POSTs to server when cards are present.
        If the selected target already has nothing to clear, clears ALL bet areas at once. */
     $('.form-clear').on('submit', function (e) {
-        // Cards are on the table only when dealt, not yet finalized, and the last action was an actual game move (1–15)
+        // Let the POST through when cards are on the table (active hand) or when the game just finalized
         var hasCards = BJ_GAME_DEALT && !BJ_FINALIZED && BJ_LAST_CHOICE >= 1 && BJ_LAST_CHOICE <= 15
-        if (hasCards) return  // let the POST through to clear server-side cards
+        if (hasCards || BJ_FINALIZED) return  // let the POST clear server-side state
 
         e.preventDefault()
 
