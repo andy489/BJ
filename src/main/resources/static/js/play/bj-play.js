@@ -205,7 +205,8 @@ $(document).ready(function () {
         calcChip(lastBet, false)
     })
 
-    /* Clear — clears the selected bet area client-side; POSTs to server only when there are real cards */
+    /* Clear — clears the selected bet area client-side; POSTs to server only when there are real cards.
+       If the selected target already has nothing to clear, clears ALL bet areas at once. */
     $('.form-clear').on('submit', function (e) {
         // Cards are on the table only when dealt, not yet finalized, and the last action was an actual game move (1–15)
         var hasCards = BJ_GAME_DEALT && !BJ_FINALIZED && BJ_LAST_CHOICE >= 1 && BJ_LAST_CHOICE <= 15
@@ -216,7 +217,30 @@ $(document).ready(function () {
         var balanceElem = $('.balance')[0]
         var bal = parseFloat(balanceElem.innerText.replace(/[£,]/g, '')) || 0.0
 
-        if (chipTarget === 'pp') {
+        // Determine if the currently selected target already has nothing to clear
+        var currentTargetAmount = 0.0
+        if (chipTarget === 'pp')        currentTargetAmount = ppStagedBet
+        else if (chipTarget === '213')  currentTargetAmount = t3StagedBet
+        else if (chipTarget === 'dpp')  currentTargetAmount = dppStagedBet
+        else                            currentTargetAmount = parseFloat($('.curr-bet-value').val()) || 0.0
+
+        var clearAll = (currentTargetAmount <= 0)
+
+        if (clearAll) {
+            // Clear every bet area and return all amounts to balance
+            var mainBet = parseFloat($('.curr-bet-value').val()) || 0.0
+            bal += mainBet + ppStagedBet + t3StagedBet + dppStagedBet
+
+            ppStagedBet  = 0.0; sessionStorage.setItem('bj-pp-staged',  '0'); updateSideCircleDisplay('pp',  0)
+            t3StagedBet  = 0.0; sessionStorage.setItem('bj-t3-staged',  '0'); updateSideCircleDisplay('213', 0)
+            dppStagedBet = 0.0; sessionStorage.setItem('bj-dpp-staged', '0'); updateSideCircleDisplay('dpp', 0)
+
+            $('.curr-bet-value').val('0')
+            var mainCurrBet = $('.curr-bet')[0]
+            mainCurrBet.innerText = '£0.00'
+            mainCurrBet.classList.remove('low-bet')
+            refreshDealButton()
+        } else if (chipTarget === 'pp') {
             bal += ppStagedBet
             ppStagedBet = 0.0
             sessionStorage.setItem('bj-pp-staged', '0')
@@ -232,9 +256,7 @@ $(document).ready(function () {
             sessionStorage.setItem('bj-dpp-staged', '0')
             updateSideCircleDisplay('dpp', 0)
         } else {
-            var betVal = parseFloat($('.curr-bet-value').val()) || 0.0
-            if (betVal <= 0) return false
-            bal += betVal
+            bal += currentTargetAmount
             $('.curr-bet-value').val('0')
             var mainCurrBet = $('.curr-bet')[0]
             mainCurrBet.innerText = '£0.00'
