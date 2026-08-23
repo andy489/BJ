@@ -34,6 +34,7 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURA
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURANCE_YES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_REPEAT_LAST_BET;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_FINALIZE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_PLAY;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT_DD_ADVANCE;
@@ -247,6 +248,9 @@ public class GameService {
     public void repeatLastBet() {
         Optional<GameEntity> currGameEntity = extractLastGame();
 
+        WalletEntity walletEntity = extractWallet()
+                .orElseThrow(() -> new IllegalStateException(NO_WALLET_FOUND));
+
         Game game;
         if (currGameEntity.isPresent()) {
             Game temp = Game.of(currGameEntity.get(), om);
@@ -270,7 +274,31 @@ public class GameService {
                 ? GameEntity.of(game, om, userService.getCurrentLoggedUser())
                 : GameEntity.map(currGameEntity.get(), game, om);
 
-        lastGameRepository.save(gameEntity);
+        GameContext ctx = buildContext(game, gameEntity, walletEntity);
+        GameContext result = processorChain.process(ctx);
+        // RepeatLastBetProcessor saves both wallet and game entity internally.
+        // RepeatLastBetAgainProcessor is a no-op pass-through — save entity here.
+        if (game.getLastChoice().equals(CHOICE_REPEAT_LAST_BET_AGAIN)) {
+            lastGameRepository.save(GameEntity.map(gameEntity, result.game(), om));
+        }
+    }
+
+    public void doubleBet() {
+        Optional<GameEntity> currGameEntity = extractLastGame();
+
+        WalletEntity walletEntity = extractWallet()
+                .orElseThrow(() -> new IllegalStateException(NO_WALLET_FOUND));
+
+        Game game = new Game()
+                .makeChoice(CHOICE_DOUBLE_BET)
+                .setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
+
+        GameEntity gameEntity = currGameEntity.isEmpty()
+                ? GameEntity.of(game, om, userService.getCurrentLoggedUser())
+                : GameEntity.map(currGameEntity.get(), game, om);
+
+        GameContext ctx = buildContext(game, gameEntity, walletEntity);
+        processorChain.process(ctx);
     }
 
     public void clearBet() {
@@ -280,10 +308,8 @@ public class GameService {
         // Delete the game entity so GET /play returns a clean dealt=false state
         currGameEntity.ifPresent(lastGameRepository::delete);
 
-        currWalletEntity.ifPresent(w -> {
-            w.setLastBet(BigDecimal.ZERO);
-            walletRepository.save(w);
-        });
+        // No wallet mutation needed — bets are already zeroed by FinalizedPayoutProcessor.
+        // lastBet must NOT be cleared here; it is read by RepeatLastBetProcessor.
     }
 
     public void accept() {

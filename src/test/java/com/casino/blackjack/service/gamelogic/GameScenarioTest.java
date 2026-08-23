@@ -45,7 +45,7 @@ class GameScenarioTest {
 
     /** Minimal context for pure-logic tests — all wallet/repo fields are null (unused by pure processors). */
     private static GameContext ctx(Game game) {
-        return new GameContext(game, null, null, null, null, null, null, null, null, null, 4);
+        return new GameContext(game, null, null, null, null, null, null, null, null, null, 4, 3000);
     }
 
     /** Convenience: build a freshly-dealt game with fixed cards and run the processor chain. */
@@ -323,7 +323,7 @@ class GameScenarioTest {
 
         // initial choices: Surrender offered (dealer is not Ace), no Split (no pair)
         assertThat(game.getAvailableChoices())
-                .containsExactlyInAnyOrder(CHOICE_SURRENDER, CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN);
+                .containsExactlyInAnyOrder(CHOICE_SURRENDER, CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN, CHOICE_AUTO_PLAY);
         assertThat(game.getAvailableChoices()).doesNotContain(CHOICE_SPLIT);
 
         // takenChoices recorded the initial DEAL
@@ -487,7 +487,7 @@ class GameScenarioTest {
         assertThat(game.getFinalized()).isFalse();
         assertThat(game.getPlayerCards()).hasSize(3);
         assertThat(game.playerHardScore()).isEqualTo(14);
-        assertThat(game.getAvailableChoices()).containsExactly(CHOICE_STAND, CHOICE_HIT);
+        assertThat(game.getAvailableChoices()).containsExactly(CHOICE_STAND, CHOICE_HIT, CHOICE_AUTO_FINALIZE);
 
         // Second hit: 14+9=23 bust
         game.makeChoice(CHOICE_HIT);
@@ -567,7 +567,7 @@ class GameScenarioTest {
 
         // Surrender available (dealer upcard not Ace, initial deal), no Split
         assertThat(game.getAvailableChoices())
-                .containsExactlyInAnyOrder(CHOICE_SURRENDER, CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN);
+                .containsExactlyInAnyOrder(CHOICE_SURRENDER, CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN, CHOICE_AUTO_PLAY);
         assertThat(game.getAvailableChoices()).doesNotContain(CHOICE_SPLIT);
 
         // takenChoices has only DEAL
@@ -690,7 +690,7 @@ class GameScenarioTest {
 
         // Normal play choices restored (no Surrender — dealerCards.size()==1, not INITIAL_DEALT_CARD_COUNT)
         assertThat(game.getAvailableChoices())
-                .containsExactlyInAnyOrder(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN);
+                .containsExactlyInAnyOrder(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN, CHOICE_AUTO_FINALIZE);
         assertThat(game.getAvailableChoices()).doesNotContain(CHOICE_DOUBLE_DOWN_YES, CHOICE_DOUBLE_DOWN_NO);
         assertThat(game.getAvailableChoices()).doesNotContain(CHOICE_SURRENDER);
 
@@ -753,7 +753,7 @@ class GameScenarioTest {
         assertThat(game.getFinalized()).isFalse();
         assertThat(game.getPlayerCards()).hasSize(3);
         assertThat(game.playerHardScore()).isEqualTo(16);
-        assertThat(game.getAvailableChoices()).containsExactly(CHOICE_STAND, CHOICE_HIT);
+        assertThat(game.getAvailableChoices()).containsExactly(CHOICE_STAND, CHOICE_HIT, CHOICE_AUTO_FINALIZE);
     }
 
     @Test

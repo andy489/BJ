@@ -5,17 +5,15 @@ import com.casino.blackjack.service.gamelogic.dto.Game;
 import com.casino.blackjack.service.gamelogic.dto.Wallet;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_REPEAT_LAST_BET;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_INSUFFICIENT_FUNDS;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_LAST_BET;
 
 /**
- * Handles CHOICE_REPEAT_LAST_BET — places the last recorded bet on the wallet.
+ * Handles CHOICE_REPEAT_LAST_BET — restores last main + side bets onto the wallet.
  */
 public class RepeatLastBetProcessor implements GameStateProcessor {
 
@@ -28,24 +26,47 @@ public class RepeatLastBetProcessor implements GameStateProcessor {
     public GameContext process(GameContext ctx) {
         Game game = ctx.game();
 
-        BigDecimal lastBet = ctx.walletEntity().getLastBet();
+        BigDecimal lastBet    = nvl(ctx.walletEntity().getLastBet());
+        BigDecimal lastPpBet  = nvl(ctx.walletEntity().getLastPpBet());
+        BigDecimal lastT3Bet  = nvl(ctx.walletEntity().getLastT3Bet());
+        BigDecimal lastDppBet = nvl(ctx.walletEntity().getLastDppBet());
 
         if (lastBet.compareTo(BigDecimal.ZERO) == 0) {
-            return ctx; // game.addErr(NO_LAST_BET) was already set by GameService.repeatLastBet()
+            return ctx;
         }
 
-        if (ctx.walletEntity().getBalance().compareTo(lastBet) < 0) {
+        BigDecimal totalNeeded = lastBet.add(lastPpBet).add(lastT3Bet).add(lastDppBet);
+        if (ctx.walletEntity().getBalance().compareTo(totalNeeded) < 0) {
             game.addErr(ERR_CODE_INSUFFICIENT_FUNDS);
             return ctx;
         }
 
         Wallet wallet = Wallet.of(ctx.walletEntity());
         wallet.placeHandBet(lastBet);
+
+        if (lastPpBet.compareTo(BigDecimal.ZERO) > 0) {
+            wallet.setBalance(wallet.getBalance().subtract(lastPpBet));
+            wallet.setPerfectPairsBet(lastPpBet);
+        }
+        if (lastT3Bet.compareTo(BigDecimal.ZERO) > 0) {
+            wallet.setBalance(wallet.getBalance().subtract(lastT3Bet));
+            wallet.setTwentyOneThreeBet(lastT3Bet);
+        }
+        if (lastDppBet.compareTo(BigDecimal.ZERO) > 0) {
+            wallet.setBalance(wallet.getBalance().subtract(lastDppBet));
+            wallet.setDealerPerfectPairsBet(lastDppBet);
+        }
+
         game.setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL))
                 .setWallet(wallet);
         Wallet.map(ctx.walletEntity(), wallet);
-        ctx.walletRepo().save(ctx.walletEntity());
+        if (ctx.walletRepo() != null) ctx.walletRepo().save(ctx.walletEntity());
+        if (ctx.lastGameRepo() != null) ctx.lastGameRepo().save(GameEntity.map(ctx.gameEntity(), game, ctx.om()));
 
         return ctx;
+    }
+
+    private static BigDecimal nvl(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

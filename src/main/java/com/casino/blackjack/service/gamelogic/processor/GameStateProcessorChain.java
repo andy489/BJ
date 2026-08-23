@@ -18,6 +18,7 @@ public class GameStateProcessorChain {
                 new RepeatLastBetAgainProcessor(),
                 new ClearLastBetProcessor(),
                 new SideBetPlacementProcessor(),
+                new DoubleBetProcessor(),
                 new InsuranceBetProcessor(),
                 new SplitBetProcessor(maxSplits),
                 new DoubleDownBetProcessor(),
