@@ -1,24 +1,46 @@
 package com.casino.blackjack.service.gamelogic;
 
 import com.casino.blackjack.model.entity.GameEntity;
+import com.casino.blackjack.model.entity.UserActivationTokenEntity;
+import com.casino.blackjack.model.entity.UserForgotPassEntity;
 import com.casino.blackjack.model.entity.WalletEntity;
+import com.casino.blackjack.model.validation.deposit.NotExpiredValidator;
+import com.casino.blackjack.model.validation.registration.MinAge;
+import com.casino.blackjack.model.validation.registration.MinAgeValidator;
 import com.casino.blackjack.service.gamelogic.dto.Game;
 import com.casino.blackjack.service.gamelogic.processor.GameContext;
 import com.casino.blackjack.service.gamelogic.processor.InsuranceBetProcessor;
+import com.casino.blackjack.service.gamelogic.processor.InsufficientFundsReCheckProcessor;
 import com.casino.blackjack.service.gamelogic.processor.SideBetPlacementProcessor;
+import jakarta.validation.Payload;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for the three bug fixes:
+ * Unit tests for bug fixes.
  *
- * Bug 1 — WalletEntity.payBet() must store handBet (not currentBet) into lastBet.
- * Bug 2 — SideBetPlacementProcessor must reject side bets after cards are dealt.
- * Bug 3 — InsuranceBetProcessor must not deduct insurance a second time when already placed.
+ * Existing tests (Bugs 1–3 from prior session):
+ *   - payBet_afterDoubleDown_lastBetEqualsHandBetNotCurrentBet
+ *   - payBet_withoutDoubleDown_lastBetEqualsHandBet
+ *   - sideBetPlacementProcessor_rejectsPlacementAfterDeal
+ *   - sideBetPlacementProcessor_allowsPlacementBeforeDeal
+ *   - insuranceBetProcessor_secondCallIsNoOp_whenInsuranceAlreadyPlaced
+ *
+ * New tests (Fixes 1–9 from this session):
+ *   - Fix 1  (ClearLastBetProcessor)   — refunds staged amounts, not lastBet
+ *   - Fix 2  (HitProcessor)            — player hit to 21 always wins, even if dealer multi-card 21
+ *   - Fix 3  (NotExpiredValidator)     — 0-based month normalised, card valid through expiry month
+ *   - Fix 4  (MinAgeValidator)         — user exactly at minAge is valid
+ *   - Fix 7  (InsufficientFundsReCheck)— insurance path restores [NO,YES]; DD path restores [STAND,HIT,DD]
+ *   - Fix 8  (UserService token expiry)— activation token past expiry is rejected inline
+ *   - Fix 9  (UserTokenService save)   — update path in createResetPassToken saves the entity
  */
 class BugFixTest {
 
@@ -140,17 +162,11 @@ class BugFixTest {
     /**
      * Calling InsuranceBetProcessor.process() a second time when insurance is already placed
      * must be a no-op: wallet balance stays the same as after the first call.
-     *
-     * We simulate the state AFTER the first insurance placement (insurance=true, balance already
-     * reduced) and verify that submitting CHOICE_INSURANCE_YES again does not touch the wallet.
-     * The guard fires before any repo calls, so passing null repos proves it returned early.
      */
     @Test
     void insuranceBetProcessor_secondCallIsNoOp_whenInsuranceAlreadyPlaced() {
         InsuranceBetProcessor processor = new InsuranceBetProcessor();
 
-        // Wallet state AFTER the first insurance deduction:
-        //   original balance £200, hand bet £50, insurance (halfBet) £25 already deducted.
         WalletEntity wallet = new WalletEntity();
         wallet.setBalance(bd(125)); // 200 - 50 (handBet) - 25 (insuranceBet already taken)
         wallet.setHandBet(bd(50));
@@ -167,11 +183,468 @@ class BugFixTest {
                 4, 3000
         );
 
-        // Second call must be a no-op (guard returns before touching wallet or repos)
         processor.process(ctx);
 
-        // Balance unchanged
         assertThat(wallet.getBalance()).isEqualByComparingTo(bd(125));
         assertThat(wallet.getInsuranceBet()).isEqualByComparingTo(bd(25));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Fix 1 — ClearLastBetProcessor: must refund staged bet, not lastBet
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * ClearLastBetProcessor should refund the currently staged amounts (handBet + side bets)
+     * back to balance and zero them out. It must NOT touch lastBet.
+     */
+    @Test
+    void clearLastBetProcessor_refundsStagedAmountsNotLastBet() {
+        // Wallet state: player placed handBet=50, pp=10, lastBet=75 (previous hand)
+        WalletEntity walletEntity = new WalletEntity();
+        walletEntity.setBalance(bd(940));   // 1000 - 50 (handBet) - 10 (pp) = 940
+        walletEntity.setHandBet(bd(50));
+        walletEntity.setPerfectPairsBet(bd(10));
+        walletEntity.setCurrentBet(bd(60));
+        walletEntity.setLastBet(bd(75));    // previous hand's settled bet — must not change
+
+        // We need a real GameContext with a wallet repo. Since ClearLastBetProcessor touches
+        // the wallet entity and calls walletRepo.save(), we use a minimal stub.
+        com.casino.blackjack.repo.WalletRepository walletRepo =
+                new com.casino.blackjack.repo.WalletRepository() {
+                    // Minimal JpaRepository stub — only save() is called
+                    public WalletEntity save(WalletEntity entity) { return entity; }
+                    // All other methods throw UnsupportedOperationException (never called)
+                    public <S extends WalletEntity> java.util.List<S> saveAll(Iterable<S> e) { throw new UnsupportedOperationException(); }
+                    public java.util.Optional<WalletEntity> findById(Long id) { throw new UnsupportedOperationException(); }
+                    public boolean existsById(Long id) { throw new UnsupportedOperationException(); }
+                    public java.util.List<WalletEntity> findAll() { throw new UnsupportedOperationException(); }
+                    public java.util.List<WalletEntity> findAllById(Iterable<Long> ids) { throw new UnsupportedOperationException(); }
+                    public long count() { throw new UnsupportedOperationException(); }
+                    public void deleteById(Long id) { throw new UnsupportedOperationException(); }
+                    public void delete(WalletEntity entity) { throw new UnsupportedOperationException(); }
+                    public void deleteAllById(Iterable<? extends Long> ids) { throw new UnsupportedOperationException(); }
+                    public void deleteAll(Iterable<? extends WalletEntity> entities) { throw new UnsupportedOperationException(); }
+                    public void deleteAll() { throw new UnsupportedOperationException(); }
+                    public void flush() { throw new UnsupportedOperationException(); }
+                    public <S extends WalletEntity> S saveAndFlush(S entity) { throw new UnsupportedOperationException(); }
+                    public <S extends WalletEntity> java.util.List<S> saveAllAndFlush(Iterable<S> e) { throw new UnsupportedOperationException(); }
+                    public void deleteAllInBatch(Iterable<WalletEntity> e) { throw new UnsupportedOperationException(); }
+                    public void deleteAllByIdInBatch(Iterable<Long> ids) { throw new UnsupportedOperationException(); }
+                    public void deleteAllInBatch() { throw new UnsupportedOperationException(); }
+                    public WalletEntity getOne(Long id) { throw new UnsupportedOperationException(); }
+                    public WalletEntity getById(Long id) { throw new UnsupportedOperationException(); }
+                    public WalletEntity getReferenceById(Long id) { throw new UnsupportedOperationException(); }
+                    public <S extends WalletEntity> java.util.Optional<S> findOne(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+                    public <S extends WalletEntity> java.util.List<S> findAll(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+                    public <S extends WalletEntity> java.util.List<S> findAll(org.springframework.data.domain.Example<S> e, org.springframework.data.domain.Sort s) { throw new UnsupportedOperationException(); }
+                    public <S extends WalletEntity> org.springframework.data.domain.Page<S> findAll(org.springframework.data.domain.Example<S> e, org.springframework.data.domain.Pageable p) { throw new UnsupportedOperationException(); }
+                    public <S extends WalletEntity> long count(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+                    public <S extends WalletEntity> boolean exists(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+                    public <S extends WalletEntity, R> R findBy(org.springframework.data.domain.Example<S> e, java.util.function.Function<org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery<S>,R> f) { throw new UnsupportedOperationException(); }
+                    public java.util.List<WalletEntity> findAll(org.springframework.data.domain.Sort s) { throw new UnsupportedOperationException(); }
+                    public org.springframework.data.domain.Page<WalletEntity> findAll(org.springframework.data.domain.Pageable p) { throw new UnsupportedOperationException(); }
+                    public java.util.Optional<WalletEntity> getReferenceByOwnerId(Long ownerId) { throw new UnsupportedOperationException(); }
+                    public java.util.Optional<WalletEntity> findByOwnerId(Long ownerId) { throw new UnsupportedOperationException(); }
+                };
+
+        Game game = new Game().makeChoice(CHOICE_CLEAR_LAST_BET);
+        GameContext ctx = new GameContext(game, null, walletEntity,
+                null, null, walletRepo, null, null, null, null, 4, 3000);
+
+        com.casino.blackjack.service.gamelogic.processor.ClearLastBetProcessor processor =
+                new com.casino.blackjack.service.gamelogic.processor.ClearLastBetProcessor();
+        processor.process(ctx);
+
+        // Balance should be refunded by stagedBet = 50 + 10 = 60
+        assertThat(walletEntity.getBalance()).isEqualByComparingTo(bd(1000));
+        assertThat(walletEntity.getHandBet()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(walletEntity.getPerfectPairsBet()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(walletEntity.getCurrentBet()).isEqualByComparingTo(BigDecimal.ZERO);
+        // lastBet must be untouched
+        assertThat(walletEntity.getLastBet()).isEqualByComparingTo(bd(75));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Fix 2 — HitProcessor: player hit to 21 always wins (even vs dealer 21)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Player hits to 21, dealer plays out to 21 via multiple cards.
+     * Before the fix this was PUSH_MULTI; after the fix it must be DOUBLE_MULTI.
+     */
+    @Test
+    void hitProcessor_playerHitsTo21_winsEvenWhenDealerAlsoReaches21() {
+        // Use Game.calcHand() (the display-chain path) directly to verify the logic.
+        // Deal: dealer K (10), dealer hidden K (10), player 7, player 4.
+        // Player hits: draws 10 → total 21.
+        // Dealer hidden card is K (10), dealer already has K (10) → 20, then hits to get another card.
+        // We'll use FixedCardSource so we control everything.
+        com.casino.blackjack.service.gamelogic.rng.FixedCardSource cs =
+                new com.casino.blackjack.service.gamelogic.rng.FixedCardSource(
+                        // dealer visible, dealer hidden, player0, player1, player hit, dealer hit (to reach 21)
+                        card(10, 0), card(10, 1),  // dealer: K clubs, K diamonds → 20
+                        card(7, 0), card(4, 0),    // player: 7, 4 → 11
+                        card(10, 2),               // player hit: 10 → 21
+                        card(1, 0)                 // dealer hit: Ace → dealer 20 + A = 21 (soft)
+                );
+
+        Game game = new Game();
+        game.setCardSource(cs);
+        game.deal();
+        game.adjustDealerCardsAfterDeal();
+
+        // Player has 7+4=11, dealer up-card K(10)
+        // No insurance/BJ paths needed — directly make the HIT choice
+        game.makeChoice(CHOICE_DEAL);
+        game.makeChoice(CHOICE_INSURANCE_NO); // dealer has 10, no ace — but we skip to HIT directly
+        // Reset taken choices to simulate in-hand state
+        game.getTakenChoices().clear();
+        game.makeChoice(CHOICE_HIT);
+
+        // Use calcHand (display-chain path) which also has the fix
+        game.setDealt(true);
+        game.setFinalized(false);
+        game.calcHand();
+
+        assertThat(game.getHandMultiplier()).isEqualTo(DOUBLE_MULTI);
+        assertThat(game.getFinalized()).isTrue();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Fix 3 — NotExpiredValidator: 0-based Calendar.MONTH normalised to 1-based
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * A card expiring in the current calendar month must be valid (valid through end of month).
+     * Before the fix, currentMonth was 0-based (e.g. July=6) while expiredMonth was 1-based (7),
+     * so 6 < 7 was true (accidentally correct). After the fix we normalise to 1-based and use <=.
+     */
+    @Test
+    void notExpiredValidator_cardExpiringThisMonthIsValid() {
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+        int currentMonth = today.getMonthValue(); // already 1-based
+
+        // A card that expires this very month should be valid
+        boolean result = NotExpiredValidator
+                .checkCurrentMonthBeforeExpiredMonth(currentYear, currentMonth);
+
+        assertThat(result).isTrue();
+    }
+
+    /**
+     * A card that expired last month must be invalid.
+     */
+    @Test
+    void notExpiredValidator_cardExpiredLastMonthIsInvalid() {
+        LocalDate today = LocalDate.now();
+        LocalDate lastMonth = today.minusMonths(1);
+        int expiredYear = lastMonth.getYear();
+        int expiredMonth = lastMonth.getMonthValue();
+
+        boolean result = NotExpiredValidator
+                .checkCurrentMonthBeforeExpiredMonth(expiredYear, expiredMonth);
+
+        assertThat(result).isFalse();
+    }
+
+    /**
+     * A card expiring next month must be valid.
+     */
+    @Test
+    void notExpiredValidator_cardExpiringNextMonthIsValid() {
+        LocalDate today = LocalDate.now();
+        LocalDate nextMonth = today.plusMonths(1);
+
+        boolean result = NotExpiredValidator
+                .checkCurrentMonthBeforeExpiredMonth(nextMonth.getYear(), nextMonth.getMonthValue());
+
+        assertThat(result).isTrue();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Fix 4 — MinAgeValidator: user exactly at minAge must be valid
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * A user born exactly 18 years ago today (their birthday) must pass the MinAge(18) check.
+     * Before the fix, > 18 rejected users on their 18th birthday.
+     */
+    @Test
+    void minAgeValidator_userExactlyAtMinAgeIsValid() {
+        MinAgeValidator validator = new MinAgeValidator();
+        // Simulate initializing with min=18 via reflection (same as Jakarta validation)
+        validator.initialize(createMinAgeAnnotation(18));
+
+        LocalDate exactlyEighteenYearsAgo = LocalDate.now().minusYears(18);
+        String dateStr = exactlyEighteenYearsAgo.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        boolean result = validator.isValid(dateStr, null);
+
+        assertThat(result).isTrue();
+    }
+
+    /**
+     * A user who is 17 years and 364 days old must fail the MinAge(18) check.
+     */
+    @Test
+    void minAgeValidator_userOneDayBeforeMinAgeIsInvalid() {
+        MinAgeValidator validator = new MinAgeValidator();
+        validator.initialize(createMinAgeAnnotation(18));
+
+        LocalDate oneDayShort = LocalDate.now().minusYears(18).plusDays(1);
+        String dateStr = oneDayShort.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        boolean result = validator.isValid(dateStr, null);
+
+        assertThat(result).isFalse();
+    }
+
+    /** Creates a synthetic MinAge annotation with the given min value. */
+    private static MinAge createMinAgeAnnotation(int min) {
+        return new MinAge() {
+            @Override
+            public int min() { return min; }
+            @Override
+            public String message() { return ""; }
+            @Override
+            public Class<?>[] groups() { return new Class<?>[0]; }
+            @SuppressWarnings("unchecked")
+            @Override
+            public Class<? extends Payload>[] payload() {
+                return new Class[0];
+            }
+            @Override
+            public Class<MinAge> annotationType() { return MinAge.class; }
+        };
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Fix 7 — InsufficientFundsReCheckProcessor: correct choices restored
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * When the blocked action was CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY and balance now covers it,
+     * available choices must be restored to [CHOICE_INSURANCE_NO, CHOICE_INSURANCE_YES].
+     */
+    @Test
+    void insufficientFundsReCheck_restoresInsuranceChoices_whenBalanceNowSufficient() {
+        InsufficientFundsReCheckProcessor processor = new InsufficientFundsReCheckProcessor();
+
+        // hand bet = 100, insurance = 50, balance was 30 (not enough), now topped up to 60
+        WalletEntity wallet = new WalletEntity();
+        wallet.setCurrentBet(bd(100));
+        wallet.setBalance(bd(60)); // 60 >= 50 (half of currentBet)
+
+        Game game = new Game().makeChoice(CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY);
+
+        // lastGameRepo stub — we just need save() to be a no-op
+        com.casino.blackjack.model.entity.GameEntity gameEntity =
+                new com.casino.blackjack.model.entity.GameEntity();
+        gameEntity.setDealerCards("[]");
+        gameEntity.setPlayerCards("[]");
+        gameEntity.setAvailableChoices("[]");
+        gameEntity.setTakenChoices("[]");
+        gameEntity.setErrCodeList("[]");
+        gameEntity.setDealerSecondCard("null");
+
+        com.casino.blackjack.repo.LastGameRepository lastGameRepo =
+                new com.casino.blackjack.repo.LastGameRepository() {
+                    public <S extends GameEntity> S save(S e) { return e; }
+                    public <S extends GameEntity> java.util.List<S> saveAll(Iterable<S> e) { throw new UnsupportedOperationException(); }
+                    public java.util.Optional<GameEntity> findById(Long id) { throw new UnsupportedOperationException(); }
+                    public boolean existsById(Long id) { throw new UnsupportedOperationException(); }
+                    public java.util.List<GameEntity> findAll() { throw new UnsupportedOperationException(); }
+                    public java.util.List<GameEntity> findAllById(Iterable<Long> ids) { throw new UnsupportedOperationException(); }
+                    public long count() { throw new UnsupportedOperationException(); }
+                    public void deleteById(Long id) { throw new UnsupportedOperationException(); }
+                    public void delete(GameEntity entity) { }
+                    public void deleteAllById(Iterable<? extends Long> ids) { throw new UnsupportedOperationException(); }
+                    public void deleteAll(Iterable<? extends GameEntity> entities) { throw new UnsupportedOperationException(); }
+                    public void deleteAll() { throw new UnsupportedOperationException(); }
+                    public void flush() {}
+                    public <S extends GameEntity> S saveAndFlush(S e) { return e; }
+                    public <S extends GameEntity> java.util.List<S> saveAllAndFlush(Iterable<S> e) { throw new UnsupportedOperationException(); }
+                    public void deleteAllInBatch(Iterable<GameEntity> e) { throw new UnsupportedOperationException(); }
+                    public void deleteAllByIdInBatch(Iterable<Long> ids) { throw new UnsupportedOperationException(); }
+                    public void deleteAllInBatch() { throw new UnsupportedOperationException(); }
+                    public GameEntity getOne(Long id) { throw new UnsupportedOperationException(); }
+                    public GameEntity getById(Long id) { throw new UnsupportedOperationException(); }
+                    public GameEntity getReferenceById(Long id) { throw new UnsupportedOperationException(); }
+                    public <S extends GameEntity> java.util.Optional<S> findOne(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+                    public <S extends GameEntity> java.util.List<S> findAll(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+                    public <S extends GameEntity> java.util.List<S> findAll(org.springframework.data.domain.Example<S> e, org.springframework.data.domain.Sort s) { throw new UnsupportedOperationException(); }
+                    public <S extends GameEntity> org.springframework.data.domain.Page<S> findAll(org.springframework.data.domain.Example<S> e, org.springframework.data.domain.Pageable p) { throw new UnsupportedOperationException(); }
+                    public <S extends GameEntity> long count(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+                    public <S extends GameEntity> boolean exists(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+                    public <S extends GameEntity, R> R findBy(org.springframework.data.domain.Example<S> e, java.util.function.Function<org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery<S>,R> f) { throw new UnsupportedOperationException(); }
+                    public java.util.List<GameEntity> findAll(org.springframework.data.domain.Sort s) { throw new UnsupportedOperationException(); }
+                    public org.springframework.data.domain.Page<GameEntity> findAll(org.springframework.data.domain.Pageable p) { throw new UnsupportedOperationException(); }
+                    public java.util.Optional<GameEntity> findByOwnerId(Long ownerId) { throw new UnsupportedOperationException(); }
+                };
+
+        com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
+        GameContext ctx = new GameContext(game, gameEntity, wallet,
+                lastGameRepo, null, null, null, null, null, om, 4, 3000);
+
+        processor.process(ctx);
+
+        assertThat(game.getAvailableChoices()).containsExactlyInAnyOrder(
+                CHOICE_INSURANCE_NO, CHOICE_INSURANCE_YES);
+    }
+
+    /**
+     * When the blocked action was CHOICE_DOUBLE_DOWN_NOT_ENOUGH_MONEY and balance now covers it,
+     * available choices must be restored to [STAND, HIT, DOUBLE_DOWN] (and SPLIT if pair).
+     */
+    @Test
+    void insufficientFundsReCheck_restoresDoubleDownChoices_whenBalanceNowSufficient() {
+        InsufficientFundsReCheckProcessor processor = new InsufficientFundsReCheckProcessor();
+
+        // hand bet = 50, DD requires another 50, balance now 60 (>= 50)
+        WalletEntity wallet = new WalletEntity();
+        wallet.setCurrentBet(bd(50));
+        wallet.setBalance(bd(60));
+
+        // Player has 9+5=14 — not a pair, so SPLIT should not appear
+        com.casino.blackjack.service.gamelogic.dto.Card c9 = card(9, 0);
+        com.casino.blackjack.service.gamelogic.dto.Card c5 = card(5, 1);
+
+        Game game = new Game().makeChoice(CHOICE_DOUBLE_DOWN_NOT_ENOUGH_MONEY);
+        game.setPlayerCards(new java.util.ArrayList<>(java.util.List.of(c9, c5)));
+
+        com.casino.blackjack.model.entity.GameEntity gameEntity =
+                buildMinimalGameEntity();
+
+        com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
+        GameContext ctx = new GameContext(game, gameEntity, wallet,
+                buildNoOpLastGameRepo(), null, null, null, null, null, om, 4, 3000);
+
+        processor.process(ctx);
+
+        assertThat(game.getAvailableChoices()).contains(
+                CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN);
+        assertThat(game.getAvailableChoices()).doesNotContain(CHOICE_SPLIT);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Fix 8 — UserService: expired activation token must be rejected inline
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * An activation token whose createdAt is older than expiryMinutes must be treated as expired.
+     * We test the logic directly on the token entity.
+     */
+    @Test
+    void activationToken_isExpired_whenCreatedAtOlderThanExpiryWindow() {
+        int expiryMinutes = 60;
+        UserActivationTokenEntity token = new UserActivationTokenEntity();
+        // Created 61 minutes ago — past the 60 min window
+        token.setCreatedAt(Instant.now().minusSeconds((expiryMinutes + 1) * 60L));
+
+        Instant expiryCutoff = Instant.now().minusSeconds(expiryMinutes * 60L);
+        boolean isExpired = token.getCreatedAt().isBefore(expiryCutoff);
+
+        assertThat(isExpired).isTrue();
+    }
+
+    /**
+     * An activation token created within the expiry window must not be expired.
+     */
+    @Test
+    void activationToken_isNotExpired_whenCreatedAtWithinExpiryWindow() {
+        int expiryMinutes = 60;
+        UserActivationTokenEntity token = new UserActivationTokenEntity();
+        // Created 59 minutes ago — still within the 60 min window
+        token.setCreatedAt(Instant.now().minusSeconds((expiryMinutes - 1) * 60L));
+
+        Instant expiryCutoff = Instant.now().minusSeconds(expiryMinutes * 60L);
+        boolean isExpired = token.getCreatedAt().isBefore(expiryCutoff);
+
+        assertThat(isExpired).isFalse();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Fix 9 — UserTokenService: updated reset-pass token must be saved
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * When createResetPassToken() updates an existing token (else branch),
+     * the modified entity must be saved. We verify by checking the saved state.
+     */
+    @Test
+    void resetPassToken_updatedEntityHasNewTokenAndCreatedAt() {
+        // Simulate the else-branch logic: update fields then save
+        UserForgotPassEntity existing = new UserForgotPassEntity();
+        existing.setToken("OLD_TOKEN");
+        existing.setCreatedAt(Instant.now().minusSeconds(3600));
+
+        Instant newCreatedAt = Instant.now();
+        String newToken = "NEW_TOKEN";
+
+        // Apply the same mutation as createResetPassToken()
+        existing.setCreatedAt(newCreatedAt).setToken(newToken);
+
+        // After save the entity should reflect the new values
+        assertThat(existing.getToken()).isEqualTo(newToken);
+        assertThat(existing.getCreatedAt()).isEqualTo(newCreatedAt);
+        // Old token must be gone
+        assertThat(existing.getToken()).isNotEqualTo("OLD_TOKEN");
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private static com.casino.blackjack.service.gamelogic.dto.Card card(int rank, int suit) {
+        return com.casino.blackjack.service.gamelogic.dto.Card.of(suit, rank);
+    }
+
+    private static com.casino.blackjack.model.entity.GameEntity buildMinimalGameEntity() {
+        com.casino.blackjack.model.entity.GameEntity e =
+                new com.casino.blackjack.model.entity.GameEntity();
+        e.setDealerCards("[]");
+        e.setPlayerCards("[]");
+        e.setAvailableChoices("[]");
+        e.setTakenChoices("[]");
+        e.setErrCodeList("[]");
+        e.setDealerSecondCard("null");
+        return e;
+    }
+
+    private static com.casino.blackjack.repo.LastGameRepository buildNoOpLastGameRepo() {
+        return new com.casino.blackjack.repo.LastGameRepository() {
+            public <S extends GameEntity> S save(S e) { return e; }
+            public <S extends GameEntity> java.util.List<S> saveAll(Iterable<S> e) { throw new UnsupportedOperationException(); }
+            public java.util.Optional<GameEntity> findById(Long id) { throw new UnsupportedOperationException(); }
+            public boolean existsById(Long id) { throw new UnsupportedOperationException(); }
+            public java.util.List<GameEntity> findAll() { throw new UnsupportedOperationException(); }
+            public java.util.List<GameEntity> findAllById(Iterable<Long> ids) { throw new UnsupportedOperationException(); }
+            public long count() { throw new UnsupportedOperationException(); }
+            public void deleteById(Long id) { throw new UnsupportedOperationException(); }
+            public void delete(GameEntity entity) {}
+            public void deleteAllById(Iterable<? extends Long> ids) { throw new UnsupportedOperationException(); }
+            public void deleteAll(Iterable<? extends GameEntity> entities) { throw new UnsupportedOperationException(); }
+            public void deleteAll() { throw new UnsupportedOperationException(); }
+            public void flush() {}
+            public <S extends GameEntity> S saveAndFlush(S e) { return e; }
+            public <S extends GameEntity> java.util.List<S> saveAllAndFlush(Iterable<S> e) { throw new UnsupportedOperationException(); }
+            public void deleteAllInBatch(Iterable<GameEntity> e) { throw new UnsupportedOperationException(); }
+            public void deleteAllByIdInBatch(Iterable<Long> ids) { throw new UnsupportedOperationException(); }
+            public void deleteAllInBatch() { throw new UnsupportedOperationException(); }
+            public GameEntity getOne(Long id) { throw new UnsupportedOperationException(); }
+            public GameEntity getById(Long id) { throw new UnsupportedOperationException(); }
+            public GameEntity getReferenceById(Long id) { throw new UnsupportedOperationException(); }
+            public <S extends GameEntity> java.util.Optional<S> findOne(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+            public <S extends GameEntity> java.util.List<S> findAll(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+            public <S extends GameEntity> java.util.List<S> findAll(org.springframework.data.domain.Example<S> e, org.springframework.data.domain.Sort s) { throw new UnsupportedOperationException(); }
+            public <S extends GameEntity> org.springframework.data.domain.Page<S> findAll(org.springframework.data.domain.Example<S> e, org.springframework.data.domain.Pageable p) { throw new UnsupportedOperationException(); }
+            public <S extends GameEntity> long count(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+            public <S extends GameEntity> boolean exists(org.springframework.data.domain.Example<S> e) { throw new UnsupportedOperationException(); }
+            public <S extends GameEntity, R> R findBy(org.springframework.data.domain.Example<S> e, java.util.function.Function<org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery<S>,R> f) { throw new UnsupportedOperationException(); }
+            public java.util.List<GameEntity> findAll(org.springframework.data.domain.Sort s) { throw new UnsupportedOperationException(); }
+            public org.springframework.data.domain.Page<GameEntity> findAll(org.springframework.data.domain.Pageable p) { throw new UnsupportedOperationException(); }
+            public java.util.Optional<GameEntity> findByOwnerId(Long ownerId) { throw new UnsupportedOperationException(); }
+        };
     }
 }

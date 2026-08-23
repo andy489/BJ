@@ -200,8 +200,12 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 .multiply(BigDecimal.valueOf(game.getInsuranceMultiplier()));
         totalWin = totalWin.add(insuranceWin);
 
+        // Net profit = total returned − total staked (consistent with Wallet.payBet())
+        BigDecimal totalStaked = totalBet.add(insuranceBet);
+        BigDecimal netProfit = totalWin.subtract(totalStaked);
+
         ctx.walletEntity().setLastBet(ctx.walletEntity().getCurrentBet());
-        ctx.walletEntity().setLastWin(totalWin.max(BigDecimal.ZERO));
+        ctx.walletEntity().setLastWin(netProfit.max(BigDecimal.ZERO));
         ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(totalWin));
         ctx.walletEntity().setCurrentBet(BigDecimal.ZERO);
         ctx.walletEntity().setHandBet(BigDecimal.ZERO);

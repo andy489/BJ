@@ -37,12 +37,12 @@ public class NotExpiredValidator implements ConstraintValidator<NotExpired, Stri
     public static boolean checkCurrentMonthBeforeExpiredMonth(Integer expiredYear, Integer expiredMonth) {
         Calendar c = Calendar.getInstance();
         int currentYear = c.get(Calendar.YEAR);
-        int currentMonth = c.get(Calendar.MONTH);
+        int currentMonth = c.get(Calendar.MONTH) + 1; // Calendar.MONTH is 0-based; normalise to 1-based
 
         if (currentYear < expiredYear) {
             return true;
         } else if (currentYear == expiredYear) {
-            return currentMonth < expiredMonth;
+            return currentMonth <= expiredMonth; // valid through end of expiry month
         } else {
             return false;
         }

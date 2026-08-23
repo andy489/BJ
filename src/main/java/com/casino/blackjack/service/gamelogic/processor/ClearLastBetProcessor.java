@@ -7,7 +7,9 @@ import java.math.BigDecimal;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CLEAR_LAST_BET;
 
 /**
- * Handles CHOICE_CLEAR_LAST_BET — returns the current bet to the balance.
+ * Handles CHOICE_CLEAR_LAST_BET — returns the currently staged bet amounts to the balance.
+ * Refunds handBet + perfectPairsBet + twentyOneThreeBet + dealerPerfectPairsBet and
+ * zeroes all four fields plus currentBet. Does NOT touch lastBet.
  */
 public class ClearLastBetProcessor implements GameStateProcessor {
 
@@ -18,11 +20,18 @@ public class ClearLastBetProcessor implements GameStateProcessor {
 
     @Override
     public GameContext process(GameContext ctx) {
-        BigDecimal lastBet = ctx.walletEntity().getLastBet();
-
         Wallet wallet = Wallet.of(ctx.walletEntity());
-        wallet.setLastBet(BigDecimal.ZERO);
-        wallet.deposit(lastBet);
+
+        BigDecimal stagedBet = nvl(wallet.getHandBet())
+                .add(nvl(wallet.getPerfectPairsBet()))
+                .add(nvl(wallet.getTwentyOneThreeBet()))
+                .add(nvl(wallet.getDealerPerfectPairsBet()));
+
+        wallet.deposit(stagedBet);
+        wallet.setHandBet(BigDecimal.ZERO);
+        wallet.setPerfectPairsBet(BigDecimal.ZERO);
+        wallet.setTwentyOneThreeBet(BigDecimal.ZERO);
+        wallet.setDealerPerfectPairsBet(BigDecimal.ZERO);
         wallet.setCurrentBet(BigDecimal.ZERO);
 
         ctx.game().setWallet(wallet);
@@ -30,5 +39,9 @@ public class ClearLastBetProcessor implements GameStateProcessor {
         ctx.walletRepo().save(ctx.walletEntity());
 
         return ctx;
+    }
+
+    private static BigDecimal nvl(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

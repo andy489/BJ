@@ -15,6 +15,7 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_HIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERR_CODE_INSUFFICIENT_FUNDS;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PENDING_MULTI;
 
 /**
  * Handles CHOICE_SPLIT — deducts the additional bet (equal to handBet) from the wallet,
@@ -77,7 +78,7 @@ public class SplitBetProcessor implements GameStateProcessor {
         // If the first active hand is already 21 after the deal, auto-advance
         int activeScore = game.getCount(game.getActiveHandCards()).getRight();
         if (!isAces && activeScore == BJ_CNT) {
-            SplitHandHelper.advanceOrFinalize(ctx, 0.0, false, maxSplits);
+            SplitHandHelper.advanceOrFinalize(ctx, PENDING_MULTI, false, maxSplits);
         } else {
             setChoicesForActiveHand(game, isAces, maxSplits, canAffordSplit);
         }

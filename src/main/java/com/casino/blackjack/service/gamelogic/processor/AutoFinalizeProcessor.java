@@ -6,6 +6,7 @@ import com.casino.blackjack.service.gamelogic.dto.Game;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_CNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_FINALIZE;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DEALER_THRESHOLD_17;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PENDING_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 
 /**
@@ -34,9 +35,9 @@ public class AutoFinalizeProcessor implements GameStateProcessor {
 
             Count count = game.getCount(game.getPlayerCards());
             boolean busted = count.getLeft() > BJ_CNT;
-            double multiplier = busted ? ZERO_MULTI : 0.0;
+            double multiplier = busted ? ZERO_MULTI : PENDING_MULTI;
 
-            boolean moreHands = game.advanceSplitHand(multiplier, alreadyDoubled || game.getDoubleDown());
+            boolean moreHands = game.advanceSplitHand(multiplier, alreadyDoubled);
             if (!moreHands) {
                 game.dealerPlayUntilSoft17Public();
                 SplitHandHelper.resolveAndFinalize(game);

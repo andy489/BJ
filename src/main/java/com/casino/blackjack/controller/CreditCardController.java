@@ -123,6 +123,7 @@ public class CreditCardController extends BaseController {
 
     @PostMapping("/deposit")
     public ModelAndView postDeposit(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
             @Valid @ModelAttribute(name = "depositDTO") DepositDTO depositDTO,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
@@ -143,7 +144,7 @@ public class CreditCardController extends BaseController {
             return super.redirect("/credit-card/deposit");
         }
 
-        walletService.deposit(depositDTO.getDepositSum(), ownerId.get());
+        walletService.deposit(depositDTO.getDepositSum(), currentUser.getId());
 
         redirectAttributes.addFlashAttribute("modalSucDep", true);
 

@@ -74,6 +74,8 @@ public class GameUtil {
     public static final Double INSURANCE_MULTIPLIER = 3.0d;
     public static final Double DOUBLE_MULTI = 2.0d;
     public static final Double BJ_MULTI = 2.5d;
+    /** Sentinel: multiplier not yet resolved — will be computed from score at finalization. */
+    public static final Double PENDING_MULTI = -1.0d;
 
     public static final String SCORE_SEPARATOR = "/";
 

@@ -27,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -59,6 +60,10 @@ public class UserService {
 
     private final UserResetPassTokenRepository userResetPassTokenRepository;
 
+    private final int activationTokenExpiryMinutes;
+
+    private final int resetPassTokenExpiryMinutes;
+
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
                        PasswordEncoder encoder,
@@ -66,7 +71,9 @@ public class UserService {
                        @Value("${auth.register.auto-login}") Boolean autoLogin,
                        ApplicationEventPublisher appEventPublisher,
                        UserActivationTokenRepository userActivationTokenRepository,
-                       UserResetPassTokenRepository userResetPassTokenRepository) {
+                       UserResetPassTokenRepository userResetPassTokenRepository,
+                       @Value("${auth.activation-token.expires-after-minutes}") int activationTokenExpiryMinutes,
+                       @Value("${auth.forgot-password-token.expires-after-minutes}") int resetPassTokenExpiryMinutes) {
 
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -77,6 +84,8 @@ public class UserService {
         this.appEventPublisher = appEventPublisher;
         this.userActivationTokenRepository = userActivationTokenRepository;
         this.userResetPassTokenRepository = userResetPassTokenRepository;
+        this.activationTokenExpiryMinutes = activationTokenExpiryMinutes;
+        this.resetPassTokenExpiryMinutes = resetPassTokenExpiryMinutes;
     }
 
     public Optional<UserEntity> findById(Long id) {
@@ -181,6 +190,15 @@ public class UserService {
         }
 
         UserActivationTokenEntity userActivationTokenEntity = byActivationToken.get();
+
+        // Reject expired tokens
+        Instant expiryCutoff = Instant.now().minusSeconds(activationTokenExpiryMinutes * 60L);
+        if (userActivationTokenEntity.getCreatedAt().isBefore(expiryCutoff)) {
+            userActivationTokenRepository.deleteById(userActivationTokenEntity.getId());
+            redirectAttributes.addFlashAttribute("tokenExpired", true);
+            return "/auth/login";
+        }
+
         Long userId = userActivationTokenEntity.getUser().getId();
         UserEntity referenceById = userRepository.getReferenceById(userId);
         referenceById.setIsActive(true);
@@ -236,6 +254,13 @@ public class UserService {
         }
 
         UserForgotPassEntity userForgotPassEntity = byToken.get();
+
+        // Reject expired tokens
+        Instant resetExpiryCutoff = Instant.now().minusSeconds(resetPassTokenExpiryMinutes * 60L);
+        if (userForgotPassEntity.getCreatedAt().isBefore(resetExpiryCutoff)) {
+            userResetPassTokenRepository.deleteById(userForgotPassEntity.getId());
+            return "/auth/pass?changed=false";
+        }
 
         UserEntity currentUser = userRepository.getReferenceById(userForgotPassEntity.getUser().getId());
 

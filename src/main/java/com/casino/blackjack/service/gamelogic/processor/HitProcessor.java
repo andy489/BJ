@@ -13,7 +13,7 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_HIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DOUBLE_MULTI;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.PUSH_MULTI;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.PENDING_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 
 public class HitProcessor implements GameStateProcessor {
@@ -33,8 +33,8 @@ public class HitProcessor implements GameStateProcessor {
             if (playerCount.getLeft() > BJ_CNT) {
                 SplitHandHelper.advanceOrFinalize(ctx, ZERO_MULTI, game.getDoubleDown(), ctx.maxSplits());
             } else if (playerCount.getRight().equals(BJ_CNT)) {
-                // 21 — auto-advance; split 21 pays 1:1 (resolved later in computeMultiplier)
-                SplitHandHelper.advanceOrFinalize(ctx, 0.0, game.getDoubleDown(), ctx.maxSplits());
+                // 21 — auto-advance; multiplier will be computed from score at finalization
+                SplitHandHelper.advanceOrFinalize(ctx, PENDING_MULTI, game.getDoubleDown(), ctx.maxSplits());
             } else {
                 boolean canAffordSplit = ctx.walletEntity().getBalance()
                         .compareTo(ctx.walletEntity().getHandBet()) >= 0;
@@ -54,14 +54,9 @@ public class HitProcessor implements GameStateProcessor {
         if (playerCount.getRight().equals(BJ_CNT)) {
             game.dealerPlayUntilSoft17Public();
             game.setFinalized(true);
-
-            Count dealerCount = game.getCount(game.getDealerCards());
-            if (dealerCount.getRight().equals(BJ_CNT)) {
-                game.setHandMultiplier(PUSH_MULTI);
-            } else {
-                game.setHandMultiplier(DOUBLE_MULTI);
-            }
-
+            // Natural BJ already handled before this point; player hitting to 21 always wins
+            // (even if dealer also reaches 21 via multiple cards — that is not a natural BJ)
+            game.setHandMultiplier(DOUBLE_MULTI);
             game.setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
             return ctx;
         }

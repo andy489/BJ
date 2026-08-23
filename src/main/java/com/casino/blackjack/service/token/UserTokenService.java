@@ -10,6 +10,8 @@ import com.casino.blackjack.repo.UserResetPassTokenRepository;
 import com.casino.blackjack.service.auth.UserService;
 import com.casino.blackjack.service.mail.MailService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ import java.util.Random;
 
 @Service
 public class UserTokenService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserTokenService.class);
 
     private static final String ACTIVATION_TOKEN_SYM = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY0123456789";
 
@@ -101,6 +105,8 @@ public class UserTokenService {
             userForgotPassEntityToModify
                     .setCreatedAt(userForgotPassEntity.getCreatedAt())
                     .setToken(userForgotPassEntity.getToken());
+
+            userResetPassTokenRepository.save(userForgotPassEntityToModify);
         }
 
         return token;
@@ -125,7 +131,7 @@ public class UserTokenService {
 
         Instant instant = expiredTime.toInstant(ZoneId.systemDefault().getRules().getOffset(expiredTime));
 
-        System.out.println("[DEBUG] instant: " + instant);
+        log.debug("Clearing tokens before: {}", instant);
 
         userActivationTokenRepository.deleteByCreatedAtBefore(instant);
     }
@@ -135,7 +141,7 @@ public class UserTokenService {
 
         Instant instant = expiredTime.toInstant(ZoneId.systemDefault().getRules().getOffset(expiredTime));
 
-        System.out.println("[DEBUG] instant: " + instant);
+        log.debug("Clearing tokens before: {}", instant);
 
         userResetPassTokenRepository.deleteByCreatedAtBefore(instant);
     }

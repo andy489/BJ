@@ -527,12 +527,9 @@ public class Game {
                 if (checkBJ(dealerCards)) {
                     handMultiplier = ZERO_MULTI;
                 } else {
-                    Count dealerCount = getCount(dealerCards);
-                    if (dealerCount.getRight().equals(BJ_CNT)) {
-                        handMultiplier = PUSH_MULTI;
-                    } else {
-                        handMultiplier = DOUBLE_MULTI;
-                    }
+                    // Dealer cannot have a natural BJ here (already handled above).
+                    // Even if dealer reaches 21 via multiple cards, player wins (not a push).
+                    handMultiplier = DOUBLE_MULTI;
                 }
 
                 return setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));
@@ -663,11 +660,11 @@ public class Game {
                 dealerHit();
             }
 
+            count = getCount(dealerCards);
+
             if (count.getLeft() > BJ_CNT) {
                 break;
             }
-
-            count = getCount(dealerCards);
         }
     }
 

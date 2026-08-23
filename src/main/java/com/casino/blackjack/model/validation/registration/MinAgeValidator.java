@@ -34,7 +34,7 @@ public class MinAgeValidator implements ConstraintValidator<MinAge, String> {
                 return true; // @CustomPast will be invalid
             }
 
-            return DateUtil.calcYearsBetween(date, LocalDate.now()) > minAge;
+            return DateUtil.calcYearsBetween(date, LocalDate.now()) >= minAge;
         } catch (ParseException e) {
             return true; // @Pattern will be invalid
         }
