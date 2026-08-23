@@ -38,7 +38,7 @@
             <div class="bet-circles-wrapper"
                  th:classappend="${#lists.contains(game.availableChoices,
                  game.availableChoicesCodeMap.get('CHOICE_CHIP_OPERATIONS')) ? '' : 'bet-circles-wrapper--locked'} +
-                 ${game.dealt and (game.finalized == null or !game.finalized) ? ' bet-circles-wrapper--in-play' : ''}">
+                 ${game.dealt ? ' bet-circles-wrapper--in-play' : ''}">
                 <!-- Dealer Perfect Pairs circle (dealer row) -->
                 <div class="bet-circles-row bet-circles-row--dealer">
                     <form class="side-bet-form" id="form-side-dpp" th:action="@{/play/side-bet/dpp}" th:method="post">
@@ -591,8 +591,8 @@
                 <div class="curr-bet-box-value">
                     <span class="curr-bet total-stake" th:text="'£' + ${#numbers.formatDecimal(game.wallet.totalStake(), 1, 'COMMA', 2, 'POINT')}">£1</span>
                 </div>
-                <!-- Bet breakdown — shown only during an active hand -->
-                <div class="bet-breakdown" th:if="${game.dealt != null and game.dealt and (game.finalized == null or !game.finalized)}">
+                <!-- Bet breakdown — shown only during an active hand or on result screen -->
+                <div class="bet-breakdown" th:if="${game.dealt != null and game.dealt}">
                     <!-- 2×2 grid: Hand, PP, 21+3, DPP — plus Ins/Split when present -->
                     <span class="bet-breakdown-item" th:if="${game.wallet.currentBet != null and game.wallet.currentBet > 0}">
                         <span class="bet-breakdown-label" th:text="#{bet.hand}">Hand</span>
@@ -926,7 +926,7 @@
             }
         }
 
-        /* ── Finalized result overlay: fade out then reload to get clean lobby ── */
+        /* ── Finalized result overlay: fade out and remove; cards stay until Deal or Clear ── */
         if (BJ_FINALIZED) {
             var resultOverlay = document.getElementById('result-overlay');
             if (resultOverlay) {
@@ -936,7 +936,7 @@
                 setTimeout(function () {
                     resultOverlay.classList.add('result-overlay--fade-out');
                     setTimeout(function () {
-                        location.reload();
+                        resultOverlay.remove();
                     }, fadeDuration);
                 }, displayDelay);
             }
