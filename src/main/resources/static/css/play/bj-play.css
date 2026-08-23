@@ -908,6 +908,16 @@ body {
     .hist-row-cards { gap: 8px; }
 }
 
+@keyframes circle-selected-pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(255, 211, 71, 0.7), 0 0 20px rgba(255, 211, 71, 0.6), 0 0 40px rgba(255, 211, 71, 0.25); }
+    50%       { box-shadow: 0 0 0 6px rgba(255, 211, 71, 0.4), 0 0 32px rgba(255, 211, 71, 0.8), 0 0 56px rgba(255, 211, 71, 0.35); }
+}
+
+@keyframes circle-selected-pulse-dpp {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(64, 180, 255, 0.7), 0 0 20px rgba(64, 180, 255, 0.6), 0 0 40px rgba(64, 180, 255, 0.25); }
+    50%       { box-shadow: 0 0 0 6px rgba(64, 180, 255, 0.4), 0 0 32px rgba(64, 180, 255, 0.8), 0 0 56px rgba(64, 180, 255, 0.35); }
+}
+
 /* ── Bet circles on the table ────────────────────────── */
 .bet-circles-wrapper {
     position: absolute;
@@ -987,11 +997,9 @@ body {
 }
 
 .bet-circle--main.bet-circle--selected {
-    border-color: rgba(255, 211, 71, 0.95);
-    box-shadow:
-        0 0 0 4px rgba(255, 211, 71, 0.35),
-        0 0 14px rgba(255, 211, 71, 0.45),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+    border-color: rgba(255, 211, 71, 1);
+    transform: scale(1.12) translateY(-3px);
+    animation: circle-selected-pulse 1.4s ease-in-out infinite;
 }
 
 /* Player side bet circles (PP, 21+3) */
@@ -1023,11 +1031,9 @@ body {
 
 /* Glowing ring when this circle is the selected chip target */
 .bet-circle--side.bet-circle--selected {
-    border-color: rgba(255, 211, 71, 0.95);
-    box-shadow:
-        0 0 0 3px rgba(255, 211, 71, 0.35),
-        0 0 12px rgba(255, 211, 71, 0.4),
-        0 4px 14px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 211, 71, 1);
+    transform: scale(1.14) translateY(-3px);
+    animation: circle-selected-pulse 1.4s ease-in-out infinite;
 }
 
 /* Dealer Perfect Pairs circle — distinct colour (blue-teal) */
@@ -1059,10 +1065,8 @@ body {
 
 .bet-circle--dpp.bet-circle--selected {
     border-color: rgba(64, 180, 255, 1);
-    box-shadow:
-        0 0 0 3px rgba(64, 180, 255, 0.35),
-        0 0 12px rgba(64, 180, 255, 0.45),
-        0 4px 14px rgba(0, 0, 0, 0.5);
+    transform: scale(1.14) translateY(-3px);
+    animation: circle-selected-pulse-dpp 1.4s ease-in-out infinite;
 }
 
 .bet-circle--dpp .bet-circle-label {
