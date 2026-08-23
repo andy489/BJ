@@ -48,4 +48,10 @@
     cursor: pointer;
 }
 
+/* ── Light theme ── */
+[data-theme="light"] .reset-password-btn,
+[data-theme="light"] .remembered-password-btn { color: #1a1100; }
+[data-theme="light"] .reset-password-btn:hover,
+[data-theme="light"] .remembered-password-btn:hover { color: #7a5c00; text-shadow: none; }
+
 

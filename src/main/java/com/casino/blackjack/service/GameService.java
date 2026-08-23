@@ -308,8 +308,28 @@ public class GameService {
         // Delete the game entity so GET /play returns a clean dealt=false state
         currGameEntity.ifPresent(lastGameRepository::delete);
 
-        // No wallet mutation needed — bets are already zeroed by FinalizedPayoutProcessor.
-        // lastBet must NOT be cleared here; it is read by RepeatLastBetProcessor.
+        // Reset any staged bet amounts on the wallet (e.g. placed by RepeatLastBetProcessor
+        // before the user clicked Clear). lastBet is intentionally preserved — it is read
+        // by RepeatLastBetProcessor on the next hand.
+        currWalletEntity.ifPresent(w -> {
+            boolean hasStagedBet = (w.getHandBet() != null && w.getHandBet().compareTo(java.math.BigDecimal.ZERO) > 0)
+                    || (w.getCurrentBet() != null && w.getCurrentBet().compareTo(java.math.BigDecimal.ZERO) > 0)
+                    || (w.getPerfectPairsBet() != null && w.getPerfectPairsBet().compareTo(java.math.BigDecimal.ZERO) > 0)
+                    || (w.getTwentyOneThreeBet() != null && w.getTwentyOneThreeBet().compareTo(java.math.BigDecimal.ZERO) > 0)
+                    || (w.getDealerPerfectPairsBet() != null && w.getDealerPerfectPairsBet().compareTo(java.math.BigDecimal.ZERO) > 0);
+            if (!hasStagedBet) return;
+            BigDecimal refund = nvl(w.getHandBet())
+                    .add(nvl(w.getPerfectPairsBet()))
+                    .add(nvl(w.getTwentyOneThreeBet()))
+                    .add(nvl(w.getDealerPerfectPairsBet()));
+            w.setBalance(w.getBalance().add(refund));
+            w.setHandBet(java.math.BigDecimal.ZERO);
+            w.setCurrentBet(java.math.BigDecimal.ZERO);
+            w.setPerfectPairsBet(java.math.BigDecimal.ZERO);
+            w.setTwentyOneThreeBet(java.math.BigDecimal.ZERO);
+            w.setDealerPerfectPairsBet(java.math.BigDecimal.ZERO);
+            walletRepository.save(w);
+        });
     }
 
     public void accept() {
@@ -453,5 +473,9 @@ public class GameService {
         }
 
         return -1;
+    }
+
+    private static BigDecimal nvl(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

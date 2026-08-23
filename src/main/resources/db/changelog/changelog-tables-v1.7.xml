@@ -36,4 +36,14 @@
         </addColumn>
     </changeSet>
 
+
+    <!-- Last side bet amounts on wallets for repeat-last-bet to restore side bets -->
+    <changeSet author="stoevand" id="39">
+        <addColumn tableName="wallets">
+            <column name="last_pp_bet"  type="DECIMAL(38,2)" defaultValueNumeric="0.00"/>
+            <column name="last_t3_bet"  type="DECIMAL(38,2)" defaultValueNumeric="0.00"/>
+            <column name="last_dpp_bet" type="DECIMAL(38,2)" defaultValueNumeric="0.00"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

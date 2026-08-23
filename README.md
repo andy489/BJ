@@ -42,6 +42,12 @@ Settings panel open (language + theme toggle):
 
 ---
 
+### Deposit
+
+![Deposit flow](assets/screenshots/2026-08/deposit.gif)
+
+---
+
 ### Gameplay — Blackjack
 
 | Double Down | Double Down Win |
@@ -94,7 +100,13 @@ Click the ⓘ button next to **Player strategy** to open a side-by-side comparis
 
 The first version of the site had a different visual identity before the current casino-dark redesign.
 
-![Original Lobby Design](assets/screenshots/2025-06/01-lobby.png)
+| Lobby | Login | Register |
+|---|---|---|
+| ![Original Lobby](assets/screenshots/2025-06/01-lobby.png) | ![Original Login](assets/screenshots/2025-06/02-login.gif) | ![Original Register](assets/screenshots/2025-06/03-register.gif) |
+
+| Deposit | Gameplay |
+|---|---|
+| ![Original Deposit](assets/screenshots/2025-06/04-deposit.gif) | ![Original Gameplay](assets/screenshots/2025-06/05-play.gif) |
 
 ---
 

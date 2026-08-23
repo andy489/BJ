@@ -25,6 +25,13 @@ public class WalletEntity extends BaseEntity {
 
     private BigDecimal lastTotalBet;
 
+    private BigDecimal lastPpBet;
+
+    @jakarta.persistence.Column(name = "last_t3_bet")
+    private BigDecimal lastT3Bet;
+
+    private BigDecimal lastDppBet;
+
     private BigDecimal lastWin;
 
     private BigDecimal lastPpWin;
@@ -56,6 +63,9 @@ public class WalletEntity extends BaseEntity {
         lastWin = BigDecimal.ZERO;
         lastBet = BigDecimal.ZERO;
         lastTotalBet = BigDecimal.ZERO;
+        lastPpBet = BigDecimal.ZERO;
+        lastT3Bet = BigDecimal.ZERO;
+        lastDppBet = BigDecimal.ZERO;
         lastPpWin = BigDecimal.ZERO;
         lastT3Win = BigDecimal.ZERO;
         lastDppWin = BigDecimal.ZERO;
@@ -79,6 +89,9 @@ public class WalletEntity extends BaseEntity {
                 .setLastDppWin(wallet.getLastDppWin())
                 .setLastBet(wallet.getLastBet())
                 .setLastTotalBet(wallet.getLastTotalBet())
+                .setLastPpBet(wallet.getLastPpBet())
+                .setLastT3Bet(wallet.getLastT3Bet())
+                .setLastDppBet(wallet.getLastDppBet())
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())
                 .setInsuranceBet(wallet.getInsuranceBet())
@@ -96,6 +109,9 @@ public class WalletEntity extends BaseEntity {
                 .setLastDppWin(wallet.getLastDppWin())
                 .setLastBet(wallet.getLastBet())
                 .setLastTotalBet(wallet.getLastTotalBet())
+                .setLastPpBet(wallet.getLastPpBet())
+                .setLastT3Bet(wallet.getLastT3Bet())
+                .setLastDppBet(wallet.getLastDppBet())
                 .setCurrentBet(wallet.getCurrentBet())
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())

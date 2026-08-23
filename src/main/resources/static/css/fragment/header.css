@@ -100,12 +100,13 @@ a.nav-link:hover .nav-svg {
 
 /* ── SVG icons ─────────────────────────────────────────── */
 .nav-svg {
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
     color: var(--gold);
     vertical-align: middle;
     transition: color .2s, filter .2s, transform .2s;
     filter: drop-shadow(0 0 3px var(--gold-glow));
+    stroke-width: 2;
 }
 
 span.nav-icon {

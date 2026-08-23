@@ -28,6 +28,12 @@ public class Wallet {
 
     private BigDecimal lastTotalBet;
 
+    private BigDecimal lastPpBet;
+
+    private BigDecimal lastT3Bet;
+
+    private BigDecimal lastDppBet;
+
     private BigDecimal currentBet;
 
     private BigDecimal handBet;
@@ -49,6 +55,9 @@ public class Wallet {
         lastWin = BigDecimal.ZERO;
         lastBet = BigDecimal.ZERO;
         lastTotalBet = BigDecimal.ZERO;
+        lastPpBet = BigDecimal.ZERO;
+        lastT3Bet = BigDecimal.ZERO;
+        lastDppBet = BigDecimal.ZERO;
         lastPpWin = BigDecimal.ZERO;
         lastT3Win = BigDecimal.ZERO;
         lastDppWin = BigDecimal.ZERO;
@@ -71,6 +80,9 @@ public class Wallet {
                 .setLastDppWin(walletEntity.getLastDppWin())
                 .setLastBet(walletEntity.getLastBet())
                 .setLastTotalBet(walletEntity.getLastTotalBet())
+                .setLastPpBet(nvl(walletEntity.getLastPpBet()))
+                .setLastT3Bet(nvl(walletEntity.getLastT3Bet()))
+                .setLastDppBet(nvl(walletEntity.getLastDppBet()))
                 .setCurrentBet(walletEntity.getCurrentBet())
                 .setHandBet(walletEntity.getHandBet())
                 .setInsuranceBet(walletEntity.getInsuranceBet())
@@ -90,6 +102,9 @@ public class Wallet {
                 .setLastDppWin(wallet.getLastDppWin())
                 .setLastBet(wallet.getLastBet())
                 .setLastTotalBet(wallet.getLastTotalBet())
+                .setLastPpBet(wallet.getLastPpBet())
+                .setLastT3Bet(wallet.getLastT3Bet())
+                .setLastDppBet(wallet.getLastDppBet())
                 .setCurrentBet(wallet.getCurrentBet())
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())
@@ -147,5 +162,9 @@ public class Wallet {
         BigDecimal t3  = twentyOneThreeBet != null ? twentyOneThreeBet : BigDecimal.ZERO;
         BigDecimal dpp = dealerPerfectPairsBet != null ? dealerPerfectPairsBet : BigDecimal.ZERO;
         return currentBet.add(pp).add(t3).add(dpp);
+    }
+
+    private static BigDecimal nvl(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

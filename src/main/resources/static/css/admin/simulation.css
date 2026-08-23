@@ -7,10 +7,18 @@
 }
 
 .body-simulation {
-    background-image: url('../images/background/02-bj-table.png');
-    background-position: center;
-    background-attachment: fixed;
-    background-size: cover;
+    /* Deep casino-dark base with a subtle teal-to-navy gradient */
+    background-color: #0a1a14;
+    background-image:
+        /* Faint RTP-style sine curve rendered as inline SVG */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='800' viewBox='0 0 1200 800'%3E%3C!-- grid dots --%3E%3Cdefs%3E%3Cpattern id='dots' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='20' cy='20' r='1' fill='rgba(255,211,71,0.12)'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='1200' height='800' fill='url(%23dots)'/%3E%3C!-- subtle chart axes --%3E%3Cline x1='80' y1='680' x2='1120' y2='680' stroke='rgba(255,211,71,0.08)' stroke-width='1.5'/%3E%3Cline x1='80' y1='120' x2='80' y2='680' stroke='rgba(255,211,71,0.08)' stroke-width='1.5'/%3E%3C!-- RTP curve: flat ~99%25 with small variance --%3E%3Cpath d='M80,420 C180,380 260,460 360,400 C460,340 540,430 640,390 C740,350 820,420 920,380 C1020,340 1080,370 1120,360' fill='none' stroke='rgba(255,211,71,0.18)' stroke-width='2' stroke-linecap='round'/%3E%3C!-- second fainter curve --%3E%3Cpath d='M80,500 C200,450 320,520 440,470 C560,420 680,490 800,450 C920,410 1040,460 1120,430' fill='none' stroke='rgba(100,200,150,0.1)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"),
+        /* Radial glow at center-top */
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,80,50,0.6) 0%, transparent 70%),
+        /* Base gradient */
+        linear-gradient(160deg, #0d1f18 0%, #071510 50%, #0a0d1a 100%);
+    background-position: center, top center, center;
+    background-size: cover, cover, cover;
+    background-attachment: fixed, fixed, fixed;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -44,6 +52,173 @@
     text-shadow: 0 0 16px var(--gold-glow);
     margin-bottom: 1.25rem;
     text-align: center;
+}
+
+/* ── Button spinner ── */
+.sim-btn-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 211, 71, 0.35);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: sim-spin 0.7s linear infinite;
+    vertical-align: middle;
+}
+
+@keyframes sim-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Loading skeleton ── */
+.sim-loading {
+    margin-top: 1.5rem;
+}
+
+.sim-loading-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 211, 71, 0.7);
+    margin-bottom: 0.85rem;
+    animation: sim-pulse 1.4s ease-in-out infinite;
+}
+
+.sim-loading-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+
+.sim-loading-card {
+    height: 72px;
+    border-radius: 12px;
+    background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0.05) 25%,
+        rgba(255,255,255,0.12) 50%,
+        rgba(255,255,255,0.05) 75%
+    );
+    background-size: 200% 100%;
+    animation: sim-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes sim-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@keyframes sim-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.5; }
+}
+
+/* ── Results fade-in on page load ── */
+.sim-results--animate {
+    animation: sim-fadein 0.45s ease both;
+}
+
+@keyframes sim-fadein {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+[data-theme="light"] .sim-btn-spinner {
+    border-color: rgba(120, 90, 0, 0.3);
+    border-top-color: #7a5c00;
+}
+
+[data-theme="light"] .sim-loading-label {
+    color: rgba(120, 90, 0, 0.75);
+}
+
+[data-theme="light"] .sim-loading-card {
+    background: linear-gradient(
+        90deg,
+        rgba(0,0,0,0.04) 25%,
+        rgba(0,0,0,0.10) 50%,
+        rgba(0,0,0,0.04) 75%
+    );
+    background-size: 200% 100%;
+}
+
+/* ── Strategy radio buttons ── */
+.sim-strategy-radios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.25rem;
+}
+
+.sim-strategy-radio {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255, 211, 71, 0.25);
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: border-color .18s, background .18s;
+    user-select: none;
+}
+
+.sim-strategy-radio input[type=radio] {
+    accent-color: var(--gold);
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.sim-strategy-radio:has(input:checked) {
+    border-color: rgba(255, 211, 71, 0.7);
+    background: rgba(255, 211, 71, 0.1);
+}
+
+.sim-strategy-radio--soon {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.sim-strategy-radio--soon input[type=radio] {
+    cursor: not-allowed;
+}
+
+.sim-strategy-radio__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: whitesmoke;
+}
+
+.sim-strategy-radio__badge {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 211, 71, 0.7);
+    border: 1px solid rgba(255, 211, 71, 0.3);
+    border-radius: 4px;
+    padding: 0.1rem 0.35rem;
+    white-space: nowrap;
+}
+
+[data-theme="light"] .sim-strategy-radio {
+    border-color: rgba(120, 90, 0, 0.25);
+    background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .sim-strategy-radio:has(input:checked) {
+    border-color: rgba(120, 90, 0, 0.6);
+    background: rgba(120, 90, 0, 0.08);
+}
+
+[data-theme="light"] .sim-strategy-radio__label {
+    color: #1a1100;
+}
+
+[data-theme="light"] .sim-strategy-radio__badge {
+    color: #7a5c00;
+    border-color: rgba(120, 90, 0, 0.35);
 }
 
 /* ── Strategy description ── */
@@ -152,7 +327,7 @@
 
 .sim-stat-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 0.75rem;
     margin-bottom: 1.25rem;
 }
@@ -161,10 +336,11 @@
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    padding: 0.85rem 1rem;
+    padding: 0.75rem 0.85rem;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    min-width: 0;
 }
 
 .sim-stat--rtp {
@@ -187,25 +363,41 @@
     border-color: rgba(100, 160, 255, 0.3);
 }
 
+.sim-stat--time {
+    background: rgba(160, 100, 255, 0.1);
+    border-color: rgba(160, 100, 255, 0.3);
+}
+
 .sim-stat-label {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .sim-stat-value {
-    font-size: 1.3rem;
+    font-size: clamp(0.85rem, 2.2vw, 1.2rem);
     font-weight: 800;
     color: whitesmoke;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.sim-stat--rtp .sim-stat-value { color: var(--gold); font-size: 1.5rem; }
+.sim-stat-value--compact {
+    font-size: clamp(0.78rem, 1.8vw, 1rem);
+}
+
+.sim-stat--rtp .sim-stat-value { color: var(--gold); }
 .sim-stat--win .sim-stat-value  { color: #6eff9e; }
 .sim-stat--loss .sim-stat-value { color: #ff7b7b; }
 .sim-stat--bj .sim-stat-value   { color: #8ec8ff; }
+.sim-stat--time .sim-stat-value { color: #c8a0ff; }
 
 .sim-strategy-box--result {
     margin-bottom: 0;
@@ -246,7 +438,14 @@
 
 /* ── Light theme ── */
 [data-theme="light"] .body-simulation {
-    background-image: url('../images/background/04-bj-table.png');
+    background-color: #f5efe0;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='800' viewBox='0 0 1200 800'%3E%3Cdefs%3E%3Cpattern id='dots' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='20' cy='20' r='1' fill='rgba(120,90,0,0.15)'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='1200' height='800' fill='url(%23dots)'/%3E%3Cline x1='80' y1='680' x2='1120' y2='680' stroke='rgba(120,90,0,0.1)' stroke-width='1.5'/%3E%3Cline x1='80' y1='120' x2='80' y2='680' stroke='rgba(120,90,0,0.1)' stroke-width='1.5'/%3E%3Cpath d='M80,420 C180,380 260,460 360,400 C460,340 540,430 640,390 C740,350 820,420 920,380 C1020,340 1080,370 1120,360' fill='none' stroke='rgba(140,100,0,0.2)' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M80,500 C200,450 320,520 440,470 C560,420 680,490 800,450 C920,410 1040,460 1120,430' fill='none' stroke='rgba(80,150,100,0.12)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"),
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(240,220,160,0.7) 0%, transparent 70%),
+        linear-gradient(160deg, #f0e8d0 0%, #ede0c0 50%, #e8dfc8 100%);
+    background-position: center, top center, center;
+    background-size: cover, cover, cover;
+    background-attachment: fixed, fixed, fixed;
 }
 
 [data-theme="light"] .sim-container {
@@ -268,6 +467,215 @@
 [data-theme="light"] .sim-stat--win .sim-stat-value  { color: #1a7a3a; }
 [data-theme="light"] .sim-stat--loss .sim-stat-value { color: #b01a1a; }
 [data-theme="light"] .sim-stat--bj .sim-stat-value   { color: #1a55a0; }
+[data-theme="light"] .sim-stat--time .sim-stat-value { color: #6a14a0; }
 [data-theme="light"] .sim-results-title { color: #8b6914; }
 [data-theme="light"] .sim-strategy-text { color: rgba(20,15,0,0.75); }
 [data-theme="light"] .sim-strategy-label { color: rgba(100,75,0,0.7); }
+
+/* ── Info button ── */
+.sim-info-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.3rem;
+    height: 1.3rem;
+    margin-left: 0.4rem;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 211, 71, 0.45);
+    background: rgba(255, 211, 71, 0.1);
+    color: rgba(255, 211, 71, 0.8);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 1;
+    transition: background .18s, border-color .18s, color .18s;
+    padding: 0;
+}
+.sim-info-btn:hover {
+    background: rgba(255, 211, 71, 0.22);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+[data-theme="light"] .sim-info-btn {
+    border-color: rgba(120, 90, 0, 0.4);
+    background: rgba(120, 90, 0, 0.07);
+    color: #7a5c00;
+}
+[data-theme="light"] .sim-info-btn:hover {
+    background: rgba(120, 90, 0, 0.14);
+    border-color: #7a5c00;
+    color: #4a3700;
+}
+
+/* ── Modal backdrop ── */
+.sim-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: sim-fadein 0.2s ease both;
+}
+
+/* ── Modal box ── */
+.sim-modal {
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #0d1f18;
+    border: 1.5px solid rgba(255, 211, 71, 0.3);
+    border-radius: 18px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+    color: whitesmoke;
+    display: flex;
+    flex-direction: column;
+}
+
+.sim-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.5rem 0.75rem;
+    border-bottom: 1px solid rgba(255, 211, 71, 0.15);
+    position: sticky;
+    top: 0;
+    background: #0d1f18;
+    z-index: 1;
+}
+
+.sim-modal-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 0.03em;
+}
+
+.sim-modal-close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 0.2rem;
+    transition: color .15s;
+}
+.sim-modal-close:hover { color: whitesmoke; }
+
+.sim-modal-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.sim-modal-intro {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.65);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.sim-modal-section {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.sim-modal-section-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.sim-modal-section-title--mirror { color: rgba(255, 160, 60, 0.9); }
+.sim-modal-section-title--basic  { color: rgba(110, 255, 158, 0.9); }
+
+.sim-modal-desc {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.75);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.sim-modal-rtp {
+    font-size: 0.82rem;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 0.25rem 0.6rem;
+    display: inline-block;
+    align-self: flex-start;
+    margin-top: 0.1rem;
+}
+.sim-modal-rtp--mirror { background: rgba(255,140,0,0.12); color: rgba(255,160,60,0.9); border: 1px solid rgba(255,140,0,0.25); }
+.sim-modal-rtp--basic  { background: rgba(0,180,80,0.12);  color: rgba(110,255,158,0.9); border: 1px solid rgba(0,180,80,0.25); }
+
+/* ── Comparison table ── */
+.sim-modal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+.sim-modal-table th {
+    padding: 0.55rem 0.75rem;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: rgba(255,255,255,0.45);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sim-modal-th--mirror { color: rgba(255, 160, 60, 0.7); }
+.sim-modal-th--basic  { color: rgba(110, 255, 158, 0.7); }
+
+.sim-modal-table td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.8);
+}
+.sim-modal-table tr:last-child td { border-bottom: none; }
+.sim-modal-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+.sim-modal-td--hit    { color: #ff9f6a; font-weight: 700; }
+.sim-modal-td--stand  { color: #8ec8ff; font-weight: 700; }
+.sim-modal-td--double { color: #6eff9e; font-weight: 700; }
+.sim-modal-td--split  { color: #e8a0ff; font-weight: 700; }
+
+/* ── Light theme modal ── */
+[data-theme="light"] .sim-modal {
+    background: #f8f0e0;
+    border-color: rgba(80, 60, 0, 0.25);
+    color: #1a1100;
+}
+[data-theme="light"] .sim-modal-header { background: #f8f0e0; border-color: rgba(80,60,0,0.15); }
+[data-theme="light"] .sim-modal-title  { color: #a07800; }
+[data-theme="light"] .sim-modal-close  { color: rgba(20,15,0,0.4); }
+[data-theme="light"] .sim-modal-close:hover { color: #1a1100; }
+[data-theme="light"] .sim-modal-intro  { color: rgba(20,15,0,0.6); }
+[data-theme="light"] .sim-modal-section { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); }
+[data-theme="light"] .sim-modal-section-title--mirror { color: #b05000; }
+[data-theme="light"] .sim-modal-section-title--basic  { color: #1a7a3a; }
+[data-theme="light"] .sim-modal-desc  { color: rgba(20,15,0,0.7); }
+[data-theme="light"] .sim-modal-rtp--mirror { background: rgba(180,80,0,0.08);  color: #b05000; border-color: rgba(180,80,0,0.2); }
+[data-theme="light"] .sim-modal-rtp--basic  { background: rgba(0,120,50,0.08);  color: #1a7a3a; border-color: rgba(0,120,50,0.2); }
+[data-theme="light"] .sim-modal-table th   { color: rgba(20,15,0,0.4); border-color: rgba(0,0,0,0.1); }
+[data-theme="light"] .sim-modal-th--mirror { color: rgba(180,80,0,0.7); }
+[data-theme="light"] .sim-modal-th--basic  { color: rgba(0,120,50,0.7); }
+[data-theme="light"] .sim-modal-table td   { color: rgba(20,15,0,0.75); border-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .sim-modal-table tr:hover td { background: rgba(0,0,0,0.02); }
+[data-theme="light"] .sim-modal-td--hit    { color: #c05000; }
+[data-theme="light"] .sim-modal-td--stand  { color: #1a55a0; }
+[data-theme="light"] .sim-modal-td--double { color: #1a7a3a; }
+[data-theme="light"] .sim-modal-td--split  { color: #7a14a0; }

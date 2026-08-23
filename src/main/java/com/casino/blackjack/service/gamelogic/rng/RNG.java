@@ -17,10 +17,11 @@ public class RNG {
 
     private static final Integer GAME_HASH_LEN = 10;
 
-    private static final MersenneTwister mersenneTwister = new MersenneTwister();
+    private static final ThreadLocal<MersenneTwister> mersenneTwister =
+            ThreadLocal.withInitial(MersenneTwister::new);
 
     public static Integer nextInt() {
-        return abs(mersenneTwister.nextInt());
+        return abs(mersenneTwister.get().nextInt());
     }
 
     public static Integer randSuit() {

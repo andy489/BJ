@@ -14,31 +14,86 @@
 
         <h1 class="sim-title">Blackjack RTP Simulator</h1>
 
-        <div class="sim-strategy-box">
-            <div class="sim-strategy-label">Player strategy</div>
-            <div class="sim-strategy-text">
-                Mirror dealer rule — hit on soft/hard ≤&nbsp;16, stand on hard ≥&nbsp;17.
-                No splits, double-down, insurance, or surrender.
-            </div>
-        </div>
-
         <form class="sim-form" th:action="@{/admin/simulation}" method="post" id="simForm">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <input type="hidden" name="spins" id="spinsHidden" value="100000"/>
+            <input type="hidden" name="spins"   id="spinsHidden"
+                   th:value="${spins != null ? spins : 100000}"/>
+            <input type="hidden" name="bet"     id="betHidden"
+                   th:value="${bet != null ? bet : '1.00'}"/>
+            <input type="hidden" name="threads" id="threadsHidden"
+                   th:value="${threads != null ? threads : 1}"/>
+
+            <!-- Strategy picker -->
+            <div class="sim-form-row">
+                <label class="sim-label">
+                    Player strategy
+                    <button type="button" class="sim-info-btn" id="strategyInfoBtn" title="Compare strategies">&#9432;</button>
+                </label>
+                <div class="sim-strategy-radios" id="strategyRadios">
+                    <label th:each="s : ${strategies}"
+                           class="sim-strategy-radio"
+                           th:classappend="${!s.implemented} ? ' sim-strategy-radio--soon' : ''">
+                        <input type="radio" name="strategy"
+                               th:value="${s.name()}"
+                               th:checked="${selectedStrategy != null ? selectedStrategy == s : s.name() == 'DEALER_MIRROR'}"
+                               th:disabled="${!s.implemented}"
+                               th:data-desc="${s.description}"
+                               th:data-implemented="${s.implemented}"/>
+                        <span class="sim-strategy-radio__label" th:text="${s.label}">Strategy</span>
+                        <span th:if="${!s.implemented}" class="sim-strategy-radio__badge">COMING SOON</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Live strategy description -->
+            <div class="sim-strategy-box" id="strategyDesc">
+                <div class="sim-strategy-label">Description</div>
+                <div class="sim-strategy-text" id="strategyDescText">
+                    Dealer-mirror strategy: hit on any total ≤ 16, stand on any total ≥ 17 (incl. soft 17); no splits/DD/insurance/surrender
+                </div>
+            </div>
 
             <div class="sim-form-row">
                 <label class="sim-label" for="spinsDisplay">Number of hands (1 – 10,000,000)</label>
                 <input class="sim-input" type="text" id="spinsDisplay"
-                       inputmode="numeric" autocomplete="off" value="100,000"/>
+                       inputmode="numeric" autocomplete="off"
+                       th:value="${spins != null ? #numbers.formatInteger(spins, 0, 'COMMA') : '100,000'}"/>
                 <div class="sim-error" id="spinsError" style="display:none"></div>
+            </div>
+
+            <div class="sim-form-row">
+                <label class="sim-label" for="betDisplay">Bet size (£0.10 – £10,000, multiple of £0.10)</label>
+                <input class="sim-input" type="text" id="betDisplay"
+                       inputmode="decimal" autocomplete="off"
+                       th:value="${bet != null ? #numbers.formatDecimal(bet, 1, 2) : '1.00'}"/>
+                <div class="sim-error" id="betError" style="display:none"></div>
+            </div>
+
+            <div class="sim-form-row">
+                <label class="sim-label" for="threadsDisplay">Threads (1 – 4)</label>
+                <input class="sim-input" type="text" id="threadsDisplay"
+                       inputmode="numeric" autocomplete="off"
+                       th:value="${threads != null ? threads : 1}"/>
+                <div class="sim-error" id="threadsError" style="display:none"></div>
             </div>
 
             <div th:if="${error}" class="sim-error" th:text="${error}"></div>
 
-            <button class="sim-btn" type="submit">Run Simulation</button>
+            <button class="sim-btn" type="submit" id="runBtn">
+                <span id="runBtnText">Run Simulation</span>
+                <span id="runBtnSpinner" class="sim-btn-spinner" style="display:none"></span>
+            </button>
         </form>
 
-        <div th:if="${result}" class="sim-results">
+        <!-- Loading skeleton — shown via JS while POST is in-flight -->
+        <div class="sim-loading" id="simLoading" style="display:none">
+            <div class="sim-loading-label" id="simLoadingLabel">Simulating…</div>
+            <div class="sim-loading-grid">
+                <div class="sim-loading-card" th:each="i : ${#numbers.sequence(1,11)}"></div>
+            </div>
+        </div>
+
+        <div th:if="${result}" class="sim-results sim-results--animate" id="simResults">
 
             <h2 class="sim-results-title">Results</h2>
 
@@ -50,17 +105,22 @@
                 <div class="sim-stat sim-stat--rtp">
                     <div class="sim-stat-label">RTP</div>
                     <div class="sim-stat-value"
-                         th:text="${#numbers.formatDecimal(result.rtp(), 1, 4)} + '%'">0.0000%</div>
+                         th:text="${#numbers.formatDecimal(result.rtp(), 1, 2)} + '%'">0.00%</div>
+                </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Bet Size</div>
+                    <div class="sim-stat-value"
+                         th:text="'£' + ${#numbers.formatDecimal(bet, 1, 2)}">£1.00</div>
                 </div>
                 <div class="sim-stat">
                     <div class="sim-stat-label">Total Wagered</div>
-                    <div class="sim-stat-value"
-                         th:text="'£' + ${#numbers.formatDecimal(result.totalWagered(), 1, 2)}">£0.00</div>
+                    <div class="sim-stat-value sim-stat-value--compact"
+                         th:text="'£' + ${#numbers.formatInteger(result.totalWagered().longValue(), 0, 'COMMA')}">£0</div>
                 </div>
                 <div class="sim-stat">
                     <div class="sim-stat-label">Total Returned</div>
-                    <div class="sim-stat-value"
-                         th:text="'£' + ${#numbers.formatDecimal(result.totalReturned(), 1, 2)}">£0.00</div>
+                    <div class="sim-stat-value sim-stat-value--compact"
+                         th:text="'£' + ${#numbers.formatInteger(result.totalReturned().longValue(), 0, 'COMMA')}">£0</div>
                 </div>
                 <div class="sim-stat sim-stat--win">
                     <div class="sim-stat-label">Wins</div>
@@ -78,6 +138,17 @@
                     <div class="sim-stat-label">Blackjacks</div>
                     <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.blackjacks(), 0, 'COMMA')}">0</div>
                 </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Threads Used</div>
+                    <div class="sim-stat-value" th:text="${threads}">1</div>
+                </div>
+                <div class="sim-stat sim-stat--time">
+                    <div class="sim-stat-label">Elapsed Time</div>
+                    <div class="sim-stat-value"
+                         th:text="${result.elapsedMs() >= 1000}
+                                   ? ${#numbers.formatDecimal(result.elapsedMs() / 1000.0, 1, 3)} + ' s'
+                                   : ${result.elapsedMs()} + ' ms'">0 ms</div>
+                </div>
             </div>
 
             <div class="sim-strategy-box sim-strategy-box--result">
@@ -90,60 +161,251 @@
     </div>
 </main>
 
+<!-- ── Strategy info modal ── -->
+<div class="sim-modal-backdrop" id="strategyModal" style="display:none" role="dialog" aria-modal="true" aria-label="Strategy comparison">
+    <div class="sim-modal">
+        <div class="sim-modal-header">
+            <span class="sim-modal-title">Strategy Comparison</span>
+            <button class="sim-modal-close" id="strategyModalClose" type="button" aria-label="Close">&times;</button>
+        </div>
+        <div class="sim-modal-body">
+            <p class="sim-modal-intro">
+                All strategies simulate the same game rules (S17, 3:2 BJ payout, no surrender).
+                The player's decision rule is what changes.
+            </p>
+
+            <div class="sim-modal-section">
+                <div class="sim-modal-section-title sim-modal-section-title--mirror">Dealer Mirror</div>
+                <p class="sim-modal-desc">Copy the dealer exactly: hit on any total ≤ 16, stand on any total ≥ 17 (including soft 17). No doubles, splits, or surrender.</p>
+                <div class="sim-modal-rtp sim-modal-rtp--mirror">House edge ≈ 5.5% &nbsp;·&nbsp; RTP ≈ 94.5%</div>
+            </div>
+
+            <div class="sim-modal-section">
+                <div class="sim-modal-section-title sim-modal-section-title--basic">Basic Strategy</div>
+                <p class="sim-modal-desc">Mathematically optimal decisions for every hand vs every dealer upcard. Uses doubles, pair splits, and correct soft-hand play.</p>
+                <div class="sim-modal-rtp sim-modal-rtp--basic">House edge ≈ 0.5% &nbsp;·&nbsp; RTP ≈ 99.5%</div>
+            </div>
+
+            <table class="sim-modal-table">
+                <thead>
+                    <tr>
+                        <th>Situation</th>
+                        <th class="sim-modal-th--mirror">Dealer Mirror</th>
+                        <th class="sim-modal-th--basic">Basic Strategy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Soft 17 (A+6)</td>
+                        <td class="sim-modal-td--stand">Stand</td>
+                        <td class="sim-modal-td--hit">Hit</td>
+                    </tr>
+                    <tr>
+                        <td>Soft 18 (A+7) vs 9/10/A</td>
+                        <td class="sim-modal-td--stand">Stand</td>
+                        <td class="sim-modal-td--hit">Hit</td>
+                    </tr>
+                    <tr>
+                        <td>Hard 11 vs dealer 6</td>
+                        <td class="sim-modal-td--hit">Hit</td>
+                        <td class="sim-modal-td--double">Double</td>
+                    </tr>
+                    <tr>
+                        <td>Hard 16 vs dealer 6</td>
+                        <td class="sim-modal-td--hit">Hit</td>
+                        <td class="sim-modal-td--stand">Stand</td>
+                    </tr>
+                    <tr>
+                        <td>Hard 9 vs dealer 3–6</td>
+                        <td class="sim-modal-td--hit">Hit</td>
+                        <td class="sim-modal-td--double">Double</td>
+                    </tr>
+                    <tr>
+                        <td>Pair of 8s</td>
+                        <td class="sim-modal-td--hit">Hit (16)</td>
+                        <td class="sim-modal-td--split">Split</td>
+                    </tr>
+                    <tr>
+                        <td>Pair of Aces</td>
+                        <td class="sim-modal-td--hit">Hit (soft 12)</td>
+                        <td class="sim-modal-td--split">Split</td>
+                    </tr>
+                    <tr>
+                        <td>Pair of 9s vs dealer 7</td>
+                        <td class="sim-modal-td--stand">Stand</td>
+                        <td class="sim-modal-td--stand">Stand</td>
+                    </tr>
+                    <tr>
+                        <td>Hard 12 vs dealer 4–6</td>
+                        <td class="sim-modal-td--hit">Hit</td>
+                        <td class="sim-modal-td--stand">Stand</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <footer th:replace="~{fragment/common::footer}"></footer>
 
 <script>
 (function () {
-    var display = document.getElementById('spinsDisplay');
-    var hidden  = document.getElementById('spinsHidden');
-    var errEl   = document.getElementById('spinsError');
-    var form    = document.getElementById('simForm');
-    var MIN = 1, MAX = 10000000;
+    /* ── Strategy radio: update description live ── */
+    var radios   = document.querySelectorAll('#strategyRadios input[type=radio]');
+    var descText = document.getElementById('strategyDescText');
+    var runBtn   = document.getElementById('runBtn');
 
-    function fmt(n) {
+    function applyStrategy(radio) {
+        descText.textContent = radio.dataset.desc || '';
+        var implemented = radio.dataset.implemented === 'true';
+        runBtn.disabled = !implemented;
+        runBtn.style.opacity = implemented ? '' : '0.45';
+        runBtn.title = implemented ? '' : 'This strategy is not yet implemented.';
+    }
+
+    radios.forEach(function (r) {
+        r.addEventListener('change', function () { applyStrategy(r); });
+        if (r.checked) applyStrategy(r);
+    });
+
+    /* ── Spins ── */
+    var spinsDisplay = document.getElementById('spinsDisplay');
+    var spinsHidden  = document.getElementById('spinsHidden');
+    var spinsError   = document.getElementById('spinsError');
+    var SPINS_MIN = 1, SPINS_MAX = 10000000;
+
+    function fmtInt(n) {
         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
-    function parse(s) {
-        return parseInt(s.replace(/,/g, ''), 10);
-    }
+    spinsDisplay.addEventListener('input', function () {
+        var raw = spinsDisplay.value.replace(/,/g, '').replace(/[^\d]/g, '');
+        var n   = parseInt(raw, 10);
+        var err = '';
+        if (raw === '' || isNaN(n) || n < SPINS_MIN) err = 'Enter a number between 1 and 10,000,000.';
+        else if (n > SPINS_MAX)                      err = 'Maximum is 10,000,000.';
+        showErr(spinsError, err);
+        spinsHidden.value = isNaN(n) ? '' : n;
+        if (raw.length > 0) {
+            var pos = spinsDisplay.selectionStart, oldLen = spinsDisplay.value.length;
+            spinsDisplay.value = isNaN(n) ? raw : fmtInt(n);
+            var diff = spinsDisplay.value.length - oldLen;
+            spinsDisplay.setSelectionRange(Math.max(0, pos + diff), Math.max(0, pos + diff));
+        }
+    });
 
-    function validate(n) {
-        if (isNaN(n) || n < MIN) return 'Enter a number between 1 and 10,000,000.';
-        if (n > MAX)             return 'Maximum is 10,000,000.';
+    /* ── Bet ── */
+    var betDisplay = document.getElementById('betDisplay');
+    var betHidden  = document.getElementById('betHidden');
+    var betError   = document.getElementById('betError');
+    var BET_MIN = 0.10, BET_MAX = 10000.0;
+
+    function validateBet(v) {
+        if (isNaN(v) || v < BET_MIN)        return 'Minimum bet is £0.10.';
+        if (v > BET_MAX)                     return 'Maximum bet is £10,000.';
+        if (Math.round(v * 100) % 10 !== 0) return 'Bet must be a multiple of £0.10.';
         return '';
     }
 
-    display.addEventListener('input', function () {
-        var raw   = display.value.replace(/,/g, '').replace(/[^\d]/g, '');
-        var n     = parseInt(raw, 10);
-        var err   = validate(n);
-        errEl.textContent = err;
-        errEl.style.display = err ? '' : 'none';
-        hidden.value = isNaN(n) ? '' : n;
-        // Reformat with commas, preserving cursor position
-        if (raw.length > 0) {
-            var pos   = display.selectionStart;
-            var oldLen = display.value.length;
-            display.value = isNaN(n) ? raw : fmt(n);
-            var newLen = display.value.length;
-            var newPos = Math.max(0, pos + (newLen - oldLen));
-            display.setSelectionRange(newPos, newPos);
-        }
+    betDisplay.addEventListener('input', function () {
+        var v = parseFloat(betDisplay.value.replace(/[^\d.]/g, ''));
+        showErr(betError, validateBet(v));
+        betHidden.value = isNaN(v) ? '' : v.toFixed(2);
     });
 
-    form.addEventListener('submit', function (e) {
-        var n   = parse(display.value);
-        var err = validate(n);
-        if (err) {
-            e.preventDefault();
-            errEl.textContent = err;
-            errEl.style.display = '';
-            display.focus();
-        } else {
-            hidden.value = n;
-        }
+    betDisplay.addEventListener('blur', function () {
+        var v = parseFloat(betDisplay.value.replace(/[^\d.]/g, ''));
+        if (!isNaN(v) && validateBet(v) === '') betDisplay.value = v.toFixed(2);
     });
+
+    /* ── Threads ── */
+    var threadsDisplay = document.getElementById('threadsDisplay');
+    var threadsHidden  = document.getElementById('threadsHidden');
+    var threadsError   = document.getElementById('threadsError');
+    var THREADS_MIN = 1, THREADS_MAX = 4;
+
+    threadsDisplay.addEventListener('input', function () {
+        var raw = threadsDisplay.value.replace(/[^\d]/g, '');
+        var n   = parseInt(raw, 10);
+        var err = '';
+        if (isNaN(n) || n < THREADS_MIN) err = 'Minimum is 1 thread.';
+        else if (n > THREADS_MAX)        err = 'Maximum is 4 threads.';
+        showErr(threadsError, err);
+        threadsHidden.value  = isNaN(n) ? '' : n;
+        threadsDisplay.value = raw;
+    });
+
+    /* ── Submit + loading animation ── */
+    var form         = document.getElementById('simForm');
+    var simResults   = document.getElementById('simResults');
+    var simLoading   = document.getElementById('simLoading');
+    var loadingLabel = document.getElementById('simLoadingLabel');
+    var btnText      = document.getElementById('runBtnText');
+    var btnSpinner   = document.getElementById('runBtnSpinner');
+
+    form.addEventListener('submit', function (e) {
+        var spinsN   = parseInt(spinsDisplay.value.replace(/,/g, ''), 10);
+        var betV     = parseFloat(betDisplay.value.replace(/[^\d.]/g, ''));
+        var threadsN = parseInt(threadsDisplay.value, 10);
+
+        var se = (isNaN(spinsN)   || spinsN < SPINS_MIN     || spinsN > SPINS_MAX)
+                    ? 'Enter a number between 1 and 10,000,000.' : '';
+        var be = validateBet(betV);
+        var te = (isNaN(threadsN) || threadsN < THREADS_MIN || threadsN > THREADS_MAX)
+                    ? 'Threads must be between 1 and 4.' : '';
+
+        showErr(spinsError,   se);
+        showErr(betError,     be);
+        showErr(threadsError, te);
+
+        if (se || be || te) {
+            e.preventDefault();
+            (se ? spinsDisplay : be ? betDisplay : threadsDisplay).focus();
+            return;
+        }
+
+        spinsHidden.value   = spinsN;
+        betHidden.value     = betV.toFixed(2);
+        threadsHidden.value = threadsN;
+
+        /* Hide old results, show skeleton */
+        if (simResults) {
+            simResults.style.transition = 'opacity 0.25s';
+            simResults.style.opacity    = '0';
+            setTimeout(function () { simResults.style.display = 'none'; }, 260);
+        }
+
+        /* Update loading label with hand count */
+        var handsFmt = fmtInt(spinsN);
+        if (loadingLabel) loadingLabel.textContent = 'Simulating ' + handsFmt + ' hands…';
+
+        setTimeout(function () {
+            simLoading.style.display = '';
+        }, 280);
+
+        /* Button → spinner */
+        btnText.style.display    = 'none';
+        btnSpinner.style.display = '';
+        runBtn.disabled          = true;
+    });
+
+    function showErr(el, msg) {
+        el.textContent   = msg;
+        el.style.display = msg ? '' : 'none';
+    }
+
+    /* ── Strategy info modal ── */
+    var modal     = document.getElementById('strategyModal');
+    var openBtn   = document.getElementById('strategyInfoBtn');
+    var closeBtn  = document.getElementById('strategyModalClose');
+
+    function openModal()  { modal.style.display = ''; document.body.style.overflow = 'hidden'; }
+    function closeModal() { modal.style.display = 'none'; document.body.style.overflow = ''; }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 })();
 </script>
 

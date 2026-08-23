@@ -9,12 +9,13 @@ public record SimulationResult(
         long losses,
         long pushes,
         long blackjacks,
-        String strategy
+        String strategy,
+        long elapsedMs
 ) {
     public static SimulationResult of(long hands, double wagered, double returned,
                                        long wins, long losses, long pushes, long blackjacks,
-                                       String strategy) {
+                                       String strategy, long elapsedMs) {
         double rtp = wagered > 0 ? returned / wagered * 100.0 : 0.0;
-        return new SimulationResult(hands, wagered, returned, rtp, wins, losses, pushes, blackjacks, strategy);
+        return new SimulationResult(hands, wagered, returned, rtp, wins, losses, pushes, blackjacks, strategy, elapsedMs);
     }
 }

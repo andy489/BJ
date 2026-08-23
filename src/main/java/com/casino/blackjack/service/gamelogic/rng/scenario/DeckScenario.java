@@ -240,6 +240,36 @@ public enum DeckScenario {
           Card.of(DIAMONDS_SUIT, TEN_RANK)     // hand0 hit → 15+10 = 25 bust
       );
     }
+  },
+
+  // Player 8+8 vs dealer 6 — split → hand1 gets 8 (re-split!); then:
+  //   hand1 (from re-split left): 8+K = 18 → stand (win)
+  //   hand2 (from re-split right): 8+7 = 15 → hit → K → bust 25 (loss)
+  //   hand0 (original left): 8+3 = 11 → double-down → K → 21 (win)
+  //   dealer: 6+9 = 15 → draws 8 → bust 23
+  SPLIT_RESPLIT_HIT_BUST_DOUBLE("8+8 vs 6 — re-split, bust on one hand, double on another") {
+    @Override
+    public CardSource source() {
+      return new FixedCardSource(
+          Card.of(CLUBS_SUIT, SIX_RANK),        // dealer visible
+          Card.of(HEARTS_SUIT, NINE_RANK),       // dealer hidden → 15
+          Card.of(SPADES_SUIT, EIGHT_RANK),      // player card 0
+          Card.of(DIAMONDS_SUIT, EIGHT_RANK),    // player card 1 → pair 8s
+          // ── first split: hand0 draws [4], hand1 draws [5] ──
+          Card.of(CLUBS_SUIT, THREE_RANK),       // hand0 (left): 8+3 = 11 (double candidate)
+          Card.of(HEARTS_SUIT, EIGHT_RANK),      // hand1 (right): 8+8 = pair → re-split offered
+          // ── re-split of hand1: new left draws [6], new right draws [7] ──
+          Card.of(SPADES_SUIT, KING_RANK),       // hand1 left: 8+K = 18 → stand
+          Card.of(DIAMONDS_SUIT, SEVEN_RANK),    // hand2 right: 8+7 = 15 → hit
+          // ── play hand2 (right of re-split, played first): hit ──
+          Card.of(CLUBS_SUIT, KING_RANK),        // hand2 hit → 15+K = 25 bust
+          // ── play hand1 left: stand on 18 (no card needed) ──
+          // ── play hand0: double-down on 11 ──
+          Card.of(HEARTS_SUIT, KING_RANK),       // hand0 double → 11+K = 21
+          // ── dealer draws ──
+          Card.of(SPADES_SUIT, EIGHT_RANK)       // dealer → 15+8 = 23 bust
+      );
+    }
   };
 
   final String description;

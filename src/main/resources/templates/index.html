@@ -5,6 +5,28 @@
     <title th:text="#{page.index.title}">Blackjack Lobby</title>
     <th:block th:insert="~{fragment/common::head}"></th:block>
     <script defer th:src="@{/js/weather/weather.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function squareWeatherTiles() {
+                var section = document.querySelector('.weather-section');
+                var container = document.querySelector('.container-index');
+                if (!section || !container) return;
+                // Match width to welcome container
+                var targetWidth = container.offsetWidth;
+                section.style.width = targetWidth + 'px';
+                // Compute square cell size
+                var cols = 4;
+                if (window.innerWidth <= 480) cols = 2;
+                else if (window.innerWidth <= 768) cols = 2;
+                var gap = parseFloat(getComputedStyle(section).gap) || 20;
+                var cellSize = Math.floor((targetWidth - gap * (cols - 1)) / cols);
+                section.style.gridTemplateColumns = 'repeat(' + cols + ', ' + cellSize + 'px)';
+                section.style.gridAutoRows = cellSize + 'px';
+            }
+            squareWeatherTiles();
+            window.addEventListener('resize', squareWeatherTiles);
+        });
+    </script>
     <link rel="stylesheet" th:href="@{/css/index.css}"/>
 </head>
 
@@ -12,52 +34,78 @@
 
 <header th:replace="~{fragment/common::navbar}"></header>
 
-<main>
-    <div>
-        <div class="container-index mt-4">
-            <div class="welcome-msg" th:text="#{index.welcome}">Welcome to BLACKJACK</div>
+<main style="flex: 1; padding-bottom: 1rem;">
+    <div class="container-index mt-4">
+        <div class="welcome-msg" th:text="#{index.welcome}">Welcome to BLACKJACK</div>
 
-            <hr class="index-divider"/>
+        <hr class="index-divider"/>
 
-            <p class="intro-msg mb-2">
-                <th:block th:if="${username}" th:text="#{index.after.activate.account.greeter}">Welcome,</th:block>
-                <span th:if="${username}" class="color-indianred fw-bold" th:text="${username} + '. '">username</span>
-                <th:block th:text="#{index.intro} + '.'">Enjoy one of the most widely played casino games in the world.</th:block>
-            </p>
+        <p class="intro-msg mb-2">
+            <th:block th:if="${username}" th:text="#{index.after.activate.account.greeter}">Welcome,</th:block>
+            <span th:if="${username}" class="color-indianred fw-bold" th:text="${username} + '. '">username</span>
+            <th:block th:text="#{index.intro} + '.'">Enjoy one of the most widely played casino games in the world.</th:block>
+        </p>
 
-            <hr class="index-divider"/>
+        <hr class="index-divider"/>
 
-            <p class="mb-0">
-                <a class="index-text-link fw-bolder"
-                   th:text="#{index.login}"
-                   th:href="@{/auth/login}">Login</a>
-                <span class="info-msg mx-1" th:text="#{index.account}">if you have an account or</span>
-                <a class="index-text-link fw-bolder"
-                   th:text="#{index.register}"
-                   th:href="@{/auth/register}">Register</a>
-                <span class="info-msg ms-1" th:text="#{index.play} + '.'">now and play.</span>
-            </p>
+        <p class="mb-0">
+            <a class="index-text-link fw-bolder"
+               th:text="#{index.login}"
+               th:href="@{/auth/login}">Login</a>
+            <span class="info-msg mx-1" th:text="#{index.account}">if you have an account or</span>
+            <a class="index-text-link fw-bolder"
+               th:text="#{index.register}"
+               th:href="@{/auth/register}">Register</a>
+            <span class="info-msg ms-1" th:text="#{index.play} + '.'">now and play.</span>
+        </p>
+    </div>
+
+    <div class="weather-section">
+        <div class="weather-box">
+            <span class="city-msg" th:text="#{index.sofia}">Sofia</span>
+            <div class="temp-icon-row">
+                <span class="celsius-msg"><span id="box-a-temp">15</span>&#8451;</span>
+                <img id="box-a-img" th:src="@{/images/weather/sun.png}" class="weather-icon" alt="sunny" src="">
+            </div>
+            <div class="clock-time-row">
+                <span id="clock-a-time" class="city-time">--:--</span>
+                <canvas id="clock-a" class="city-clock" width="52" height="52"></canvas>
+            </div>
         </div>
 
-        <div class="weather-section">
-            <div class="weather-box">
-                <span class="weather-msg" th:text="#{index.weather}">Weather in</span>
-                <span class="city-msg" th:text="#{index.sofia}">Sofia</span>
-                <span class="celsius-msg">
-                    <span id="box-a-temp">15</span>
-                    <span>&#8451;</span>
-                </span>
-                <img id="box-a-img" th:src="@{/images/weather/sun.png}" height="120px" alt="sunny" src="">
+        <div class="weather-box">
+            <span class="city-msg" th:text="#{index.vegas}">Las Vegas</span>
+            <div class="temp-icon-row">
+                <span class="celsius-msg"><span id="box-b-temp">15</span>&#8451;</span>
+                <img id="box-b-img" th:src="@{/images/weather/cloudy.png}" class="weather-icon" alt="cloudy" src="">
             </div>
+            <div class="clock-time-row">
+                <span id="clock-b-time" class="city-time">--:--</span>
+                <canvas id="clock-b" class="city-clock" width="52" height="52"></canvas>
+            </div>
+        </div>
 
-            <div class="weather-box">
-                <span class="weather-msg" th:text="#{index.weather}">Weather in</span>
-                <span class="city-msg" th:text="#{index.vegas}">Las Vegas</span>
-                <span class="celsius-msg">
-                    <span id="box-b-temp">15</span>
-                    <span>&#8451;</span>
-                </span>
-                <img id="box-b-img" th:src="@{/images/weather/cloudy.png}" height="120px" alt="cloudy" src="">
+        <div class="weather-box">
+            <span class="city-msg" th:text="#{index.monte.carlo}">Monte Carlo</span>
+            <div class="temp-icon-row">
+                <span class="celsius-msg"><span id="box-c-temp">15</span>&#8451;</span>
+                <img id="box-c-img" th:src="@{/images/weather/sun.png}" class="weather-icon" alt="sunny" src="">
+            </div>
+            <div class="clock-time-row">
+                <span id="clock-c-time" class="city-time">--:--</span>
+                <canvas id="clock-c" class="city-clock" width="52" height="52"></canvas>
+            </div>
+        </div>
+
+        <div class="weather-box">
+            <span class="city-msg" th:text="#{index.macao}">Macao</span>
+            <div class="temp-icon-row">
+                <span class="celsius-msg"><span id="box-d-temp">15</span>&#8451;</span>
+                <img id="box-d-img" th:src="@{/images/weather/sun.png}" class="weather-icon" alt="sunny" src="">
+            </div>
+            <div class="clock-time-row">
+                <span id="clock-d-time" class="city-time">--:--</span>
+                <canvas id="clock-d" class="city-clock" width="52" height="52"></canvas>
             </div>
         </div>
     </div>

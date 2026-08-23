@@ -146,6 +146,12 @@ public class PlayController extends BaseController {
         return super.redirect("/play");
     }
 
+    @PostMapping("/double-bet")
+    public ModelAndView doubleBet() {
+        gameService.doubleBet();
+        return super.redirect("/play");
+    }
+
     @PostMapping("/clear-bet")
     public ModelAndView clearBet() {
         gameService.clearBet();
