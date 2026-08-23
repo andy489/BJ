@@ -81,7 +81,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 .setUser(playedGame.getOwner());
         ctx.betHistoryService().save(betHistory);
 
-        Game result = Game.of(gameEntity, ctx.om())
+        Game result = new Game()
                 .setAvailableChoices(new java.util.ArrayList<>(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL)))
                 .setWallet(Wallet.of(ctx.walletEntity()));
 
