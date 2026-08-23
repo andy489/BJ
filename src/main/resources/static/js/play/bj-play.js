@@ -221,7 +221,10 @@ $(document).ready(function () {
     $('.form-clear').on('submit', function (e) {
         // Let the POST through when cards are on the table (active hand) or when the game just finalized
         var hasCards = BJ_GAME_DEALT && !BJ_FINALIZED && BJ_LAST_CHOICE >= 1 && BJ_LAST_CHOICE <= 15
-        if (hasCards || BJ_FINALIZED) return  // let the POST clear server-side state
+        // Also POST when a completed hand's cards are still visible (post-payout state:
+        // dealt=false, finalized=false, but takenChoices non-empty → last_games row still present)
+        var hasPostPayoutCards = !BJ_GAME_DEALT && !BJ_FINALIZED && BJ_LAST_CHOICE > 0
+        if (hasCards || BJ_FINALIZED || hasPostPayoutCards) return  // let the POST clear server-side state
 
         e.preventDefault()
 
