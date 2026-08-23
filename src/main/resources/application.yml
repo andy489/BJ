@@ -5,6 +5,13 @@ spring:
     name: BJ
   main:
     banner-mode: off
+  web:
+    resources:
+      chain:
+        strategy:
+          content:
+            enabled: true
+            paths: /**
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/bjdb?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
