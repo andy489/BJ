@@ -22,5 +22,6 @@ public record GameContext(
         BasicStrategy basicStrategy,
         LocalDateTimeProvider clock,
         ObjectMapper om,
-        int maxSplits
+        int maxSplits,
+        int resultDisplayMs
 ) {}

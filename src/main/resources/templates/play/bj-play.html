@@ -91,6 +91,19 @@
                     </form>
                 </div>
             </div>
+            <!-- ── Result overlay — fades out after BJ_RESULT_DISPLAY_MS; auto-reload then clears state ── -->
+            <div class="result-overlay" th:if="${game.finalized != null and game.finalized}" id="result-overlay">
+                <span class="result-overlay-label result-overlay--win"
+                      th:if="${game.handMultiplier != null and game.handMultiplier > 1.0}"
+                      th:text="#{game.result.win}">WIN</span>
+                <span class="result-overlay-label result-overlay--push"
+                      th:if="${game.handMultiplier != null and game.handMultiplier == 1.0}"
+                      th:text="#{game.result.push}">PUSH</span>
+                <span class="result-overlay-label result-overlay--loss"
+                      th:if="${game.handMultiplier == null or game.handMultiplier == 0.0}"
+                      th:text="#{game.result.loss}">LOSS</span>
+            </div>
+
             <div class="dealer-cards">
                 <div class="dealer-cards-box">
                     <div class="play-card-wrapper" th:if="${game.dealerCards.size == 1}"
@@ -718,6 +731,8 @@
     var BJ_PP_BET         = /*[[${game.wallet.perfectPairsBet}]]*/ 0;
     var BJ_213_BET        = /*[[${game.wallet.twentyOneThreeBet}]]*/ 0;
     var BJ_DPP_BET        = /*[[${game.wallet.dealerPerfectPairsBet}]]*/ 0;
+    var BJ_HAND_MULTI     = /*[[${game.handMultiplier}]]*/ null;
+    var BJ_RESULT_DISPLAY_MS = /*[[${resultDisplayMs}]]*/ 2500;
 </script>
 <script>
     (function () {
@@ -908,6 +923,22 @@
             var sddForm = document.querySelector('form[action="/play/split-dd-advance"]');
             if (sddForm) {
                 setTimeout(function () { sddForm.submit(); }, 700);
+            }
+        }
+
+        /* ── Finalized result overlay: fade out then reload to get clean lobby ── */
+        if (BJ_FINALIZED) {
+            var resultOverlay = document.getElementById('result-overlay');
+            if (resultOverlay) {
+                var fadeDuration = 600; /* ms for CSS fade-out */
+                var displayDelay = BJ_RESULT_DISPLAY_MS - fadeDuration;
+                if (displayDelay < 0) displayDelay = 0;
+                setTimeout(function () {
+                    resultOverlay.classList.add('result-overlay--fade-out');
+                    setTimeout(function () {
+                        location.reload();
+                    }, fadeDuration);
+                }, displayDelay);
             }
         }
     })();

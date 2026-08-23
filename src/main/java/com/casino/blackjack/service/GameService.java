@@ -71,6 +71,7 @@ public class GameService {
 
     private final ObjectMapper om;
     private final int maxSplits;
+    private final int resultDisplayMs;
 
     public GameService(LastGameRepository lastGameRepository, PastGameRepository pastGameRepository,
                        WalletRepository walletRepository, UserService userService,
@@ -92,6 +93,7 @@ public class GameService {
         this.cardSource = cardSource;
         this.om = om;
         this.maxSplits = gameProperties.getMaxSplits();
+        this.resultDisplayMs = gameProperties.getResultDisplayMs();
     }
 
     public Game getTable() {
@@ -389,7 +391,7 @@ public class GameService {
     private GameContext buildContext(Game game, GameEntity gameEntity, WalletEntity walletEntity) {
         return new GameContext(game, gameEntity, walletEntity,
                 lastGameRepository, pastGameRepository, walletRepository,
-                betHistoryService, basicStrategy, localDateTimeProvider, om, maxSplits);
+                betHistoryService, basicStrategy, localDateTimeProvider, om, maxSplits, resultDisplayMs);
     }
 
     private Optional<GameEntity> extractLastGame() {

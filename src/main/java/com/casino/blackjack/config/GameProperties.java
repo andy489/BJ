@@ -14,6 +14,8 @@ public class GameProperties {
 
     private DeckScenario deckScenario = DeckScenario.RANDOM;
 
+    private int resultDisplayMs = 2500;
+
     public int getMaxSplits() {
         return maxSplits;
     }
@@ -36,5 +38,13 @@ public class GameProperties {
 
     public void setDeckScenario(DeckScenario deckScenario) {
         this.deckScenario = deckScenario;
+    }
+
+    public int getResultDisplayMs() {
+        return resultDisplayMs;
+    }
+
+    public void setResultDisplayMs(int resultDisplayMs) {
+        this.resultDisplayMs = resultDisplayMs;
     }
 }
