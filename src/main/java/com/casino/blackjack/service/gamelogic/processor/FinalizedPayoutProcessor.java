@@ -69,6 +69,9 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         BigDecimal lastTotalBet = ctx.walletEntity().getLastBet()
                 .add(ppBetSnapshot).add(t3BetSnapshot).add(dppBetSnapshot);
         ctx.walletEntity().setLastTotalBet(lastTotalBet);
+        ctx.walletEntity().setLastPpBet(ppBetSnapshot);
+        ctx.walletEntity().setLastT3Bet(t3BetSnapshot);
+        ctx.walletEntity().setLastDppBet(dppBetSnapshot);
 
         ctx.walletRepo().save(ctx.walletEntity());
 
@@ -88,6 +91,8 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         ctx.betHistoryService().save(betHistory);
 
         Game result = game
+                .setDealt(false)
+                .setFinalized(false)
                 .setAvailableChoices(new java.util.ArrayList<>(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL)))
                 .setWallet(Wallet.of(ctx.walletEntity()));
 
