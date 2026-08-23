@@ -42,7 +42,7 @@ public class BetHistoryEntity extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal ppBet = BigDecimal.ZERO;
 
-    @Column(nullable = false)
+    @Column(name = "t3_bet", nullable = false)
     private BigDecimal t3Bet = BigDecimal.ZERO;
 
     @Column(nullable = false)
@@ -51,7 +51,7 @@ public class BetHistoryEntity extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private BigDecimal ppWin = BigDecimal.ZERO;
 
-    @Column(nullable = false)
+    @Column(name = "t3_win", nullable = false)
     private BigDecimal t3Win = BigDecimal.ZERO;
 
     @Column(nullable = false)
