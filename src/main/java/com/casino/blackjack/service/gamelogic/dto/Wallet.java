@@ -26,6 +26,8 @@ public class Wallet {
 
     private BigDecimal lastBet;
 
+    private BigDecimal lastTotalBet;
+
     private BigDecimal currentBet;
 
     private BigDecimal handBet;
@@ -46,6 +48,7 @@ public class Wallet {
         balance = BigDecimal.ZERO;
         lastWin = BigDecimal.ZERO;
         lastBet = BigDecimal.ZERO;
+        lastTotalBet = BigDecimal.ZERO;
         lastPpWin = BigDecimal.ZERO;
         lastT3Win = BigDecimal.ZERO;
         lastDppWin = BigDecimal.ZERO;
@@ -67,6 +70,7 @@ public class Wallet {
                 .setLastT3Win(walletEntity.getLastT3Win())
                 .setLastDppWin(walletEntity.getLastDppWin())
                 .setLastBet(walletEntity.getLastBet())
+                .setLastTotalBet(walletEntity.getLastTotalBet())
                 .setCurrentBet(walletEntity.getCurrentBet())
                 .setHandBet(walletEntity.getHandBet())
                 .setInsuranceBet(walletEntity.getInsuranceBet())
@@ -85,6 +89,7 @@ public class Wallet {
                 .setLastT3Win(wallet.getLastT3Win())
                 .setLastDppWin(wallet.getLastDppWin())
                 .setLastBet(wallet.getLastBet())
+                .setLastTotalBet(wallet.getLastTotalBet())
                 .setCurrentBet(wallet.getCurrentBet())
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())

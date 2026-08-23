@@ -184,6 +184,7 @@ public class Game {
                 .setBalance(walletEntity.getBalance())
                 .setLastWin(walletEntity.getLastWin())
                 .setLastBet(walletEntity.getLastBet())
+                .setLastTotalBet(walletEntity.getLastTotalBet())
                 .setCurrentBet(walletEntity.getCurrentBet())
                 .setHandBet(walletEntity.getHandBet())
                 .setInsuranceBet(walletEntity.getInsuranceBet())

@@ -23,6 +23,8 @@ public class WalletEntity extends BaseEntity {
 
     private BigDecimal lastBet;
 
+    private BigDecimal lastTotalBet;
+
     private BigDecimal lastWin;
 
     private BigDecimal lastPpWin;
@@ -53,6 +55,7 @@ public class WalletEntity extends BaseEntity {
         balance = BigDecimal.ZERO;
         lastWin = BigDecimal.ZERO;
         lastBet = BigDecimal.ZERO;
+        lastTotalBet = BigDecimal.ZERO;
         lastPpWin = BigDecimal.ZERO;
         lastT3Win = BigDecimal.ZERO;
         lastDppWin = BigDecimal.ZERO;
@@ -75,6 +78,7 @@ public class WalletEntity extends BaseEntity {
                 .setLastT3Win(wallet.getLastT3Win())
                 .setLastDppWin(wallet.getLastDppWin())
                 .setLastBet(wallet.getLastBet())
+                .setLastTotalBet(wallet.getLastTotalBet())
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())
                 .setInsuranceBet(wallet.getInsuranceBet())
@@ -91,6 +95,7 @@ public class WalletEntity extends BaseEntity {
                 .setLastT3Win(wallet.getLastT3Win())
                 .setLastDppWin(wallet.getLastDppWin())
                 .setLastBet(wallet.getLastBet())
+                .setLastTotalBet(wallet.getLastTotalBet())
                 .setCurrentBet(wallet.getCurrentBet())
                 .setHandBet(wallet.getHandBet())
                 .setDoubleBet(wallet.getDoubleBet())

@@ -180,6 +180,11 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         totalWin = totalWin.add(insuranceWin);
 
         ctx.walletEntity().setLastBet(ctx.walletEntity().getCurrentBet());
+        BigDecimal lastTotalBet = ctx.walletEntity().getCurrentBet()
+                .add(ctx.walletEntity().getPerfectPairsBet())
+                .add(ctx.walletEntity().getTwentyOneThreeBet())
+                .add(ctx.walletEntity().getDealerPerfectPairsBet());
+        ctx.walletEntity().setLastTotalBet(lastTotalBet);
         ctx.walletEntity().setLastWin(totalWin.max(BigDecimal.ZERO));
         ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(totalWin));
         ctx.walletEntity().setCurrentBet(BigDecimal.ZERO);
