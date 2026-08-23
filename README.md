@@ -353,4 +353,4 @@ The Rules (spade) icon is a custom SVG.
 
 ## License
 
-Educational portfolio project. Use responsibly.
+MIT License. Educational portfolio project. Use responsibly.
