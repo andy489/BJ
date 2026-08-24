@@ -1137,9 +1137,9 @@
                                   th:text="'-£' + ${#numbers.formatDecimal(h.dppBet, 1, 'COMMA', 2, 'POINT')}">-£5</span>
                         </th:block>
                         <!-- Net side bet summary -->
-                        <span class="hist-sidebet-net"
-                              th:classappend="${h.sideBetNet().compareTo(T(java.math.BigDecimal).ZERO) > 0} ? 'hist-sidebet-net--win' : (${h.sideBetNet().compareTo(T(java.math.BigDecimal).ZERO) == 0} ? 'hist-sidebet-net--push' : 'hist-sidebet-net--loss')"
-                              th:text="${h.sideBetNet().compareTo(T(java.math.BigDecimal).ZERO) >= 0} ? ('net +£' + ${#numbers.formatDecimal(h.sideBetNet(), 1, 'COMMA', 2, 'POINT')}) : ('net -£' + ${#numbers.formatDecimal(h.sideBetNet().abs(), 1, 'COMMA', 2, 'POINT')})">net +£20</span>
+                        <span th:if="${h.sideBetGross().compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                              class="hist-sidebet-net hist-sidebet-net--win"
+                              th:text="'gross £' + ${#numbers.formatDecimal(h.sideBetGross(), 1, 'COMMA', 2, 'POINT')}">gross £155</span>
                     </div>
 
                     <!-- ── Initial deal cards (for full replay context) ── -->

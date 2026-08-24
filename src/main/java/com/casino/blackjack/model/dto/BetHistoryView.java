@@ -200,6 +200,11 @@ public class BetHistoryView {
         return totalWin.subtract(totalStake);
     }
 
+    /** Total gross returned from winning side bets (stake + profit). Zero when all side bets lost. */
+    public BigDecimal sideBetGross() {
+        return ppWin.add(t3Win).add(dppWin);
+    }
+
     /** Net result for the whole round: positive = win, zero = push, negative = loss */
     public int resultSign() {
         return returnAmount.compareTo(totalBet);
