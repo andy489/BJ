@@ -922,7 +922,18 @@ body {
 .hist-sidebet-loss {
     color: #ff7070;
     opacity: 0.7;
+    font-weight: 600;
 }
+.hist-sidebet-net {
+    margin-left: auto;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+}
+.hist-sidebet-net--win  { color: #4cff91; }
+.hist-sidebet-net--loss { color: #ff7070; }
+.hist-sidebet-net--push { color: #a0b8cc; }
 
 /* ── Initial deal row ── */
 .hist-row-initial-deal {
@@ -943,6 +954,9 @@ body {
 [data-theme="light"] .hist-sidebet-stake { color: #444; }
 [data-theme="light"] .hist-sidebet-win   { color: #0a8a3a; }
 [data-theme="light"] .hist-sidebet-loss  { color: #cc2222; }
+[data-theme="light"] .hist-sidebet-net--win  { color: #0a8a3a; }
+[data-theme="light"] .hist-sidebet-net--loss { color: #cc2222; }
+[data-theme="light"] .hist-sidebet-net--push { color: #556677; }
 
 /* ── Divider between rows ── */
 .history-cards-list .hist-row + .hist-row {

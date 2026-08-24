@@ -193,6 +193,13 @@ public class BetHistoryView {
     public boolean hasDppBet() { return dppBet.compareTo(BigDecimal.ZERO) > 0; }
     public boolean hasSideBets() { return hasPpBet() || hasT3Bet() || hasDppBet(); }
 
+    /** Net profit/loss across all side bets: wins minus stakes. Positive = net win, negative = net loss. */
+    public BigDecimal sideBetNet() {
+        BigDecimal totalWin   = ppWin.add(t3Win).add(dppWin);
+        BigDecimal totalStake = ppBet.add(t3Bet).add(dppBet);
+        return totalWin.subtract(totalStake);
+    }
+
     /** Net result for the whole round: positive = win, zero = push, negative = loss */
     public int resultSign() {
         return returnAmount.compareTo(totalBet);

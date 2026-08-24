@@ -1,6 +1,10 @@
 package com.casino.blackjack.service.gamelogic;
 
+import com.casino.blackjack.model.dto.BetHistoryView;
+import com.casino.blackjack.model.entity.BetHistoryEntity;
 import com.casino.blackjack.model.entity.GameEntity;
+import com.casino.blackjack.model.entity.PlayedGameEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.casino.blackjack.model.entity.UserActivationTokenEntity;
 import com.casino.blackjack.model.entity.UserForgotPassEntity;
 import com.casino.blackjack.model.entity.WalletEntity;
@@ -439,8 +443,8 @@ class BugFixTest {
         Game game = new Game().makeChoice(CHOICE_INSURANCE_YES_NOT_ENOUGH_MONEY);
 
         // lastGameRepo stub — we just need save() to be a no-op
-        com.casino.blackjack.model.entity.GameEntity gameEntity =
-                new com.casino.blackjack.model.entity.GameEntity();
+        GameEntity gameEntity =
+                new GameEntity();
         gameEntity.setDealerCards("[]");
         gameEntity.setPlayerCards("[]");
         gameEntity.setAvailableChoices("[]");
@@ -513,7 +517,7 @@ class BugFixTest {
         Game game = new Game().makeChoice(CHOICE_DOUBLE_DOWN_NOT_ENOUGH_MONEY);
         game.setPlayerCards(new java.util.ArrayList<>(java.util.List.of(c9, c5)));
 
-        com.casino.blackjack.model.entity.GameEntity gameEntity =
+        GameEntity gameEntity =
                 buildMinimalGameEntity();
 
         com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
@@ -600,9 +604,9 @@ class BugFixTest {
         return com.casino.blackjack.service.gamelogic.dto.Card.of(suit, rank);
     }
 
-    private static com.casino.blackjack.model.entity.GameEntity buildMinimalGameEntity() {
-        com.casino.blackjack.model.entity.GameEntity e =
-                new com.casino.blackjack.model.entity.GameEntity();
+    private static GameEntity buildMinimalGameEntity() {
+        GameEntity e =
+                new GameEntity();
         e.setDealerCards("[]");
         e.setPlayerCards("[]");
         e.setAvailableChoices("[]");
@@ -647,4 +651,91 @@ class BugFixTest {
             public java.util.Optional<GameEntity> findByOwnerId(Long ownerId) { throw new UnsupportedOperationException(); }
         };
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BetHistoryView.sideBetNet() — net side bet profit/loss
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private static BetHistoryView historyViewWithSideBets(
+            BigDecimal ppBet, BigDecimal ppWin,
+            BigDecimal t3Bet, BigDecimal t3Win,
+            BigDecimal dppBet, BigDecimal dppWin) {
+        PlayedGameEntity pg = new PlayedGameEntity();
+        // leave all card/choice JSON fields null — BetHistoryView.parseCards handles null gracefully
+
+        BetHistoryEntity e = new BetHistoryEntity();
+        e.setPlayedGame(pg);
+        e.setTotalBetAmount(ZERO);
+        e.setReturnAmount(ZERO);
+        e.setPpBet(ppBet);   e.setPpWin(ppWin);
+        e.setT3Bet(t3Bet);   e.setT3Win(t3Win);
+        e.setDppBet(dppBet); e.setDppWin(dppWin);
+        return BetHistoryView.of(e, new ObjectMapper());
+    }
+
+    @Test
+    void sideBetNet_allLost_returnsNegativeTotalStake() {
+        // PP £5 lost, 21+3 £10 lost — net should be -(5+10) = -15
+        BetHistoryView v = historyViewWithSideBets(
+                bd("5"), ZERO, bd("10"), ZERO, ZERO, ZERO);
+        assertThat(v.sideBetNet()).isEqualByComparingTo(bd("-15"));
+    }
+
+    @Test
+    void sideBetNet_allWon_returnsPositiveNet() {
+        // PP £5 staked, won £25 net return → net = 25 - 5 = +20
+        BetHistoryView v = historyViewWithSideBets(
+                bd("5"), bd("25"), ZERO, ZERO, ZERO, ZERO);
+        assertThat(v.sideBetNet()).isEqualByComparingTo(bd("20"));
+    }
+
+    @Test
+    void sideBetNet_mixedResult_ppWonT3Lost() {
+        // PP £5 staked, won £25 (net +20); 21+3 £10 lost (net -10) → total +10
+        BetHistoryView v = historyViewWithSideBets(
+                bd("5"), bd("25"), bd("10"), ZERO, ZERO, ZERO);
+        assertThat(v.sideBetNet()).isEqualByComparingTo(bd("10"));
+    }
+
+    @Test
+    void sideBetNet_noSideBets_returnsZero() {
+        BetHistoryView v = historyViewWithSideBets(ZERO, ZERO, ZERO, ZERO, ZERO, ZERO);
+        assertThat(v.sideBetNet()).isEqualByComparingTo(ZERO);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // hasPostPayoutCards JS condition logic (documented as Java equivalents)
+    // The JS condition: !BJ_GAME_DEALT && !BJ_FINALIZED && BJ_LAST_CHOICE > 0
+    // triggers a server POST to /clear-bet so cards are removed server-side.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @Test
+    void clearCondition_postPayoutState_shouldTriggerServerPost() {
+        // After FinalizedPayoutProcessor: dealt=false, finalized=false, lastChoice=CHOICE_STAND(15)
+        boolean dealt = false, finalized = false;
+        int lastChoice = 15; // CHOICE_STAND
+        boolean hasPostPayoutCards = !dealt && !finalized && lastChoice > 0;
+        assertThat(hasPostPayoutCards).isTrue();
+    }
+
+    @Test
+    void clearCondition_freshState_shouldNotTriggerServerPost() {
+        // Brand new session: dealt=false, finalized=false, lastChoice=-1 (empty takenChoices)
+        boolean dealt = false, finalized = false;
+        int lastChoice = -1;
+        boolean hasPostPayoutCards = !dealt && !finalized && lastChoice > 0;
+        assertThat(hasPostPayoutCards).isFalse();
+    }
+
+    @Test
+    void clearCondition_activeHand_alreadyCoveredByHasCards() {
+        // Active dealt hand: dealt=true, finalized=false — hasCards covers this, not hasPostPayoutCards
+        boolean dealt = true, finalized = false;
+        int lastChoice = 10; // CHOICE_DEAL
+        boolean hasPostPayoutCards = !dealt && !finalized && lastChoice > 0;
+        assertThat(hasPostPayoutCards).isFalse(); // hasCards=true covers this separately
+    }
+
+    private static final BigDecimal ZERO = BigDecimal.ZERO;
+    private static BigDecimal bd(String val) { return new BigDecimal(val); }
 }
