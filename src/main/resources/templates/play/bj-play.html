@@ -12,14 +12,6 @@
 
 <header th:replace="~{fragment/common::navbar}"></header>
 
-<!-- ── Basic Strategy info button (fixed, upper-left) ── -->
-<button class="strategy-info-btn" id="strategyInfoBtn"
-        th:title="#{strategy.title}"
-        aria-label="Basic Strategy Chart">
-    <span class="strategy-info-icon">?</span>
-    <span class="strategy-info-label" th:text="#{dec.strategy}">Strategy</span>
-</button>
-
 <!-- ── Basic Strategy Modal ── -->
 <div class="strategy-modal-overlay" id="strategyModalOverlay" role="dialog" aria-modal="true"
      th:attr="aria-label=#{strategy.title}">
@@ -305,6 +297,16 @@
 
     </div>
     <!-- EO: cards-wrapper -->
+
+    <!-- ── Basic Strategy info button — below metadata bar, same width/alignment as cards-wrapper ── -->
+    <div class="strategy-btn-row">
+        <button class="strategy-info-btn" id="strategyInfoBtn"
+                th:title="#{strategy.title}"
+                aria-label="Basic Strategy Chart">
+            <span class="strategy-info-icon">?</span>
+            <span class="strategy-info-label" th:text="#{dec.strategy}">Strategy</span>
+        </button>
+    </div>
 
     <!-- ── Controls panel — never scaled, always full-width ── -->
     <div class="controls-panel">

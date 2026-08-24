@@ -1,238 +1,297 @@
+/* ── Action colour palette ── */
 :root {
-    --sc-h:   #1a6e2e;  /* Hit  — dark green */
-    --sc-s:   #b5261e;  /* Stand — dark red */
-    --sc-d:   #1a4f8a;  /* Double — dark blue */
-    --sc-ds:  #5c3d8f;  /* Double/Stand — purple */
-    --sc-p:   #a85c00;  /* Split — amber */
-    --sc-h-t: #e8f5eb;
-    --sc-s-t: #fdecea;
-    --sc-d-t: #e8f0fb;
-    --sc-ds-t: #f0eafa;
-    --sc-p-t: #fff3e0;
+    --sc-h:    #1b6b30;
+    --sc-s:    #aa2018;
+    --sc-d:    #15508c;
+    --sc-ds:   #5a3690;
+    --sc-p:    #a05500;
 }
 
-/* ── Floating info button ── */
-.strategy-info-btn {
-    position: fixed;
-    top: 80px;
-    left: 16px;
-    z-index: 300;
+/* ────────────────────────────────────────────────
+   Trigger button row — sits below the metadata bar,
+   left-aligned with the cards-wrapper edge
+──────────────────────────────────────────────── */
+.strategy-btn-row {
     display: flex;
+    justify-content: flex-start;
+    width: min(var(--table-w, 900px), 100%);
+    margin-bottom: 0.5em;
+    padding: 0 2px;
+}
+
+.strategy-info-btn {
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 7px 14px 7px 10px;
-    background: rgba(0, 0, 0, 0.55);
-    border: 1px solid rgba(255, 211, 71, 0.45);
+    gap: 5px;
+    padding: 5px 11px 5px 8px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 211, 71, 0.35);
     border-radius: 2em;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    color: rgba(255, 211, 71, 0.92);
+    color: rgba(255, 211, 71, 0.85);
     font-family: "Source Sans Pro", sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.12s;
     white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s, transform 0.12s;
 }
-
 .strategy-info-btn:hover {
-    background: rgba(255, 211, 71, 0.18);
-    border-color: rgba(255, 211, 71, 0.8);
+    background: rgba(255, 211, 71, 0.15);
+    border-color: rgba(255, 211, 71, 0.7);
     color: #ffd347;
     transform: translateY(-1px);
 }
-
 .strategy-info-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     border-radius: 50%;
     border: 1.5px solid currentColor;
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 900;
     flex-shrink: 0;
     line-height: 1;
 }
 
-/* ── Modal overlay ── */
+/* ────────────────────────────────────────────────
+   Overlay
+──────────────────────────────────────────────── */
 .strategy-modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
     z-index: 500;
-    background: rgba(0, 0, 0, 0.72);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    padding: 12px;
 }
+.strategy-modal-overlay--open { display: flex; }
 
-.strategy-modal-overlay--open {
-    display: flex;
-}
-
-/* ── Modal box ── */
+/* ────────────────────────────────────────────────
+   Modal shell
+──────────────────────────────────────────────── */
 .strategy-modal {
-    background: #1a2a1a;
-    border: 1px solid rgba(255, 211, 71, 0.3);
-    border-radius: 12px;
-    width: min(780px, 100%);
-    max-height: calc(100vh - 32px);
+    width: min(560px, 100%);
+    max-height: calc(100vh - 24px);
     display: flex;
     flex-direction: column;
+    background: linear-gradient(160deg, #0f1f12 0%, #0a1409 100%);
+    border: 1px solid rgba(255, 211, 71, 0.28);
+    border-radius: 14px;
+    box-shadow: 0 12px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255,211,71,0.06) inset;
     overflow: hidden;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
 }
 
+/* ── Header ── */
 .strategy-modal-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    padding: 16px 20px 12px;
-    border-bottom: 1px solid rgba(255, 211, 71, 0.18);
+    padding: 13px 16px 11px;
+    background: rgba(255, 211, 71, 0.05);
+    border-bottom: 1px solid rgba(255, 211, 71, 0.15);
     flex-shrink: 0;
+    gap: 8px;
 }
-
 .strategy-modal-title {
-    font-size: 1.15rem;
+    font-size: 0.95rem;
     font-weight: 800;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    color: #ffd347;
+    line-height: 1;
+}
+.strategy-modal-subtitle {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.38);
+    margin-top: 3px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.strategy-modal-close {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    cursor: pointer;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.strategy-modal-close:hover {
+    background: rgba(255, 211, 71, 0.15);
+    border-color: rgba(255, 211, 71, 0.5);
     color: #ffd347;
 }
 
-.strategy-modal-subtitle {
-    font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin-top: 2px;
-    letter-spacing: 0.04em;
+/* ── Tab bar ── */
+.strategy-tabs {
+    display: flex;
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 211, 71, 0.12);
+    padding: 0 14px;
+    gap: 2px;
 }
-
-.strategy-modal-close {
+.strategy-tab {
+    padding: 7px 14px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.38);
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 1.3rem;
+    border-bottom: 2px solid transparent;
     cursor: pointer;
-    padding: 0 4px;
-    line-height: 1;
-    flex-shrink: 0;
-    margin-left: 12px;
-    transition: color 0.15s;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+.strategy-tab:hover { color: rgba(255, 211, 71, 0.7); }
+.strategy-tab--active {
+    color: #ffd347;
+    border-bottom-color: #ffd347;
 }
 
-.strategy-modal-close:hover { color: #ffd347; }
-
+/* ── Body ── */
 .strategy-modal-body {
     overflow-y: auto;
-    padding: 14px 20px 20px;
+    padding: 12px 14px 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
 }
 
-/* ── Section titles ── */
-.strategy-section-title {
-    font-size: 0.72rem;
+/* ── Tab panels ── */
+.strategy-panel { display: none; }
+.strategy-panel--active { display: block; }
+
+/* ── Dealer header row label ── */
+.strategy-dealer-label {
+    font-size: 0.6rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(255, 211, 71, 0.75);
-    margin-top: 6px;
+    color: rgba(255, 211, 71, 0.5);
+    text-align: center;
+    margin-bottom: 3px;
 }
 
-/* ── Table wrapper (horizontal scroll on small screens) ── */
+/* ── Table scroll wrapper ── */
 .strategy-table-scroll {
     overflow-x: auto;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 211, 71, 0.1);
+    background: rgba(0,0,0,0.2);
 }
 
 /* ── Strategy table ── */
 .strategy-table {
     border-collapse: collapse;
     width: 100%;
-    min-width: 420px;
-    font-size: 0.75rem;
+    min-width: 360px;
+    font-size: 0.68rem;
+    table-layout: fixed;
 }
 
 .strategy-table thead th {
-    background: rgba(255, 211, 71, 0.12);
-    color: rgba(255, 211, 71, 0.85);
+    background: rgba(255, 211, 71, 0.09);
+    color: rgba(255, 211, 71, 0.8);
     font-weight: 700;
     text-align: center;
-    padding: 5px 6px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 0.72rem;
-    letter-spacing: 0.04em;
+    padding: 4px 2px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.65rem;
+    letter-spacing: 0.03em;
 }
 
 .strategy-hand-col {
     text-align: right !important;
-    padding-right: 10px !important;
-    padding-left: 8px !important;
-    color: rgba(255, 255, 255, 0.75) !important;
+    padding: 3px 7px 3px 4px !important;
+    color: rgba(255, 255, 255, 0.72) !important;
     font-weight: 700;
     white-space: nowrap;
-    min-width: 38px;
-    background: rgba(0, 0, 0, 0.25) !important;
-    border-right: 1px solid rgba(255, 211, 71, 0.2) !important;
+    width: 36px;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-right: 1px solid rgba(255, 211, 71, 0.18) !important;
+    font-size: 0.65rem;
 }
 
-.strategy-table td, .strategy-table tbody th {
+.strategy-table td {
     text-align: center;
-    padding: 5px 4px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    font-weight: 700;
-    font-size: 0.72rem;
-    letter-spacing: 0.03em;
+    padding: 3px 2px;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    font-weight: 800;
+    font-size: 0.65rem;
+    letter-spacing: 0.01em;
+}
+.strategy-table tbody tr:hover td,
+.strategy-table tbody tr:hover .strategy-hand-col {
+    filter: brightness(1.18);
 }
 
-/* ── Action colors ── */
-.sc-h  { background: var(--sc-h);  color: var(--sc-h-t);  }
-.sc-s  { background: var(--sc-s);  color: var(--sc-s-t);  }
-.sc-d  { background: var(--sc-d);  color: var(--sc-d-t);  }
-.sc-ds { background: var(--sc-ds); color: var(--sc-ds-t); }
-.sc-p  { background: var(--sc-p);  color: var(--sc-p-t);  }
+/* ── Action colours ── */
+.sc-h  { background: var(--sc-h);  color: #c8f5d0; }
+.sc-s  { background: var(--sc-s);  color: #fce8e7; }
+.sc-d  { background: var(--sc-d);  color: #cde0fa; }
+.sc-ds { background: var(--sc-ds); color: #e8dcfa; }
+.sc-p  { background: var(--sc-p);  color: #fde8c0; }
 
 /* ── Legend ── */
 .strategy-legend {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px 16px;
-    margin-top: 6px;
-    font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.65);
+    gap: 5px 10px;
+    padding: 8px 10px;
+    background: rgba(255, 211, 71, 0.04);
+    border: 1px solid rgba(255, 211, 71, 0.1);
+    border-radius: 8px;
 }
-
-.strategy-legend span[class^="sc-"],
-.strategy-legend span[class*=" sc-"] {
+.strategy-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 0.63rem;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.02em;
+}
+.strategy-legend-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px;
-    height: 18px;
+    width: 20px;
+    height: 16px;
     border-radius: 3px;
-    font-size: 0.68rem;
+    font-size: 0.6rem;
     font-weight: 800;
     flex-shrink: 0;
 }
 
-/* ── Dark theme has same style — modal is always dark ── */
-[data-theme="light"] .strategy-modal {
-    background: #12201a;
-}
-
-/* ── Mobile ── */
-@media (max-width: 600px) {
+/* ── Mobile: hide label text, icon only ── */
+@media (max-width: 480px) {
     .strategy-info-label { display: none; }
-    .strategy-info-btn   { padding: 7px 10px; }
-    .strategy-modal-body { padding: 10px 12px 16px; }
-    .strategy-modal-header { padding: 12px 14px 10px; }
+    .strategy-info-btn   { padding: 5px 8px; }
+    .strategy-modal-body { padding: 8px 10px 12px; }
+    .strategy-modal-header { padding: 10px 12px 9px; }
+    .strategy-tab { padding: 6px 10px; font-size: 0.62rem; }
 }
