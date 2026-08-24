@@ -65,17 +65,17 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         // Settle side bets (independent of main hand outcome)
         settleSideBets(ctx, gameEntity, ppBetSnapshot, t3BetSnapshot, dppBetSnapshot);
 
-        // Capture main-hand-only return before rolling side-bet returns into lastWin
+        // Capture main-hand-only gross return before adding side-bet returns
         ctx.walletEntity().setLastHandWin(nvl(ctx.walletEntity().getLastWin()));
 
-        // Roll side-bet net profits into lastWin so the "Last Win" box is consistent with
-        // the breakdown labels (PP/T3/DPP show net profit, hand shows gross return).
-        // lastPpWin/T3Win/DppWin already hold net profit (gross return - stake).
-        BigDecimal ppNet  = nvl(ctx.walletEntity().getLastPpWin());
-        BigDecimal t3Net  = nvl(ctx.walletEntity().getLastT3Win());
-        BigDecimal dppNet = nvl(ctx.walletEntity().getLastDppWin());
+        // Add side-bet gross returns (stake + profit) to produce total gross return.
+        // lastPpWin/T3Win/DppWin hold gross returns so breakdown labels are consistent
+        // with the hand (which also shows gross return from payBet).
+        BigDecimal ppGross  = nvl(ctx.walletEntity().getLastPpWin());
+        BigDecimal t3Gross  = nvl(ctx.walletEntity().getLastT3Win());
+        BigDecimal dppGross = nvl(ctx.walletEntity().getLastDppWin());
         BigDecimal combinedLastWin = nvl(ctx.walletEntity().getLastWin())
-                .add(ppNet).add(t3Net).add(dppNet);
+                .add(ppGross).add(t3Gross).add(dppGross);
         ctx.walletEntity().setLastWin(combinedLastWin);
 
         // lastBet = main hand bet (for Repeat); lastTotalBet = all bets combined (for display)
@@ -151,9 +151,8 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
             if (hasPP) {
                 double multi = SideBetEvaluator.evalPerfectPairs(p0, p1, ctx.paytable());
                 BigDecimal ppReturn = ppBet.multiply(BigDecimal.valueOf(multi));
-                BigDecimal ppNet = ppReturn.subtract(ppBet).max(BigDecimal.ZERO);
                 ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(ppReturn));
-                ctx.walletEntity().setLastPpWin(ppNet);
+                ctx.walletEntity().setLastPpWin(ppReturn);
                 ctx.walletEntity().setPerfectPairsBet(BigDecimal.ZERO);
             } else {
                 ctx.walletEntity().setLastPpWin(BigDecimal.ZERO);
@@ -162,9 +161,8 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
             if (hasT3) {
                 double multi = SideBetEvaluator.eval21_3(p0, p1, dealerUpCard, ctx.paytable());
                 BigDecimal t3Return = t3Bet.multiply(BigDecimal.valueOf(multi));
-                BigDecimal t3Net = t3Return.subtract(t3Bet).max(BigDecimal.ZERO);
                 ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(t3Return));
-                ctx.walletEntity().setLastT3Win(t3Net);
+                ctx.walletEntity().setLastT3Win(t3Return);
                 ctx.walletEntity().setTwentyOneThreeBet(BigDecimal.ZERO);
             } else {
                 ctx.walletEntity().setLastT3Win(BigDecimal.ZERO);
@@ -175,9 +173,8 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 if (initialDealerCards.size() >= 2) {
                     double multi = SideBetEvaluator.evalPerfectPairs(initialDealerCards.get(0), initialDealerCards.get(1), ctx.paytable());
                     BigDecimal dppReturn = dppBet.multiply(BigDecimal.valueOf(multi));
-                    BigDecimal dppNet = dppReturn.subtract(dppBet).max(BigDecimal.ZERO);
                     ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(dppReturn));
-                    ctx.walletEntity().setLastDppWin(dppNet);
+                    ctx.walletEntity().setLastDppWin(dppReturn);
                 }
                 ctx.walletEntity().setDealerPerfectPairsBet(BigDecimal.ZERO);
             } else {

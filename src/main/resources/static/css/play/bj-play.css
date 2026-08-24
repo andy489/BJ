@@ -532,7 +532,55 @@ body {
     color: whitesmoke;
 }
 
-/* ── Double-down card layout ─────────────────────────── */
+/* ── Last Win info icon + tooltip ──────────────────────────────────────── */
+.last-win-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.last-win-info-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--electric);
+    font-size: 0.72rem;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+.last-win-info-btn:hover { opacity: 1; }
+
+.last-win-tooltip {
+    display: none;
+    position: absolute;
+    z-index: 200;
+    background: rgba(20, 20, 20, 0.97);
+    border: 1px solid rgba(255, 211, 71, 0.4);
+    border-radius: 6px;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.68rem;
+    line-height: 1.4;
+    padding: 6px 9px;
+    max-width: 200px;
+    white-space: normal;
+    pointer-events: none;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(100% + 4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+.last-win-tooltip.visible { display: block; }
+
+.last-win-info-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+
 .double-down-wrapper {
     position: relative;
 }
