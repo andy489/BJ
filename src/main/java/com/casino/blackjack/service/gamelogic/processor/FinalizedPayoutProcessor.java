@@ -63,7 +63,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         }
 
         // Settle side bets (independent of main hand outcome)
-        settleSideBets(ctx, gameEntity);
+        settleSideBets(ctx, gameEntity, ppBetSnapshot, t3BetSnapshot, dppBetSnapshot);
 
         // Capture main-hand-only return before rolling side-bet returns into lastWin
         ctx.walletEntity().setLastHandWin(nvl(ctx.walletEntity().getLastWin()));
@@ -118,11 +118,8 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 ctx.paytable());
     }
 
-    private void settleSideBets(GameContext ctx, GameEntity gameEntity) {
-        BigDecimal ppBet  = ctx.walletEntity().getPerfectPairsBet();
-        BigDecimal t3Bet  = ctx.walletEntity().getTwentyOneThreeBet();
-        BigDecimal dppBet = ctx.walletEntity().getDealerPerfectPairsBet();
-
+    private void settleSideBets(GameContext ctx, GameEntity gameEntity,
+                                BigDecimal ppBet, BigDecimal t3Bet, BigDecimal dppBet) {
         boolean hasPP  = ppBet  != null && ppBet.compareTo(BigDecimal.ZERO)  > 0;
         boolean hasT3  = t3Bet  != null && t3Bet.compareTo(BigDecimal.ZERO)  > 0;
         boolean hasDPP = dppBet != null && dppBet.compareTo(BigDecimal.ZERO) > 0;

@@ -101,21 +101,21 @@ class BugFixTest {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * When initialPlayerCards is set on the GameEntity (hand already dealt),
-     * canProcess() must return false so the side bet is rejected.
+     * When the game is in a dealt state (game.dealt == true), canProcess() must return false
+     * so the side bet is rejected during an active hand.
      */
     @Test
     void sideBetPlacementProcessor_rejectsPlacementAfterDeal() {
         SideBetPlacementProcessor processor = new SideBetPlacementProcessor();
 
-        // Build a Game that requests a PP side bet
+        // Build a Game that requests a PP side bet but is already in a dealt state
         Game game = new Game().makeChoice(CHOICE_PLACE_PERFECT_PAIRS);
         game.setSideBetAmountStr("5");
+        game.setDealt(true);
 
-        // Build a GameEntity that simulates a dealt hand (initialPlayerCards is non-null)
+        // GameEntity with no special state needed; dealt check is on the game object
         GameEntity gameEntity = new GameEntity();
         gameEntity.setFinalized(false);
-        gameEntity.setInitialPlayerCards("[{\"rank\":5,\"suit\":0},{\"rank\":6,\"suit\":1}]");
 
         WalletEntity wallet = new WalletEntity();
         wallet.setBalance(bd(200));
