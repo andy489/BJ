@@ -13,7 +13,8 @@
 ──────────────────────────────────────────────── */
 .strategy-btn-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 6px;
     width: min(var(--table-w, 900px), 100%);
     margin-bottom: 0.5em;
     padding: 0 2px;
