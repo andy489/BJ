@@ -208,12 +208,18 @@ $(document).ready(function () {
     $('.chip-10000').click(function () { handleChip(CHIP_3XL, false) })
     $('.btn-chip-double').click(function () { handleChip(null, true) })
 
-    /* Repeat last bet — always adds to main */
+    /* Repeat last bet — restores main hand bet and all side bets from previous hand */
     $('.form-repeat').on('submit', function (e) {
-        var lastBet = (typeof BJ_LAST_BET !== 'undefined') ? parseFloat(BJ_LAST_BET) : 0
+        var lastBet    = (typeof BJ_LAST_BET     !== 'undefined') ? parseFloat(BJ_LAST_BET)     : 0
+        var lastPpBet  = (typeof BJ_LAST_PP_BET  !== 'undefined') ? parseFloat(BJ_LAST_PP_BET)  : 0
+        var lastT3Bet  = (typeof BJ_LAST_T3_BET  !== 'undefined') ? parseFloat(BJ_LAST_T3_BET)  : 0
+        var lastDppBet = (typeof BJ_LAST_DPP_BET !== 'undefined') ? parseFloat(BJ_LAST_DPP_BET) : 0
         if (isNaN(lastBet) || lastBet <= 0) return
         e.preventDefault()
         calcChip(lastBet, false)
+        if (!isNaN(lastPpBet)  && lastPpBet  > 0) calcSideChip('pp',  lastPpBet)
+        if (!isNaN(lastT3Bet)  && lastT3Bet  > 0) calcSideChip('213', lastT3Bet)
+        if (!isNaN(lastDppBet) && lastDppBet > 0) calcSideChip('dpp', lastDppBet)
     })
 
     /* Clear — clears the selected bet area client-side; POSTs to server when cards are present.

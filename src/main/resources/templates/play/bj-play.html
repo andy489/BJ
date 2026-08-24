@@ -284,7 +284,7 @@
                     </tr>
                     <tr>
                         <td><strong>Repeat</strong></td>
-                        <td>Restore the exact main-hand bet from the previous hand.</td>
+                        <td>Restore the exact main-hand bet <em>and</em> all side bets from the previous hand.</td>
                     </tr>
                     <tr>
                         <td><strong>Double (bet)</strong></td>
@@ -1160,6 +1160,9 @@
     var BJ_SPLIT_ACTIVE   = /*[[${game.splitActive}]]*/ false;
     var BJ_SPLIT_DD       = /*[[${game.splitActive and game.doubleDown}]]*/ false;
     var BJ_LAST_BET       = /*[[${game.wallet.lastBet}]]*/ 0;
+    var BJ_LAST_PP_BET    = /*[[${game.wallet.lastPpBet}]]*/ 0;
+    var BJ_LAST_T3_BET    = /*[[${game.wallet.lastT3Bet}]]*/ 0;
+    var BJ_LAST_DPP_BET   = /*[[${game.wallet.lastDppBet}]]*/ 0;
     var BJ_DEALER_NOMINAL = /*[[${game.dealerFirstCardNominal()}]]*/ 0;
     var BJ_PAIR_NOMINAL   = /*[[${game.playerPairNominal()}]]*/ 0;
     var BJ_PP_BET         = /*[[${game.wallet.perfectPairsBet}]]*/ 0;
