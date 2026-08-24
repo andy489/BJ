@@ -274,15 +274,49 @@
         <div class="strategy-modal-body">
 
             <div class="strategy-section-title">Betting Phase</div>
-            <p class="payout-note">Place your bet before dealing. You can adjust it with chips, or use the quick-action buttons.</p>
+            <p class="payout-note">Place your bet before dealing. Chips go to whichever bet area is currently selected (main hand or a side-bet circle).</p>
             <table class="payout-table">
                 <thead><tr><th>Button</th><th>What it does</th></tr></thead>
                 <tbody>
-                    <tr><td><strong>Chips (2.5 – 100)</strong></td><td>Add that chip value to your current bet.</td></tr>
-                    <tr><td><strong>Repeat</strong></td><td>Restore the exact bet from the previous hand.</td></tr>
-                    <tr><td><strong>Double (bet)</strong></td><td>Double your current staged bet.</td></tr>
-                    <tr><td><strong>Clear</strong></td><td>Remove all chips from the current bet.</td></tr>
-                    <tr><td><strong>Deal</strong></td><td>Start the hand. Locks in the bet and deals two cards each.</td></tr>
+                    <tr>
+                        <td><strong>Chips (2.5 – 100)</strong></td>
+                        <td>Add that chip value to the currently selected bet area (main hand or the highlighted side-bet circle).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Repeat</strong></td>
+                        <td>Restore the exact main-hand bet from the previous hand.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Double (bet)</strong></td>
+                        <td>Double your current <strong>main hand</strong> bet. Does not affect side bets.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Clear</strong></td>
+                        <td>
+                            Clears the currently selected bet area and returns those chips to your balance.<br>
+                            <span style="color:rgba(255,211,71,0.75);">If the selected area is already £0, one click clears <em>all</em> bet areas (main hand + all side bets) at once.</span>
+                        </td>
+                    </tr>
+                    <tr><td><strong>Deal</strong></td><td>Start the hand. Locks in all bets and deals two cards each.</td></tr>
+                </tbody>
+            </table>
+
+            <div class="strategy-section-title">Side-Bet Circles (PP / 21+3 / DPP)</div>
+            <p class="payout-note">The three oval circles on the table are both bet displays and chip-target selectors.</p>
+            <table class="payout-table">
+                <thead><tr><th>Action</th><th>Effect</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Click an unselected circle</strong></td>
+                        <td>Routes subsequent chip clicks to that side bet. The circle is highlighted to show it is the active target.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Click the already-selected circle</strong></td>
+                        <td>Deselects it — chip target returns to the main hand.</td>
+                    </tr>
+                    <tr><td><strong>PP — Perfect Pairs</strong></td><td>Wins when your first two cards share the same rank. Higher payouts for matching colour (Coloured) or identical suit (Perfect).</td></tr>
+                    <tr><td><strong>21+3</strong></td><td>Wins when your two cards + the dealer's up-card form a poker hand (Flush, Straight, Three-of-a-Kind, Straight Flush, or Suited Three-of-a-Kind).</td></tr>
+                    <tr><td><strong>DPP — Dealer Perfect Pairs</strong></td><td>Same as PP but evaluated on the dealer's first two cards.</td></tr>
                 </tbody>
             </table>
 
@@ -293,11 +327,17 @@
                 <tbody>
                     <tr>
                         <td><strong>Hit</strong></td>
-                        <td>Draw one more card. You can hit multiple times. Busting (going over 21) loses the hand immediately.</td>
+                        <td>
+                            Draw one more card. You can hit multiple times. Busting (going over 21) loses the hand immediately.<br>
+                            <span style="color:rgba(255,211,71,0.75);">If your current score is 17 or higher, a confirmation prompt appears before the card is drawn.</span>
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Stand</strong></td>
-                        <td>Take no more cards and end your turn. The dealer then plays.</td>
+                        <td>
+                            Take no more cards and end your turn. The dealer then plays.<br>
+                            <span style="color:rgba(255,211,71,0.75);">If your hard score is 11 or lower (and the hand is not soft), a confirmation prompt appears before standing.</span>
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Double</strong></td>
@@ -305,32 +345,27 @@
                     </tr>
                     <tr>
                         <td><strong>Split</strong></td>
-                        <td>Split a matching pair into two separate hands, each with its own bet equal to the original. Only available when your first two cards share the same rank.</td>
+                        <td>
+                            Split a matching pair into two separate hands, each with its own equal bet. Only available when your first two cards share the same rank.<br>
+                            <span style="color:rgba(255,211,71,0.75);">If your pair rank is lower than the dealer's up-card rank (weak-pair scenario), a confirmation prompt appears first.</span>
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Surrender</strong></td>
-                        <td>Forfeit the hand and recover half your bet. Only available as your very first action before any other move.</td>
+                        <td>
+                            Forfeit the hand and recover half your bet. Only available as your very first action before any other move.<br>
+                            <span style="color:rgba(255,211,71,0.75);">Always requires confirmation via a prompt before the hand is forfeited.</span>
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Auto Play</strong></td>
-                        <td>Let the computer finish the hand for you using Dealer-Mirror strategy (hit ≤16, stand ≥17). Useful when you want a quick resolution.</td>
+                        <td>Let the computer finish the hand using Dealer-Mirror strategy (hit ≤16, stand ≥17).</td>
                     </tr>
-                </tbody>
-            </table>
-
-            <div class="strategy-section-title">Side Bets</div>
-            <p class="payout-note">Placed before dealing, settled independently of the main hand.</p>
-            <table class="payout-table">
-                <thead><tr><th>Bet</th><th>When it wins</th></tr></thead>
-                <tbody>
-                    <tr><td><strong>PP — Perfect Pairs</strong></td><td>Your first two cards form any pair (same rank). Higher payouts for matching colour or identical suit.</td></tr>
-                    <tr><td><strong>21+3</strong></td><td>Your two cards + the dealer's up-card form a poker hand (flush, straight, three-of-a-kind, straight flush, or suited three-of-a-kind).</td></tr>
-                    <tr><td><strong>DPP — Dealer Perfect Pairs</strong></td><td>Same as PP, but applied to the dealer's first two cards instead of yours.</td></tr>
                 </tbody>
             </table>
 
             <div class="payout-note payout-note--footer">
-                Greyed-out action buttons mean that move is not available right now — e.g. Split requires a pair,
+                Greyed-out action buttons mean that move is not available right now — e.g. Split requires a matching pair,
                 Double is only offered on the opening two cards, and Surrender must be your first action.
             </div>
 
