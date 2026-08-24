@@ -6,10 +6,123 @@
     <th:block th:insert="~{fragment/common::head}"></th:block>
     <link th:href="@{/css/play/bj-play.css}" rel="stylesheet">
     <link th:href="@{/css/play/choice-modal.css}" rel="stylesheet">
+    <link th:href="@{/css/play/strategy-modal.css}" rel="stylesheet">
 </head>
 <body>
 
 <header th:replace="~{fragment/common::navbar}"></header>
+
+<!-- ── Basic Strategy info button (fixed, upper-left) ── -->
+<button class="strategy-info-btn" id="strategyInfoBtn"
+        th:title="#{strategy.title}"
+        aria-label="Basic Strategy Chart">
+    <span class="strategy-info-icon">?</span>
+    <span class="strategy-info-label" th:text="#{dec.strategy}">Strategy</span>
+</button>
+
+<!-- ── Basic Strategy Modal ── -->
+<div class="strategy-modal-overlay" id="strategyModalOverlay" role="dialog" aria-modal="true"
+     th:attr="aria-label=#{strategy.title}">
+    <div class="strategy-modal">
+        <div class="strategy-modal-header">
+            <div>
+                <div class="strategy-modal-title" th:text="#{strategy.title}">Basic Strategy</div>
+                <div class="strategy-modal-subtitle" th:text="#{strategy.subtitle}">S17 · Multi-Deck · DAS · No Surrender</div>
+            </div>
+            <button class="strategy-modal-close" id="strategyModalClose"
+                    th:attr="aria-label=#{strategy.close}">&#x2715;</button>
+        </div>
+
+        <div class="strategy-modal-body">
+
+            <!-- ── HARD TOTALS ── -->
+            <div class="strategy-section-title" th:text="#{strategy.hard}">Hard Totals</div>
+            <div class="strategy-table-scroll">
+            <table class="strategy-table">
+                <thead>
+                <tr>
+                    <th class="strategy-hand-col"></th>
+                    <th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+                    <th>7</th><th>8</th><th>9</th><th>10</th><th>A</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- 8 -->  <tr><th class="strategy-hand-col">8</th>  <td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 9 -->  <tr><th class="strategy-hand-col">9</th>  <td class="sc-h">H</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 10 --> <tr><th class="strategy-hand-col">10</th> <td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 11 --> <tr><th class="strategy-hand-col">11</th> <td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-h">H</td></tr>
+                <!-- 12 --> <tr><th class="strategy-hand-col">12</th> <td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 13 --> <tr><th class="strategy-hand-col">13</th> <td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 14 --> <tr><th class="strategy-hand-col">14</th> <td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 15 --> <tr><th class="strategy-hand-col">15</th> <td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 16 --> <tr><th class="strategy-hand-col">16</th> <td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 17 --> <tr><th class="strategy-hand-col">17</th> <td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <!-- ── SOFT TOTALS ── -->
+            <div class="strategy-section-title" th:text="#{strategy.soft}">Soft Totals</div>
+            <div class="strategy-table-scroll">
+            <table class="strategy-table">
+                <thead>
+                <tr>
+                    <th class="strategy-hand-col"></th>
+                    <th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+                    <th>7</th><th>8</th><th>9</th><th>10</th><th>A</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- A,2 --> <tr><th class="strategy-hand-col">A,2</th> <td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- A,3 --> <tr><th class="strategy-hand-col">A,3</th> <td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- A,4 --> <tr><th class="strategy-hand-col">A,4</th> <td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- A,5 --> <tr><th class="strategy-hand-col">A,5</th> <td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- A,6 --> <tr><th class="strategy-hand-col">A,6</th> <td class="sc-h">H</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- A,7 --> <tr><th class="strategy-hand-col">A,7</th> <td class="sc-s">S</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- A,8 --> <tr><th class="strategy-hand-col">A,8</th> <td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-ds">Ds</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td></tr>
+                <!-- A,9 --> <tr><th class="strategy-hand-col">A,9</th> <td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <!-- ── PAIRS ── -->
+            <div class="strategy-section-title" th:text="#{strategy.pairs}">Pairs</div>
+            <div class="strategy-table-scroll">
+            <table class="strategy-table">
+                <thead>
+                <tr>
+                    <th class="strategy-hand-col"></th>
+                    <th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+                    <th>7</th><th>8</th><th>9</th><th>10</th><th>A</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- 2,2 --> <tr><th class="strategy-hand-col">2,2</th> <td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 3,3 --> <tr><th class="strategy-hand-col">3,3</th> <td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 4,4 --> <tr><th class="strategy-hand-col">4,4</th> <td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 5,5 --> <tr><th class="strategy-hand-col">5,5</th> <td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-d">D</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 6,6 --> <tr><th class="strategy-hand-col">6,6</th> <td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 7,7 --> <tr><th class="strategy-hand-col">7,7</th> <td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td><td class="sc-h">H</td></tr>
+                <!-- 8,8 --> <tr><th class="strategy-hand-col">8,8</th> <td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td></tr>
+                <!-- 9,9 --> <tr><th class="strategy-hand-col">9,9</th> <td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-s">S</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-s">S</td><td class="sc-s">S</td></tr>
+                <!-- T,T --> <tr><th class="strategy-hand-col">T,T</th> <td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td><td class="sc-s">S</td></tr>
+                <!-- A,A --> <tr><th class="strategy-hand-col">A,A</th> <td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td><td class="sc-p">P</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <!-- ── Legend ── -->
+            <div class="strategy-legend">
+                <span class="sc-h">H</span> <span th:text="#{strategy.legend.h}">Hit</span>
+                <span class="sc-s">S</span> <span th:text="#{strategy.legend.s}">Stand</span>
+                <span class="sc-d">D</span> <span th:text="#{strategy.legend.d}">Double (Hit if not allowed)</span>
+                <span class="sc-ds">Ds</span> <span th:text="#{strategy.legend.ds}">Double (Stand if not allowed)</span>
+                <span class="sc-p">P</span> <span th:text="#{strategy.legend.p}">Split</span>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 <div class="wrapper" th:object="${game}">
 
@@ -1008,6 +1121,30 @@
         btn.addEventListener('click', function () {
             var open = panel.classList.toggle('history-panel--open');
             btn.classList.toggle('history-toggle-btn--open', open);
+        });
+    })();
+</script>
+<script>
+    (function () {
+        var openBtn  = document.getElementById('strategyInfoBtn');
+        var closeBtn = document.getElementById('strategyModalClose');
+        var overlay  = document.getElementById('strategyModalOverlay');
+        if (!openBtn || !overlay) return;
+
+        openBtn.addEventListener('click', function () {
+            overlay.classList.add('strategy-modal-overlay--open');
+            document.body.style.overflow = 'hidden';
+        });
+        function closeModal() {
+            overlay.classList.remove('strategy-modal-overlay--open');
+            document.body.style.overflow = '';
+        }
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeModal();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeModal();
         });
     })();
 </script>
