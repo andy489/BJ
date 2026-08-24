@@ -258,6 +258,86 @@
     </div>
 </div>
 
+<!-- ══════════════════════════════════════════════
+     HOW TO PLAY MODAL
+══════════════════════════════════════════════ -->
+<div class="strategy-modal-overlay" id="howToPlayOverlay" role="dialog" aria-modal="true" aria-label="How to Play">
+    <div class="strategy-modal">
+        <div class="strategy-modal-header">
+            <div>
+                <div class="strategy-modal-title">How to Play</div>
+                <div class="strategy-modal-subtitle">What every button on the table does</div>
+            </div>
+            <button class="strategy-modal-close" id="howToPlayClose"
+                    th:attr="aria-label=#{strategy.close}">&#x2715;</button>
+        </div>
+        <div class="strategy-modal-body">
+
+            <div class="strategy-section-title">Betting Phase</div>
+            <p class="payout-note">Place your bet before dealing. You can adjust it with chips, or use the quick-action buttons.</p>
+            <table class="payout-table">
+                <thead><tr><th>Button</th><th>What it does</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Chips (2.5 – 100)</strong></td><td>Add that chip value to your current bet.</td></tr>
+                    <tr><td><strong>Repeat</strong></td><td>Restore the exact bet from the previous hand.</td></tr>
+                    <tr><td><strong>Double (bet)</strong></td><td>Double your current staged bet.</td></tr>
+                    <tr><td><strong>Clear</strong></td><td>Remove all chips from the current bet.</td></tr>
+                    <tr><td><strong>Deal</strong></td><td>Start the hand. Locks in the bet and deals two cards each.</td></tr>
+                </tbody>
+            </table>
+
+            <div class="strategy-section-title">Decision Phase</div>
+            <p class="payout-note">Once cards are dealt, choose your action. Greyed-out buttons are unavailable in the current situation.</p>
+            <table class="payout-table">
+                <thead><tr><th>Button</th><th>What it does</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Hit</strong></td>
+                        <td>Draw one more card. You can hit multiple times. Busting (going over 21) loses the hand immediately.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stand</strong></td>
+                        <td>Take no more cards and end your turn. The dealer then plays.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Double</strong></td>
+                        <td>Double your bet and receive exactly one more card, then stand automatically. Only available on your first two cards.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Split</strong></td>
+                        <td>Split a matching pair into two separate hands, each with its own bet equal to the original. Only available when your first two cards share the same rank.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Surrender</strong></td>
+                        <td>Forfeit the hand and recover half your bet. Only available as your very first action before any other move.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Auto Play</strong></td>
+                        <td>Let the computer finish the hand for you using Dealer-Mirror strategy (hit ≤16, stand ≥17). Useful when you want a quick resolution.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="strategy-section-title">Side Bets</div>
+            <p class="payout-note">Placed before dealing, settled independently of the main hand.</p>
+            <table class="payout-table">
+                <thead><tr><th>Bet</th><th>When it wins</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>PP — Perfect Pairs</strong></td><td>Your first two cards form any pair (same rank). Higher payouts for matching colour or identical suit.</td></tr>
+                    <tr><td><strong>21+3</strong></td><td>Your two cards + the dealer's up-card form a poker hand (flush, straight, three-of-a-kind, straight flush, or suited three-of-a-kind).</td></tr>
+                    <tr><td><strong>DPP — Dealer Perfect Pairs</strong></td><td>Same as PP, but applied to the dealer's first two cards instead of yours.</td></tr>
+                </tbody>
+            </table>
+
+            <div class="payout-note payout-note--footer">
+                Greyed-out action buttons mean that move is not available right now — e.g. Split requires a pair,
+                Double is only offered on the opening two cards, and Surrender must be your first action.
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <div class="wrapper" th:object="${game}">
 
     <!-- ── Scaled card canvas (card table only) ── -->
@@ -450,6 +530,9 @@
                 th:title="#{payouts.title}"
                 aria-label="Payouts"
                 th:text="#{payouts.btn}">Payouts</button>
+        <button class="strategy-info-btn" id="howToPlayBtn"
+                title="How to Play"
+                aria-label="How to Play">How to Play</button>
     </div>
 
     <!-- ── Controls panel — never scaled, always full-width ── -->
@@ -1298,6 +1381,29 @@
         var openBtn  = document.getElementById('payoutsInfoBtn');
         var closeBtn = document.getElementById('payoutsModalClose');
         var overlay  = document.getElementById('payoutsModalOverlay');
+        if (!openBtn || !overlay) return;
+
+        openBtn.addEventListener('click', function () {
+            overlay.classList.add('strategy-modal-overlay--open');
+            document.body.style.overflow = 'hidden';
+        });
+        function closeModal() {
+            overlay.classList.remove('strategy-modal-overlay--open');
+            document.body.style.overflow = '';
+        }
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeModal();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    })();
+
+    (function () {
+        var openBtn  = document.getElementById('howToPlayBtn');
+        var closeBtn = document.getElementById('howToPlayClose');
+        var overlay  = document.getElementById('howToPlayOverlay');
         if (!openBtn || !overlay) return;
 
         openBtn.addEventListener('click', function () {
