@@ -1207,10 +1207,12 @@
         var totalDuration = 0;
 
         if (isInitialDeal) {
-            /* stagger: dealer cards first, then player cards */
+            /* stagger: dealer cards first, then player cards.
+               All cards start hidden; revealed together after BJ_DEALER_REVEAL_MS. */
             var dealerCards = document.querySelectorAll('.dealer-cards .play-card:not(.double-down-card)');
             var playerCards = document.querySelectorAll('.player-cards .play-card:not(.double-down-card)');
-            var delay = 0;
+            var delay = BJ_DEALER_REVEAL_MS;
+            allCards.forEach(function (c) { c.style.visibility = 'hidden'; });
             Array.from(dealerCards).forEach(function (c) {
                 c.style.willChange = 'transform';
                 c.style.animationDelay = delay + 'ms';
@@ -1221,6 +1223,10 @@
                 c.style.animationDelay = delay + 'ms';
                 delay += 100;
             });
+            /* reveal all cards at reveal time so animations play correctly */
+            setTimeout(function () {
+                allCards.forEach(function (c) { c.style.visibility = ''; });
+            }, BJ_DEALER_REVEAL_MS);
             /* release will-change after all animations finish */
             totalDuration = delay + 420;
             setTimeout(function () {
@@ -1272,11 +1278,14 @@
                 if (c !== lastCard) {
                     c.style.animation = 'none';
                 } else {
+                    c.style.visibility = 'hidden';
                     c.style.willChange = 'transform';
+                    c.style.animationDelay = BJ_DEALER_REVEAL_MS + 'ms';
                 }
             });
-            totalDuration = 420;
-            setTimeout(function () { lastCard.style.willChange = 'auto'; }, 420);
+            setTimeout(function () { lastCard.style.visibility = ''; }, BJ_DEALER_REVEAL_MS);
+            totalDuration = BJ_DEALER_REVEAL_MS + 420;
+            setTimeout(function () { lastCard.style.willChange = 'auto'; }, totalDuration);
         } else {
             /* no new card dealt — suppress all card animations */
             allCards.forEach(function (c) {
