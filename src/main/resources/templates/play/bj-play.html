@@ -1207,28 +1207,26 @@
         var totalDuration = 0;
 
         if (isInitialDeal) {
-            /* stagger: dealer cards first, then player cards.
-               All cards start hidden; revealed together after BJ_DEALER_REVEAL_MS. */
-            var dealerCards = document.querySelectorAll('.dealer-cards .play-card:not(.double-down-card)');
-            var playerCards = document.querySelectorAll('.player-cards .play-card:not(.double-down-card)');
-            var delay = BJ_DEALER_REVEAL_MS;
-            allCards.forEach(function (c) { c.style.visibility = 'hidden'; });
-            Array.from(dealerCards).forEach(function (c) {
+            /* Deal order: dealer[0] → player[0] → dealer[1] → player[1].
+               Each card is hidden on load, then revealed one at a time
+               with BJ_DEALER_REVEAL_MS between each reveal. */
+            var dealerCards = Array.from(document.querySelectorAll('.dealer-cards .play-card:not(.double-down-card)'));
+            var playerCards = Array.from(document.querySelectorAll('.player-cards .play-card:not(.double-down-card)'));
+            var dealOrder = [dealerCards[0], playerCards[0], dealerCards[1], playerCards[1]].filter(Boolean);
+
+            allCards.forEach(function (c) {
+                c.style.visibility = 'hidden';
+                c.style.animationDelay = '0ms';
                 c.style.willChange = 'transform';
-                c.style.animationDelay = delay + 'ms';
-                delay += 100;
             });
-            Array.from(playerCards).forEach(function (c) {
-                c.style.willChange = 'transform';
-                c.style.animationDelay = delay + 'ms';
-                delay += 100;
+
+            dealOrder.forEach(function (c, i) {
+                setTimeout(function () {
+                    c.style.visibility = '';
+                }, (i + 1) * BJ_DEALER_REVEAL_MS);
             });
-            /* reveal all cards at reveal time so animations play correctly */
-            setTimeout(function () {
-                allCards.forEach(function (c) { c.style.visibility = ''; });
-            }, BJ_DEALER_REVEAL_MS);
-            /* release will-change after all animations finish */
-            totalDuration = delay + 420;
+
+            totalDuration = (dealOrder.length + 1) * BJ_DEALER_REVEAL_MS + 420;
             setTimeout(function () {
                 allCards.forEach(function (c) { c.style.willChange = 'auto'; });
             }, totalDuration);
@@ -1293,10 +1291,10 @@
             });
         }
 
-        /* ── Delay modals until after card animation + 250ms ── */
+        /* ── Delay modals until after card animation ── */
         var overlay = document.querySelector('.modal-overlay');
         if (overlay && overlay.classList.contains('active')) {
-            var modalDelay = isCardDealing ? totalDuration : 0;
+            var modalDelay = (isCardDealing || isInitialDeal) ? totalDuration : 0;
             overlay.classList.remove('active');
             overlay.style.visibility = 'hidden';
             setTimeout(function () {
