@@ -324,6 +324,13 @@ thead .strategy-hand-col {
     margin: -6px 0 6px;
     line-height: 1.4;
 }
+.payout-note--footer {
+    margin: 14px 0 2px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 211, 71, 0.15);
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.68rem;
+}
 .payout-table-wrap {
     border-radius: 8px;
     border: 1px solid rgba(255, 211, 71, 0.1);
