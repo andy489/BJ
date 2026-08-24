@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_FINALIZE;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_AUTO_PLAY;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DOUBLE_DOWN;
@@ -46,7 +47,7 @@ public class InsuranceProcessor implements GameStateProcessor {
             return ctx;
         }
 
-        List<Integer> choices = new ArrayList<>(List.of(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN, CHOICE_AUTO_FINALIZE));
+        List<Integer> choices = new ArrayList<>(List.of(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN, CHOICE_AUTO_FINALIZE, CHOICE_AUTO_PLAY));
         game.setAvailableChoices(choices);
 
         if (game.isPair()) {

@@ -68,17 +68,14 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         // Capture main-hand-only return before rolling side-bet returns into lastWin
         ctx.walletEntity().setLastHandWin(nvl(ctx.walletEntity().getLastWin()));
 
-        // Roll side-bet gross returns into lastWin so the "Last Win" box shows total money
-        // returned to wallet: main hand return + any winning side bet returns.
-        // lastPpWin/T3Win/DppWin hold net profit (return - stake); gross return = net + stake.
-        BigDecimal ppGross  = nvl(ctx.walletEntity().getLastPpWin()).compareTo(BigDecimal.ZERO)  > 0
-                ? nvl(ctx.walletEntity().getLastPpWin()).add(ppBetSnapshot)  : BigDecimal.ZERO;
-        BigDecimal t3Gross  = nvl(ctx.walletEntity().getLastT3Win()).compareTo(BigDecimal.ZERO)  > 0
-                ? nvl(ctx.walletEntity().getLastT3Win()).add(t3BetSnapshot)  : BigDecimal.ZERO;
-        BigDecimal dppGross = nvl(ctx.walletEntity().getLastDppWin()).compareTo(BigDecimal.ZERO) > 0
-                ? nvl(ctx.walletEntity().getLastDppWin()).add(dppBetSnapshot) : BigDecimal.ZERO;
+        // Roll side-bet net profits into lastWin so the "Last Win" box is consistent with
+        // the breakdown labels (PP/T3/DPP show net profit, hand shows gross return).
+        // lastPpWin/T3Win/DppWin already hold net profit (gross return - stake).
+        BigDecimal ppNet  = nvl(ctx.walletEntity().getLastPpWin());
+        BigDecimal t3Net  = nvl(ctx.walletEntity().getLastT3Win());
+        BigDecimal dppNet = nvl(ctx.walletEntity().getLastDppWin());
         BigDecimal combinedLastWin = nvl(ctx.walletEntity().getLastWin())
-                .add(ppGross).add(t3Gross).add(dppGross);
+                .add(ppNet).add(t3Net).add(dppNet);
         ctx.walletEntity().setLastWin(combinedLastWin);
 
         // lastBet = main hand bet (for Repeat); lastTotalBet = all bets combined (for display)
