@@ -1185,115 +1185,52 @@
     var BJ_DPP_BET        = /*[[${game.wallet.dealerPerfectPairsBet}]]*/ 0;
     var BJ_HAND_MULTI     = /*[[${game.handMultiplier}]]*/ null;
     var BJ_RESULT_DISPLAY_MS = /*[[${resultDisplayMs}]]*/ 2500;
-    var BJ_DEALER_REVEAL_MS  = /*[[${dealerRevealMs}]]*/ 500;
 </script>
 <script>
     (function () {
         /* ── Card animation ──────────────────────────────────────
-           Choices that result in a new card being dealt to player or dealer.
-           Any other action (stand, insurance, even-money, etc.) must NOT
-           trigger the deal+flip animation on already-visible cards.
+           Only the newly dealt card(s) play the card-deal animation.
+           All pre-existing cards have animation suppressed.
         ── */
-        /* Choice categories:
-           9  = HIT          : player requests a card → show immediately, no delay
-           2  = SPLIT        : computer draws cards for each split hand → delay per card
-           6  = DD_YES       : computer deals the double-down card → delay
-           8  = STAND        : dealer plays out all remaining cards → delay per card
-           19 = AUTO_FINALIZE: same as STAND for split hands
-           20 = AUTO_PLAY    : same as STAND (dealer busts player out / reaches 17)
-           3  = DOUBLE_DOWN  : only places the bet, no card yet
-           10 = DEAL         : initial deal, interleaved order below */
-        var DEALER_PLAY_CHOICES = [8, 19, 20]; /* dealer plays out N cards, all delayed */
-        var SINGLE_DELAY_CHOICES = [2, 6];     /* computer deals exactly 1 card, delayed */
+        /* Choices that produce a new card: */
+        var CARD_DEAL_CHOICES = [2, 6, 8, 9, 10, 19, 20];
+        /* Choices where the dealer plays out N new cards (dealer[1..N] all new): */
+        var DEALER_PLAY_CHOICES = [8, 19, 20];
 
         var allCards = Array.from(document.querySelectorAll(
             '.dealer-cards .play-card:not(.double-down-card), ' +
             '.player-cards .play-card:not(.double-down-card), ' +
             '.split-hand-box .play-card:not(.double-down-card)'
         ));
-        var isInitialDeal   = allCards.length <= 4 && BJ_LAST_CHOICE === 10;
-        var isDealerPlay    = DEALER_PLAY_CHOICES.indexOf(BJ_LAST_CHOICE) !== -1;
-        var isSingleDelay   = SINGLE_DELAY_CHOICES.indexOf(BJ_LAST_CHOICE) !== -1;
-        var isPlayerHit     = BJ_LAST_CHOICE === 9;
+        var isInitialDeal  = allCards.length <= 4 && BJ_LAST_CHOICE === 10;
+        var isDealerPlay   = DEALER_PLAY_CHOICES.indexOf(BJ_LAST_CHOICE) !== -1;
+        var isNewCard      = CARD_DEAL_CHOICES.indexOf(BJ_LAST_CHOICE) !== -1;
 
-        var totalDuration = 0;
+        var totalDuration = 420; /* single card-deal animation duration */
 
         if (isInitialDeal) {
-            /* Deal order: player[0] → dealer[0] → player[1] → dealer[1], 1 delay apart each. */
-            var dealerCards = Array.from(document.querySelectorAll('.dealer-cards .play-card:not(.double-down-card)'));
-            var playerCards = Array.from(document.querySelectorAll('.player-cards .play-card:not(.double-down-card)'));
-
-            allCards.forEach(function (c) {
-                c.style.visibility = 'hidden';
-                c.style.animationDelay = '0ms';
-                c.style.willChange = 'transform';
-            });
-
-            var revealSchedule = [
-                { card: playerCards[0], t: 1 * BJ_DEALER_REVEAL_MS },
-                { card: dealerCards[0], t: 2 * BJ_DEALER_REVEAL_MS },
-                { card: playerCards[1], t: 2 * BJ_DEALER_REVEAL_MS },
-                { card: dealerCards[1], t: 3 * BJ_DEALER_REVEAL_MS }
-            ].filter(function (e) { return e.card; });
-
-            revealSchedule.forEach(function (e) {
-                setTimeout(function () { e.card.style.visibility = ''; }, e.t);
-            });
-
-            totalDuration = 3 * BJ_DEALER_REVEAL_MS + 420;
-            setTimeout(function () {
-                allCards.forEach(function (c) { c.style.willChange = 'auto'; });
-            }, totalDuration);
+            /* All 4 cards are new — animate them all, suppress nothing. */
+            allCards.forEach(function (c) { c.style.willChange = 'transform'; });
+            setTimeout(function () { allCards.forEach(function (c) { c.style.willChange = 'auto'; }); }, totalDuration);
 
         } else if (isDealerPlay) {
-            /* STAND / AUTO_PLAY / AUTO_FINALIZE: dealer[0] was visible before;
-               dealer[1..N] are all new (hole card + any hits).
-               Reveal each one after i×BJ_DEALER_REVEAL_MS. */
-            var newDealerCards = Array.from(document.querySelectorAll('.dealer-cards .play-card:not(.double-down-card)')).slice(1);
-
+            /* STAND / AUTO_PLAY / AUTO_FINALIZE: dealer[0] existed; dealer[1..N] are new. */
+            var newDealerCards = Array.from(document.querySelectorAll(
+                '.dealer-cards .play-card:not(.double-down-card)')).slice(1);
             allCards.forEach(function (c) {
-                c.style.animation = 'none';
+                if (newDealerCards.indexOf(c) === -1) c.style.animation = 'none';
+                else c.style.willChange = 'transform';
             });
-            newDealerCards.forEach(function (c, i) {
-                var t = (i + 1) * BJ_DEALER_REVEAL_MS;
-                c.style.visibility = 'hidden';
-                c.style.animationDelay = '0ms';
-                c.style.willChange = 'transform';
-                setTimeout(function () {
-                    c.style.visibility = '';
-                    c.style.animation = '';
-                }, t);
-            });
+            setTimeout(function () { newDealerCards.forEach(function (c) { c.style.willChange = 'auto'; }); }, totalDuration);
 
-            var lastNewDealer = newDealerCards[newDealerCards.length - 1];
-            if (lastNewDealer) {
-                totalDuration = newDealerCards.length * BJ_DEALER_REVEAL_MS + 420;
-                setTimeout(function () {
-                    newDealerCards.forEach(function (c) { c.style.willChange = 'auto'; });
-                }, totalDuration);
-            }
-
-        } else if (isSingleDelay) {
-            /* SPLIT or DD_YES: exactly one new card, computer-dealt → delayed. */
+        } else if (isNewCard) {
+            /* Single new card: HIT, SPLIT draw, DD_YES — last card in the active hand. */
             var splitBoxes = Array.from(document.querySelectorAll('.split-hand-box'));
             var activeHandBox = null;
             if (splitBoxes.length > 0) {
                 var activeBox = document.querySelector('.split-hand-box.active-hand');
                 if (activeBox) {
-                    var activeCount = activeBox.querySelectorAll('.play-card:not(.double-down-card)').length;
-                    var maxOtherCount = 0;
-                    splitBoxes.forEach(function (b) {
-                        if (b !== activeBox) {
-                            var cnt = b.querySelectorAll('.play-card:not(.double-down-card)').length;
-                            if (cnt > maxOtherCount) maxOtherCount = cnt;
-                        }
-                    });
-                    activeHandBox = (activeCount >= maxOtherCount) ? activeBox
-                        : splitBoxes.reduce(function (best, box) {
-                            return box.querySelectorAll('.play-card:not(.double-down-card)').length >
-                                   best.querySelectorAll('.play-card:not(.double-down-card)').length
-                                   ? box : best;
-                          }, splitBoxes[0]);
+                    activeHandBox = activeBox;
                 } else {
                     activeHandBox = splitBoxes.reduce(function (best, box) {
                         return box.querySelectorAll('.play-card:not(.double-down-card)').length >
@@ -1309,67 +1246,26 @@
                 ? activeHandCards[activeHandCards.length - 1]
                 : allCards[allCards.length - 1];
             allCards.forEach(function (c) {
-                if (c !== lastCard) {
-                    c.style.animation = 'none';
-                } else {
-                    c.style.visibility = 'hidden';
-                    c.style.animationDelay = '0ms';
-                    c.style.willChange = 'transform';
-                }
+                if (c !== lastCard) c.style.animation = 'none';
+                else c.style.willChange = 'transform';
             });
-            setTimeout(function () { lastCard.style.visibility = ''; }, BJ_DEALER_REVEAL_MS);
-            totalDuration = BJ_DEALER_REVEAL_MS + 420;
             setTimeout(function () { lastCard.style.willChange = 'auto'; }, totalDuration);
 
-        } else if (isPlayerHit) {
-            /* HIT: player-requested card appears immediately, no delay. */
-            var splitBoxes2 = Array.from(document.querySelectorAll('.split-hand-box'));
-            var activeHandBox2 = null;
-            if (splitBoxes2.length > 0) {
-                var activeBox2 = document.querySelector('.split-hand-box.active-hand');
-                if (activeBox2) {
-                    activeHandBox2 = activeBox2;
-                } else {
-                    activeHandBox2 = splitBoxes2.reduce(function (best, box) {
-                        return box.querySelectorAll('.play-card:not(.double-down-card)').length >
-                               best.querySelectorAll('.play-card:not(.double-down-card)').length
-                               ? box : best;
-                    }, splitBoxes2[0]);
-                }
-            }
-            var activeHandCards2 = activeHandBox2
-                ? Array.from(activeHandBox2.querySelectorAll('.play-card:not(.double-down-card)'))
-                : null;
-            var lastCard2 = (activeHandCards2 && activeHandCards2.length > 0)
-                ? activeHandCards2[activeHandCards2.length - 1]
-                : allCards[allCards.length - 1];
-            allCards.forEach(function (c) {
-                if (c !== lastCard2) {
-                    c.style.animation = 'none';
-                } else {
-                    c.style.willChange = 'transform';
-                }
-            });
-            totalDuration = 420;
-            setTimeout(function () { lastCard2.style.willChange = 'auto'; }, totalDuration);
-
         } else {
-            /* No new card dealt — suppress all card animations. */
-            allCards.forEach(function (c) {
-                c.style.animation = 'none';
-            });
+            /* No new card — suppress all animations. */
+            allCards.forEach(function (c) { c.style.animation = 'none'; });
+            totalDuration = 0;
         }
 
         /* ── Delay modals until after card animation ── */
         var overlay = document.querySelector('.modal-overlay');
         if (overlay && overlay.classList.contains('active')) {
-            var modalDelay = (isInitialDeal || isDealerPlay || isSingleDelay || isPlayerHit) ? totalDuration : 0;
             overlay.classList.remove('active');
             overlay.style.visibility = 'hidden';
             setTimeout(function () {
                 overlay.style.visibility = '';
                 overlay.classList.add('active');
-            }, modalDelay);
+            }, totalDuration);
         }
 
         /* ── Viewport scale ── */
