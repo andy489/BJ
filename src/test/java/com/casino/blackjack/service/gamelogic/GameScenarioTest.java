@@ -57,8 +57,8 @@ class GameScenarioTest {
         game.setDealt(true);
         game.deal();
         game.makeChoice(CHOICE_DEAL);
-        CHAIN.process(ctx(game));
         game.adjustDealerCardsAfterDeal();
+        CHAIN.process(ctx(game));
         return game;
     }
 
@@ -690,11 +690,11 @@ class GameScenarioTest {
         assertThat(game.getFinalized()).isFalse();
         assertThat(game.getDoubleDown()).isFalse();
 
-        // Normal play choices restored (no Surrender — dealerCards.size()==1, not INITIAL_DEALT_CARD_COUNT)
+        // Normal play choices restored. Surrender is available — dealer has 1 visible card (10),
+        // DoubleDownConfirmProcessor restores the initial-deal choice set when dealerCards.size()==1.
         assertThat(game.getAvailableChoices())
-                .containsExactlyInAnyOrder(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN, CHOICE_AUTO_FINALIZE);
+                .containsExactlyInAnyOrder(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN, CHOICE_AUTO_FINALIZE, CHOICE_SURRENDER);
         assertThat(game.getAvailableChoices()).doesNotContain(CHOICE_DOUBLE_DOWN_YES, CHOICE_DOUBLE_DOWN_NO);
-        assertThat(game.getAvailableChoices()).doesNotContain(CHOICE_SURRENDER);
 
         // Cards unchanged — no hit
         assertThat(game.getPlayerCards()).hasSize(2);

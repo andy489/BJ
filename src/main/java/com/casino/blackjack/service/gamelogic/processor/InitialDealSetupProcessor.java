@@ -11,7 +11,6 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURA
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SURRENDER;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.INITIAL_DEALT_CARD_COUNT;
 
 public class InitialDealSetupProcessor implements GameStateProcessor {
 
@@ -24,7 +23,7 @@ public class InitialDealSetupProcessor implements GameStateProcessor {
     public GameContext process(GameContext ctx) {
         Game game = ctx.game();
 
-        if (game.getDealerCards().size() == INITIAL_DEALT_CARD_COUNT) {
+        if (game.getDealerCards().size() == 1) {
             if (game.getDealerCards().get(0).getRank().equals(ACE_RANK)) {
                 game.setAvailableChoices(java.util.List.of(CHOICE_INSURANCE_YES, CHOICE_INSURANCE_NO));
                 return ctx;
@@ -35,7 +34,7 @@ public class InitialDealSetupProcessor implements GameStateProcessor {
 
         game.getAvailableChoices().addAll(java.util.List.of(CHOICE_STAND, CHOICE_HIT, CHOICE_DOUBLE_DOWN));
 
-        if (game.getDealerCards().size() == INITIAL_DEALT_CARD_COUNT) {
+        if (game.getDealerCards().size() == 1) {
             game.getAvailableChoices().add(CHOICE_AUTO_PLAY);
         }
 

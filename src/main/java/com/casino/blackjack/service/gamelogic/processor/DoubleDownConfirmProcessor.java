@@ -18,7 +18,6 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SURRENDER;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DOUBLE_MULTI;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.INITIAL_DEALT_CARD_COUNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PUSH_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 
@@ -75,7 +74,7 @@ public class DoubleDownConfirmProcessor implements GameStateProcessor {
         // CHOICE_DOUBLE_DOWN_NO: cancel confirm, restore normal play choices
         game.setFinalized(false);
         List<Integer> choices = new ArrayList<>();
-        if (game.getDealerCards().size() == INITIAL_DEALT_CARD_COUNT) {
+        if (game.getDealerCards().size() == 1) {
             choices.add(CHOICE_SURRENDER);
         }
         choices.add(CHOICE_STAND);

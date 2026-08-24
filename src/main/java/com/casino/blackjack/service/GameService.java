@@ -167,21 +167,23 @@ public class GameService {
                 ? GameEntity.of(game, om, userService.getCurrentLoggedUser())
                 : GameEntity.map(currGameEntity.get(), game, om);
 
-        // Persist the initial deal cards for side bet evaluation (survives splits)
+        // Persist the initial deal cards for side bet evaluation (survives splits).
+        // Must happen before adjustDealerCardsAfterDeal() so both dealer cards are captured.
         try {
             gameEntity.setInitialPlayerCards(om.writeValueAsString(game.getPlayerCards()));
-            // dealer up-card is dealerCards[0] (before hide)
             gameEntity.setInitialDealerUpCard(om.writeValueAsString(game.getDealerCards().get(0)));
-            // all dealer initial cards for Dealer Perfect Pairs evaluation
             gameEntity.setInitialDealerCards(om.writeValueAsString(game.getDealerCards()));
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
+        // Hide dealer's second card BEFORE running processors so that dealerPlayOneCard()
+        // (called by BJ/insurance paths) correctly reveals the pre-dealt hidden card rather
+        // than drawing a new one from the deck.
+        game.setWallet(wallet.placeHandBet(bet)).adjustDealerCardsAfterDeal();
+
         GameContext ctx = buildContext(game, gameEntity, walletEntity);
         processorChain.process(ctx);
-
-        game.setWallet(wallet.placeHandBet(bet)).adjustDealerCardsAfterDeal();
 
         if (wallet.cannotAffordDouble()) {
             game.removeAvailableChoice(CHOICE_DOUBLE_DOWN);
