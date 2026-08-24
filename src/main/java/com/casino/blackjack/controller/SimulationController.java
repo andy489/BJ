@@ -1,5 +1,6 @@
 package com.casino.blackjack.controller;
 
+import com.casino.blackjack.service.simulation.SideBetRtpCalculator;
 import com.casino.blackjack.service.simulation.SimulationResult;
 import com.casino.blackjack.service.simulation.SimulationService;
 import com.casino.blackjack.service.simulation.SimulationStrategy;
@@ -35,6 +36,7 @@ public class SimulationController extends BaseController {
     @GetMapping
     public ModelAndView form(ModelAndView mav) {
         mav.addObject("strategies", SimulationStrategy.values());
+        mav.addObject("sideBetRtp", SideBetRtpCalculator.calculate());
         return super.view("admin/simulation", mav);
     }
 
@@ -84,6 +86,7 @@ public class SimulationController extends BaseController {
         mav.addObject("threads", threads);
         mav.addObject("spins", spins);
         mav.addObject("selectedStrategy", strategy);
+        mav.addObject("sideBetRtp", SideBetRtpCalculator.calculate());
         return super.view("admin/simulation", mav);
     }
 

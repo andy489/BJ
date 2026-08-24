@@ -653,7 +653,151 @@
 .sim-modal-td--double { color: #6eff9e; font-weight: 700; }
 .sim-modal-td--split  { color: #e8a0ff; font-weight: 700; }
 
-/* ── Light theme modal ── */
+/* ── Side-bet analytical RTP section ── */
+.sim-sidebet-rtp {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 211, 71, 0.12);
+}
+
+.sim-sidebet-rtp-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+.sim-sidebet-rtp-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: rgba(255, 211, 71, 0.6);
+    border: 1px solid rgba(255, 211, 71, 0.22);
+    border-radius: 4px;
+    padding: 0.15rem 0.5rem;
+    white-space: nowrap;
+}
+
+.sim-sidebet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+.sim-sidebet-card {
+    border-radius: 14px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.sim-sidebet-card--pp {
+    background: rgba(100, 160, 255, 0.07);
+    border: 1px solid rgba(100, 160, 255, 0.22);
+}
+
+.sim-sidebet-card--t3 {
+    background: rgba(160, 100, 255, 0.07);
+    border: 1px solid rgba(160, 100, 255, 0.22);
+}
+
+.sim-sidebet-card-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 0.1rem;
+}
+
+.sim-sidebet-card--pp .sim-sidebet-card-label { color: rgba(100, 160, 255, 0.7); }
+.sim-sidebet-card--t3 .sim-sidebet-card-label { color: rgba(160, 100, 255, 0.7); }
+
+.sim-sidebet-card-rtp {
+    font-size: clamp(1.6rem, 4vw, 2.1rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    margin-bottom: 0.1rem;
+}
+
+.sim-sidebet-card--pp .sim-sidebet-card-rtp { color: #8ec8ff; }
+.sim-sidebet-card--t3 .sim-sidebet-card-rtp { color: #c8a0ff; }
+
+.sim-sidebet-card-edge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+}
+.sim-sidebet-card-edge--pos { color: #6eff9e; }
+.sim-sidebet-card-edge--neg { color: #ff9f6a; }
+
+.sim-sidebet-payouts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sim-sidebet-payout-item {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.55);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.sim-sidebet-pip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 16px;
+    border-radius: 3px;
+    font-size: 0.58rem;
+    font-weight: 900;
+    flex-shrink: 0;
+    letter-spacing: 0.01em;
+}
+
+.sim-sidebet-pip--perfect { background: #5a3690; color: #e8dcfa; }
+.sim-sidebet-pip--col     { background: #15508c; color: #cde0fa; }
+.sim-sidebet-pip--mix     { background: #1b6b30; color: #c8f5d0; }
+.sim-sidebet-pip--tok     { background: #7a1010; color: #fce0e0; }
+.sim-sidebet-pip--sf      { background: #5a3690; color: #e8dcfa; }
+.sim-sidebet-pip--tok2    { background: #a05500; color: #fde8c0; }
+.sim-sidebet-pip--str     { background: #15508c; color: #cde0fa; }
+.sim-sidebet-pip--fl      { background: #1b6b30; color: #c8f5d0; }
+
+.sim-sidebet-note {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.35);
+    line-height: 1.5;
+}
+
+/* ── Light theme overrides ── */
+[data-theme="light"] .sim-sidebet-rtp { border-top-color: rgba(120, 90, 0, 0.15); }
+[data-theme="light"] .sim-sidebet-rtp-title { color: #a07800; }
+[data-theme="light"] .sim-sidebet-rtp-badge { color: rgba(100, 75, 0, 0.6); border-color: rgba(120, 90, 0, 0.25); }
+[data-theme="light"] .sim-sidebet-card--pp  { background: rgba(30, 80, 180, 0.05); border-color: rgba(30, 80, 180, 0.18); }
+[data-theme="light"] .sim-sidebet-card--t3  { background: rgba(100, 40, 180, 0.05); border-color: rgba(100, 40, 180, 0.18); }
+[data-theme="light"] .sim-sidebet-card--pp .sim-sidebet-card-label { color: rgba(30, 80, 180, 0.65); }
+[data-theme="light"] .sim-sidebet-card--t3 .sim-sidebet-card-label { color: rgba(100, 40, 180, 0.65); }
+[data-theme="light"] .sim-sidebet-card--pp .sim-sidebet-card-rtp   { color: #1a55a0; }
+[data-theme="light"] .sim-sidebet-card--t3 .sim-sidebet-card-rtp   { color: #6a14a0; }
+[data-theme="light"] .sim-sidebet-card-edge--pos { color: #1a7a3a; }
+[data-theme="light"] .sim-sidebet-card-edge--neg { color: #b05000; }
+[data-theme="light"] .sim-sidebet-payout-item { color: rgba(20, 15, 0, 0.5); }
+[data-theme="light"] .sim-sidebet-payouts { border-top-color: rgba(0, 0, 0, 0.08); }
+[data-theme="light"] .sim-sidebet-note { color: rgba(20, 15, 0, 0.38); }
 [data-theme="light"] .sim-modal {
     background: #f8f0e0;
     border-color: rgba(80, 60, 0, 0.25);
