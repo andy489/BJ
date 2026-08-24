@@ -105,7 +105,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
 
         Game result = game
                 .setDealt(false)
-                .setFinalized(false)
+                .setFinalized(true)  // keep true so the result overlay renders; entity already deleted from last_games
                 .setAvailableChoices(new java.util.ArrayList<>(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL)))
                 .setWallet(Wallet.of(ctx.walletEntity()));
 
