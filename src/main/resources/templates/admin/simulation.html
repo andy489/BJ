@@ -285,7 +285,7 @@
                         </p>
                         <div class="sim-formula-table-wrap">
                             <table class="sim-formula-table">
-                                <thead><tr><th>Hand</th><th>Example</th><th>Probability</th><th>Payout</th><th>Contribution</th></tr></thead>
+                                <thead><tr><th>Hand</th><th>Example</th><th>Formula</th><th>Payout</th><th>Probability (%)</th></tr></thead>
                                 <tbody>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--tok">S3K</span> Suited 3oK</td>
@@ -299,7 +299,7 @@
                                         <td class="sim-formula-ex">7♥ 8♥ 9♥</td>
                                         <td>72/(13³×4²)</td>
                                         <td th:text="${#numbers.formatDecimal(sideBetRtp.t3StraightFlush(),1,0)} + ':1'"></td>
-                                        <td>≈ 0.1876%</td>
+                                        <td>≈ 0.2048%</td>
                                     </tr>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--tok2">3K</span> 3-of-a-Kind</td>
@@ -313,14 +313,14 @@
                                         <td class="sim-formula-ex">7♠ 8♥ 9♦</td>
                                         <td>72/13³ × 15/16</td>
                                         <td th:text="${#numbers.formatDecimal(sideBetRtp.t3Straight(),1,0)} + ':1'"></td>
-                                        <td>≈ 2.8163%</td>
+                                        <td>≈ 3.0724%</td>
                                     </tr>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--fl">F</span> Flush</td>
                                         <td class="sim-formula-ex">2♠ 5♠ 9♠</td>
                                         <td>1/16 − SF − S3K</td>
                                         <td th:text="${#numbers.formatDecimal(sideBetRtp.t3Flush(),1,0)} + ':1'"></td>
-                                        <td>≈ 6.0253%</td>
+                                        <td>≈ 6.0082%</td>
                                     </tr>
                                     <tr class="sim-formula-total-row">
                                         <td colspan="4">RTP (∞ deck)</td>
