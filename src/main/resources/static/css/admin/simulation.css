@@ -783,6 +783,162 @@
     line-height: 1.5;
 }
 
+/* ── Deck comparison row inside cards ── */
+.sim-sidebet-deck-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 0.35rem 0 0.5rem;
+    font-size: 0.72rem;
+    flex-wrap: wrap;
+}
+.sim-sidebet-deck-label {
+    color: rgba(255,255,255,0.38);
+}
+.sim-sidebet-deck-val {
+    font-weight: 600;
+    color: rgba(255,255,255,0.72);
+    margin-right: 0.6rem;
+}
+
+/* ── Formula breakdown section ── */
+.sim-formula-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.sim-formula-block {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem 1rem;
+    background: rgba(255,255,255,0.02);
+}
+.sim-formula-block--pp { border-color: rgba(100,160,255,0.15); }
+.sim-formula-block--t3 { border-color: rgba(160,100,255,0.15); }
+
+.sim-formula-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    color: rgba(255,255,255,0.55);
+}
+.sim-formula-block--pp .sim-formula-title { color: rgba(100,160,255,0.7); }
+.sim-formula-block--t3 .sim-formula-title { color: rgba(160,100,255,0.7); }
+
+.sim-formula-group {
+    margin-bottom: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.sim-formula-group:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+.sim-formula-sub {
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.38);
+    margin-bottom: 0.5rem;
+}
+
+.sim-formula-explain {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+    margin: 0 0 0.75rem;
+    line-height: 1.55;
+}
+
+.sim-formula-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 0.7rem;
+    border-radius: 6px;
+}
+
+.sim-formula-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+}
+.sim-formula-table th {
+    padding: 0.35rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.35);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+}
+.sim-formula-table td {
+    padding: 0.35rem 0.6rem;
+    color: rgba(255,255,255,0.68);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.sim-formula-table tr:last-child td { border-bottom: none; }
+.sim-formula-table tr:hover td { background: rgba(255,255,255,0.025); }
+
+.sim-formula-total-row td {
+    font-weight: 700;
+    color: rgba(255,255,255,0.85) !important;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+}
+
+.sim-formula-ex {
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+}
+
+.sim-formula-eq {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-family: monospace;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0,0,0,0.15);
+    border-radius: 6px;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+.sim-formula-eq strong { color: rgba(255,255,255,0.85); }
+
+.sim-formula-note {
+    font-size: 0.74rem;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.55;
+    margin-top: 0.6rem;
+    font-style: italic;
+}
+
+/* ── Light theme overrides ── */
+[data-theme="light"] .sim-sidebet-deck-label { color: rgba(20,15,0,0.4); }
+[data-theme="light"] .sim-sidebet-deck-val   { color: rgba(20,15,0,0.75); }
+[data-theme="light"] .sim-formula-block { border-color: rgba(0,0,0,0.08); background: rgba(0,0,0,0.01); }
+[data-theme="light"] .sim-formula-block--pp { border-color: rgba(30,80,180,0.15); }
+[data-theme="light"] .sim-formula-block--t3 { border-color: rgba(100,40,180,0.15); }
+[data-theme="light"] .sim-formula-title { color: rgba(20,15,0,0.5); }
+[data-theme="light"] .sim-formula-block--pp .sim-formula-title { color: rgba(30,80,180,0.65); }
+[data-theme="light"] .sim-formula-block--t3 .sim-formula-title { color: rgba(100,40,180,0.65); }
+[data-theme="light"] .sim-formula-sub     { color: rgba(20,15,0,0.38); }
+[data-theme="light"] .sim-formula-explain { color: rgba(20,15,0,0.6); }
+[data-theme="light"] .sim-formula-table th { color: rgba(20,15,0,0.4); border-color: rgba(0,0,0,0.1); }
+[data-theme="light"] .sim-formula-table td { color: rgba(20,15,0,0.7); border-color: rgba(0,0,0,0.05); }
+[data-theme="light"] .sim-formula-table tr:hover td { background: rgba(0,0,0,0.02); }
+[data-theme="light"] .sim-formula-total-row td { color: rgba(20,15,0,0.9) !important; background: rgba(0,0,0,0.03); border-top-color: rgba(0,0,0,0.08); }
+[data-theme="light"] .sim-formula-ex  { color: rgba(20,15,0,0.45); }
+[data-theme="light"] .sim-formula-eq  { background: rgba(0,0,0,0.04); color: rgba(20,15,0,0.5); }
+[data-theme="light"] .sim-formula-eq strong { color: rgba(20,15,0,0.85); }
+[data-theme="light"] .sim-formula-note { color: rgba(20,15,0,0.38); }
+[data-theme="light"] .sim-formula-group { border-bottom-color: rgba(0,0,0,0.06); }
+
+
 /* ── Light theme overrides ── */
 [data-theme="light"] .sim-sidebet-rtp { border-top-color: rgba(120, 90, 0, 0.15); }
 [data-theme="light"] .sim-sidebet-rtp-title { color: #a07800; }
