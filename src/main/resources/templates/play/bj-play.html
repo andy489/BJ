@@ -563,9 +563,9 @@
                 <!-- Win breakdown: show side-bet wins when any were non-zero -->
                 <div class="bet-breakdown win-breakdown"
                      th:if="${(game.wallet.lastPpWin != null and game.wallet.lastPpWin > 0) or (game.wallet.lastT3Win != null and game.wallet.lastT3Win > 0) or (game.wallet.lastDppWin != null and game.wallet.lastDppWin > 0)}">
-                    <span class="bet-breakdown-item" th:if="${game.wallet.lastWin != null and game.wallet.lastWin > 0}">
+                    <span class="bet-breakdown-item" th:if="${game.wallet.lastHandWin != null and game.wallet.lastHandWin > 0}">
                         <span class="bet-breakdown-label" th:text="#{bet.hand}">Hand</span>
-                        <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.lastWin, 1, 'COMMA', 2, 'POINT')}">£10</span>
+                        <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.lastHandWin, 1, 'COMMA', 2, 'POINT')}">£10</span>
                     </span>
                     <span class="bet-breakdown-item" th:if="${game.wallet.lastPpWin != null and game.wallet.lastPpWin > 0}">
                         <span class="bet-breakdown-label">PP</span>

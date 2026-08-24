@@ -18,6 +18,8 @@ public class Wallet {
 
     private BigDecimal lastWin;
 
+    private BigDecimal lastHandWin;
+
     private BigDecimal lastPpWin;
 
     private BigDecimal lastT3Win;
@@ -53,6 +55,7 @@ public class Wallet {
     public Wallet() {
         balance = BigDecimal.ZERO;
         lastWin = BigDecimal.ZERO;
+        lastHandWin = BigDecimal.ZERO;
         lastBet = BigDecimal.ZERO;
         lastTotalBet = BigDecimal.ZERO;
         lastPpBet = BigDecimal.ZERO;
@@ -75,6 +78,7 @@ public class Wallet {
         return new Wallet()
                 .setBalance(walletEntity.getBalance())
                 .setLastWin(walletEntity.getLastWin())
+                .setLastHandWin(nvl(walletEntity.getLastHandWin()))
                 .setLastPpWin(walletEntity.getLastPpWin())
                 .setLastT3Win(walletEntity.getLastT3Win())
                 .setLastDppWin(walletEntity.getLastDppWin())
@@ -97,6 +101,7 @@ public class Wallet {
         return walletEntity
                 .setBalance(wallet.getBalance())
                 .setLastWin(wallet.getLastWin())
+                .setLastHandWin(wallet.getLastHandWin())
                 .setLastPpWin(wallet.getLastPpWin())
                 .setLastT3Win(wallet.getLastT3Win())
                 .setLastDppWin(wallet.getLastDppWin())

@@ -65,6 +65,22 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         // Settle side bets (independent of main hand outcome)
         settleSideBets(ctx, gameEntity);
 
+        // Capture main-hand-only return before rolling side-bet returns into lastWin
+        ctx.walletEntity().setLastHandWin(nvl(ctx.walletEntity().getLastWin()));
+
+        // Roll side-bet gross returns into lastWin so the "Last Win" box shows total money
+        // returned to wallet: main hand return + any winning side bet returns.
+        // lastPpWin/T3Win/DppWin hold net profit (return - stake); gross return = net + stake.
+        BigDecimal ppGross  = nvl(ctx.walletEntity().getLastPpWin()).compareTo(BigDecimal.ZERO)  > 0
+                ? nvl(ctx.walletEntity().getLastPpWin()).add(ppBetSnapshot)  : BigDecimal.ZERO;
+        BigDecimal t3Gross  = nvl(ctx.walletEntity().getLastT3Win()).compareTo(BigDecimal.ZERO)  > 0
+                ? nvl(ctx.walletEntity().getLastT3Win()).add(t3BetSnapshot)  : BigDecimal.ZERO;
+        BigDecimal dppGross = nvl(ctx.walletEntity().getLastDppWin()).compareTo(BigDecimal.ZERO) > 0
+                ? nvl(ctx.walletEntity().getLastDppWin()).add(dppBetSnapshot) : BigDecimal.ZERO;
+        BigDecimal combinedLastWin = nvl(ctx.walletEntity().getLastWin())
+                .add(ppGross).add(t3Gross).add(dppGross);
+        ctx.walletEntity().setLastWin(combinedLastWin);
+
         // lastBet = main hand bet (for Repeat); lastTotalBet = all bets combined (for display)
         BigDecimal lastTotalBet = ctx.walletEntity().getLastBet()
                 .add(ppBetSnapshot).add(t3BetSnapshot).add(dppBetSnapshot);
@@ -204,7 +220,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         BigDecimal totalStaked = totalBet.add(insuranceBet);
         BigDecimal netProfit = totalWin.subtract(totalStaked);
 
-        ctx.walletEntity().setLastBet(ctx.walletEntity().getCurrentBet());
+        ctx.walletEntity().setLastBet(handBet);
         ctx.walletEntity().setLastWin(netProfit.max(BigDecimal.ZERO));
         ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(totalWin));
         ctx.walletEntity().setCurrentBet(BigDecimal.ZERO);

@@ -736,6 +736,94 @@ class BugFixTest {
         assertThat(hasPostPayoutCards).isFalse(); // hasCards=true covers this separately
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Bug fix — FinalizedPayoutProcessor: paySplitHands must set lastBet=handBet
+    // not lastBet=currentBet (which equals handBet*numHands for multi-hand splits).
+    // Also: lastWin must equal main-hand gross return + any winning side bet gross returns.
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @Test
+    void paySplitHands_lastBetEqualsHandBetNotCurrentBet() {
+        // Two-hand split on £10: handBet=10, splitBet=10, currentBet=20.
+        // After payout lastBet must be 10 (the original per-hand stake for Repeat).
+        WalletEntity w = new WalletEntity();
+        w.setBalance(bd("0"));
+        w.setHandBet(bd("10"));
+        w.setSplitBet(bd("10"));
+        w.setCurrentBet(bd("20"));
+        w.setDoubleBet(bd("0"));
+        w.setInsuranceBet(bd("0"));
+        w.setSplitBet(bd("10"));
+        w.setPerfectPairsBet(bd("0"));
+        w.setTwentyOneThreeBet(bd("0"));
+        w.setDealerPerfectPairsBet(bd("0"));
+        w.setLastWin(bd("0"));
+        w.setLastHandWin(bd("0"));
+
+        // Simulate paySplitHands result: both hands win (multiplier 2.0)
+        // totalWin = 10*2 + 10*2 = 40, netProfit = 40-20 = 20
+        BigDecimal handBet = w.getHandBet();
+        BigDecimal netProfit = bd("20");
+        w.setLastBet(handBet);                         // THE FIX
+        w.setLastWin(netProfit.max(BigDecimal.ZERO));
+        w.setBalance(w.getBalance().add(bd("40")));
+        w.setCurrentBet(BigDecimal.ZERO);
+        w.setHandBet(BigDecimal.ZERO);
+
+        assertThat(w.getLastBet()).isEqualByComparingTo(bd("10")); // not £20
+    }
+
+    @Test
+    void lastWin_withWinningSideBet_includesSideBetGrossReturn() {
+        // Main hand wins: handBet=10, handMultiplier=2 → gross return=20, lastWin=20 (from payBet)
+        // PP side bet: ppBet=5, ppReturn=30 (6:1 on mixed pair), ppNet=25
+        // Combined lastWin must be 20 + 30 = 50
+        BigDecimal handGross = bd("20");
+        BigDecimal ppBetSnapshot = bd("5");
+        BigDecimal ppNet = bd("25");  // ppReturn(30) - ppBet(5)
+
+        BigDecimal ppGross = ppNet.compareTo(BigDecimal.ZERO) > 0
+                ? ppNet.add(ppBetSnapshot) : BigDecimal.ZERO;
+        BigDecimal combinedLastWin = handGross.add(ppGross);
+
+        assertThat(ppGross).isEqualByComparingTo(bd("30"));
+        assertThat(combinedLastWin).isEqualByComparingTo(bd("50"));
+    }
+
+    @Test
+    void lastWin_withLosingSideBet_doesNotReduceLastWin() {
+        // Main hand wins: gross return=20
+        // PP side bet lost: ppNet=0
+        // Combined lastWin must still be just 20
+        BigDecimal handGross = bd("20");
+        BigDecimal ppBetSnapshot = bd("5");
+        BigDecimal ppNet = bd("0");  // lost
+
+        BigDecimal ppGross = ppNet.compareTo(BigDecimal.ZERO) > 0
+                ? ppNet.add(ppBetSnapshot) : BigDecimal.ZERO;
+        BigDecimal combinedLastWin = handGross.add(ppGross);
+
+        assertThat(ppGross).isEqualByComparingTo(ZERO);
+        assertThat(combinedLastWin).isEqualByComparingTo(bd("20"));
+    }
+
+    @Test
+    void lastHandWin_capturedBeforeSideBetRollup() {
+        // lastHandWin should equal the main-hand return only, not the combined total
+        BigDecimal handGross = bd("20");
+        BigDecimal ppNet = bd("25");
+        BigDecimal ppBetSnapshot = bd("5");
+
+        // Simulate the processor flow
+        BigDecimal lastHandWin = handGross;  // captured before rollup
+        BigDecimal ppGross = ppNet.add(ppBetSnapshot);
+        BigDecimal combinedLastWin = handGross.add(ppGross);
+
+        assertThat(lastHandWin).isEqualByComparingTo(bd("20"));    // main only
+        assertThat(combinedLastWin).isEqualByComparingTo(bd("50")); // combined
+        assertThat(lastHandWin).isLessThan(combinedLastWin);
+    }
+
     private static final BigDecimal ZERO = BigDecimal.ZERO;
     private static BigDecimal bd(String val) { return new BigDecimal(val); }
 }

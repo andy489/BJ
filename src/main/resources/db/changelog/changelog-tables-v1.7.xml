@@ -46,4 +46,12 @@
         </addColumn>
     </changeSet>
 
+    <!-- Main-hand-only gross return stored separately so breakdown in Last Win box
+         can show hand vs side-bet components; lastWin is now the combined total -->
+    <changeSet author="stoevand" id="40">
+        <addColumn tableName="wallets">
+            <column name="last_hand_win" type="DECIMAL(38,2)" defaultValueNumeric="0.00"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
