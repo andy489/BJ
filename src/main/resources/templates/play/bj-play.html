@@ -1214,8 +1214,8 @@
         var totalDuration = 0;
 
         if (isInitialDeal) {
-            /* Visual deal order: player[0] immediately, dealer[0] after 1×delay,
-               player[1] after 1×delay, dealer[1] after 2×delay. */
+            /* Visual deal order: player[0] after 1×delay, dealer[0] after 2×delay,
+               player[1] after 2×delay, dealer[1] after 3×delay. */
             var dealerCards = Array.from(document.querySelectorAll('.dealer-cards .play-card:not(.double-down-card)'));
             var playerCards = Array.from(document.querySelectorAll('.player-cards .play-card:not(.double-down-card)'));
 
@@ -1225,19 +1225,19 @@
                 c.style.willChange = 'transform';
             });
 
-            /* Reveal times: player[0]=0, dealer[0]=1×, player[1]=1×, dealer[1]=2× */
+            /* Reveal times: player[0]=1×, dealer[0]=2×, player[1]=2×, dealer[1]=3× */
             var revealSchedule = [
-                { card: playerCards[0], t: 0 },
-                { card: dealerCards[0], t: 1 * BJ_DEALER_REVEAL_MS },
-                { card: playerCards[1], t: 1 * BJ_DEALER_REVEAL_MS },
-                { card: dealerCards[1], t: 2 * BJ_DEALER_REVEAL_MS }
+                { card: playerCards[0], t: 1 * BJ_DEALER_REVEAL_MS },
+                { card: dealerCards[0], t: 2 * BJ_DEALER_REVEAL_MS },
+                { card: playerCards[1], t: 2 * BJ_DEALER_REVEAL_MS },
+                { card: dealerCards[1], t: 3 * BJ_DEALER_REVEAL_MS }
             ].filter(function (e) { return e.card; });
 
             revealSchedule.forEach(function (e) {
                 setTimeout(function () { e.card.style.visibility = ''; }, e.t);
             });
 
-            totalDuration = 2 * BJ_DEALER_REVEAL_MS + 420;
+            totalDuration = 3 * BJ_DEALER_REVEAL_MS + 420;
             setTimeout(function () {
                 allCards.forEach(function (c) { c.style.willChange = 'auto'; });
             }, totalDuration);
