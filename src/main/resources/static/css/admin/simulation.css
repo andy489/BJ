@@ -6,6 +6,21 @@
     --card-radius: 18px;
 }
 
+/* ── Page-level scrollbar ── */
+.body-simulation {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 211, 71, 0.28) transparent;
+}
+.body-simulation::-webkit-scrollbar { width: 6px; }
+.body-simulation::-webkit-scrollbar-track { background: transparent; }
+.body-simulation::-webkit-scrollbar-thumb {
+    background: rgba(255, 211, 71, 0.28);
+    border-radius: 3px;
+}
+.body-simulation::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 211, 71, 0.5);
+}
+
 .body-simulation {
     /* Deep casino-dark base with a subtle teal-to-navy gradient */
     background-color: #0a1a14;
@@ -33,8 +48,8 @@
 }
 
 .sim-container {
-    width: 100%;
-    max-width: 760px;
+    width: 92%;
+    max-width: 1100px;
     background: var(--glass-bg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -529,6 +544,8 @@
     max-width: 680px;
     max-height: 90vh;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 211, 71, 0.28) transparent;
     background: #0d1f18;
     border: 1.5px solid rgba(255, 211, 71, 0.3);
     border-radius: 18px;
@@ -537,6 +554,13 @@
     display: flex;
     flex-direction: column;
 }
+.sim-modal::-webkit-scrollbar { width: 5px; }
+.sim-modal::-webkit-scrollbar-track { background: transparent; }
+.sim-modal::-webkit-scrollbar-thumb {
+    background: rgba(255, 211, 71, 0.28);
+    border-radius: 3px;
+}
+.sim-modal::-webkit-scrollbar-thumb:hover { background: rgba(255, 211, 71, 0.5); }
 
 .sim-modal-header {
     display: flex;
@@ -856,6 +880,17 @@
     overflow-x: auto;
     margin-bottom: 0.7rem;
     border-radius: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 211, 71, 0.3) transparent;
+}
+.sim-formula-table-wrap::-webkit-scrollbar { height: 4px; }
+.sim-formula-table-wrap::-webkit-scrollbar-track { background: transparent; }
+.sim-formula-table-wrap::-webkit-scrollbar-thumb {
+    background: rgba(255, 211, 71, 0.3);
+    border-radius: 2px;
+}
+.sim-formula-table-wrap::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 211, 71, 0.55);
 }
 
 .sim-formula-table {
@@ -979,3 +1014,15 @@
 [data-theme="light"] .sim-modal-td--stand  { color: #1a55a0; }
 [data-theme="light"] .sim-modal-td--double { color: #1a7a3a; }
 [data-theme="light"] .sim-modal-td--split  { color: #7a14a0; }
+
+/* ── Light-theme scrollbar overrides ── */
+[data-theme="light"] .body-simulation {
+    scrollbar-color: rgba(120, 90, 0, 0.3) transparent;
+}
+[data-theme="light"] .body-simulation::-webkit-scrollbar-thumb { background: rgba(120, 90, 0, 0.3); }
+[data-theme="light"] .body-simulation::-webkit-scrollbar-thumb:hover { background: rgba(120, 90, 0, 0.55); }
+[data-theme="light"] .sim-formula-table-wrap {
+    scrollbar-color: rgba(120, 90, 0, 0.3) transparent;
+}
+[data-theme="light"] .sim-formula-table-wrap::-webkit-scrollbar-thumb { background: rgba(120, 90, 0, 0.3); }
+[data-theme="light"] .sim-formula-table-wrap::-webkit-scrollbar-thumb:hover { background: rgba(120, 90, 0, 0.55); }
