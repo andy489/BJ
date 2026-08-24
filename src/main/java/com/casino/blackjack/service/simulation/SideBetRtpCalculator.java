@@ -120,6 +120,7 @@ public final class SideBetRtpCalculator {
     public record SideBetRtpResult(
             double ppRtp, double t3Rtp,
             double ppRtp6, double t3Rtp6,
+            double ppRtp8, double t3Rtp8,
             double ppPerfect, double ppColoured, double ppMixed,
             double t3SuitedThree, double t3StraightFlush,
             double t3ThreeOfAKind, double t3Straight, double t3Flush
@@ -131,6 +132,8 @@ public final class SideBetRtpCalculator {
                 twentyOneThreeRtp(pt),
                 perfectPairsRtpNDeck(6, pt),
                 twentyOneThreeRtpNDeck(6, pt),
+                perfectPairsRtpNDeck(8, pt),
+                twentyOneThreeRtpNDeck(8, pt),
                 pt.getPpPerfect(), pt.getPpColoured(), pt.getPpMixed(),
                 pt.getT3SuitedThreeOfAKind(), pt.getT3StraightFlush(),
                 pt.getT3ThreeOfAKind(), pt.getT3Straight(), pt.getT3Flush()

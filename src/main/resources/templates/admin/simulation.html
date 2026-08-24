@@ -112,6 +112,9 @@
                         <span class="sim-sidebet-deck-label">6 deck</span>
                         <span class="sim-sidebet-deck-val"
                               th:text="${#numbers.formatDecimal(sideBetRtp.ppRtp6(), 1, 2)} + '%'"></span>
+                        <span class="sim-sidebet-deck-label">8 deck</span>
+                        <span class="sim-sidebet-deck-val"
+                              th:text="${#numbers.formatDecimal(sideBetRtp.ppRtp8(), 1, 2)} + '%'"></span>
                     </div>
                     <div class="sim-sidebet-payouts">
                         <span class="sim-sidebet-payout-item"><span class="sim-sidebet-pip sim-sidebet-pip--perfect">PP</span>
@@ -140,6 +143,9 @@
                         <span class="sim-sidebet-deck-label">6 deck</span>
                         <span class="sim-sidebet-deck-val"
                               th:text="${#numbers.formatDecimal(sideBetRtp.t3Rtp6(), 1, 2)} + '%'"></span>
+                        <span class="sim-sidebet-deck-label">8 deck</span>
+                        <span class="sim-sidebet-deck-val"
+                              th:text="${#numbers.formatDecimal(sideBetRtp.t3Rtp8(), 1, 2)} + '%'"></span>
                     </div>
                     <div class="sim-sidebet-payouts">
                         <span class="sim-sidebet-payout-item"><span class="sim-sidebet-pip sim-sidebet-pip--tok">S3K</span>
@@ -218,29 +224,33 @@
                         </p>
                         <div class="sim-formula-table-wrap">
                             <table class="sim-formula-table">
-                                <thead><tr><th>Hand</th><th>Cards remaining</th><th>General formula</th><th>N = 6</th></tr></thead>
+                                <thead><tr><th>Hand</th><th>Cards remaining</th><th>General formula</th><th>N = 6</th><th>N = 8</th></tr></thead>
                                 <tbody>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--perfect">PP</span> Perfect</td>
                                         <td>N − 1 copies (same rank &amp; suit)</td>
                                         <td>(N−1) / (52N−1)</td>
                                         <td>5 / 311</td>
+                                        <td>7 / 415</td>
                                     </tr>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--col">CP</span> Coloured</td>
                                         <td>N copies (same colour, other suit)</td>
                                         <td>N / (52N−1)</td>
                                         <td>6 / 311</td>
+                                        <td>8 / 415</td>
                                     </tr>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--mix">MP</span> Mixed</td>
                                         <td>2N copies (two opposite-colour suits)</td>
                                         <td>2N / (52N−1)</td>
                                         <td>12 / 311</td>
+                                        <td>16 / 415</td>
                                     </tr>
                                     <tr class="sim-formula-total-row">
-                                        <td colspan="3">RTP (6 decks)</td>
+                                        <td colspan="3">RTP</td>
                                         <td th:text="${#numbers.formatDecimal(sideBetRtp.ppRtp6(),1,4)} + '%'"></td>
+                                        <td th:text="${#numbers.formatDecimal(sideBetRtp.ppRtp8(),1,4)} + '%'"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -250,6 +260,11 @@
                             + (6/311)×<span th:text="${#numbers.formatDecimal(sideBetRtp.ppColoured(),1,0)}"></span>
                             + (12/311)×<span th:text="${#numbers.formatDecimal(sideBetRtp.ppMixed(),1,0)}"></span>
                             = <strong th:text="${#numbers.formatDecimal(sideBetRtp.ppRtp6(),1,4)} + '%'"></strong>
+                            &nbsp;·&nbsp;
+                            RTP (N=8) = (7/415)×<span th:text="${#numbers.formatDecimal(sideBetRtp.ppPerfect(),1,0)}"></span>
+                            + (8/415)×<span th:text="${#numbers.formatDecimal(sideBetRtp.ppColoured(),1,0)}"></span>
+                            + (16/415)×<span th:text="${#numbers.formatDecimal(sideBetRtp.ppMixed(),1,0)}"></span>
+                            = <strong th:text="${#numbers.formatDecimal(sideBetRtp.ppRtp8(),1,4)} + '%'"></strong>
                         </div>
                         <p class="sim-formula-note">
                             Removing one card from a finite deck shifts probabilities — fewer copies of the drawn card remain, so Perfect (same suit) becomes rarer relative to Mixed.
@@ -323,45 +338,59 @@
                         <div class="sim-formula-sub">N decks — ordered triples without replacement</div>
                         <p class="sim-formula-explain">
                             Total ordered triples from N×52 cards: <strong>T = (52N)(52N−1)(52N−2)</strong>.
-                            For N = 6: T = 312 × 311 × 310 = <strong>30,079,920</strong>
+                            For N = 6: T = 312 × 311 × 310 = <strong>30,079,920</strong> &nbsp;·&nbsp;
+                            For N = 8: T = 416 × 415 × 414 = <strong>71,472,960</strong>
                         </p>
                         <div class="sim-formula-table-wrap">
                             <table class="sim-formula-table">
-                                <thead><tr><th>Hand</th><th>Ordered triples formula</th><th>N = 6 count</th><th>N = 6 prob</th></tr></thead>
+                                <thead><tr><th>Hand</th><th>Ordered triples formula</th><th>N = 6 count</th><th>N = 6 prob</th><th>N = 8 count</th><th>N = 8 prob</th></tr></thead>
                                 <tbody>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--tok">S3K</span></td>
                                         <td>52 × N(N−1)(N−2)</td>
                                         <td>52×6×5×4 = <strong>6,240</strong></td>
                                         <td>0.0207%</td>
+                                        <td>52×8×7×6 = <strong>17,472</strong></td>
+                                        <td>0.0244%</td>
                                     </tr>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--sf">SF</span></td>
                                         <td>12 × 4 × 3! × N³</td>
                                         <td>12×4×6×216 = <strong>62,208</strong></td>
                                         <td>0.2068%</td>
+                                        <td>12×4×6×512 = <strong>147,456</strong></td>
+                                        <td>0.2063%</td>
                                     </tr>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--tok2">3K</span></td>
                                         <td>13 × (4N)(4N−1)(4N−2) − S3K</td>
                                         <td>13×24×23×22 − 6,240 = <strong>151,632</strong></td>
                                         <td>0.5041%</td>
+                                        <td>13×32×31×30 − 17,472 = <strong>369,408</strong></td>
+                                        <td>0.5168%</td>
                                     </tr>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--str">S</span></td>
                                         <td>12 × 3! × (4N)³ − SF</td>
                                         <td>12×6×24³ − 62,208 = <strong>933,120</strong></td>
                                         <td>3.1021%</td>
+                                        <td>12×6×32³ − 147,456 = <strong>2,211,840</strong></td>
+                                        <td>3.0946%</td>
                                     </tr>
                                     <tr>
                                         <td><span class="sim-sidebet-pip sim-sidebet-pip--fl">F</span></td>
                                         <td>4 × [(13N)(13N−1)(13N−2) − SF/suit − S3K/suit]</td>
                                         <td>4×(78×77×76 − 12×6×216 − 13×120) = <strong>1,757,376</strong></td>
                                         <td>5.8424%</td>
+                                        <td>4×(104×103×102 − 12×6×512 − 13×336) = <strong>4,205,568</strong></td>
+                                        <td>5.8843%</td>
                                     </tr>
                                     <tr class="sim-formula-total-row">
-                                        <td colspan="3">RTP (6 decks)</td>
+                                        <td colspan="2">Total T &amp; RTP</td>
+                                        <td>312×311×310 = 30,079,920</td>
                                         <td th:text="${#numbers.formatDecimal(sideBetRtp.t3Rtp6(),1,4)} + '%'"></td>
+                                        <td>416×415×414 = 71,472,960</td>
+                                        <td th:text="${#numbers.formatDecimal(sideBetRtp.t3Rtp8(),1,4)} + '%'"></td>
                                     </tr>
                                 </tbody>
                             </table>
