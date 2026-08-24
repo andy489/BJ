@@ -16,6 +16,8 @@ public class GameProperties {
 
     private int resultDisplayMs = 2500;
 
+    private int dealerRevealMs = 500;
+
     public int getMaxSplits() {
         return maxSplits;
     }
@@ -46,5 +48,13 @@ public class GameProperties {
 
     public void setResultDisplayMs(int resultDisplayMs) {
         this.resultDisplayMs = resultDisplayMs;
+    }
+
+    public int getDealerRevealMs() {
+        return dealerRevealMs;
+    }
+
+    public void setDealerRevealMs(int dealerRevealMs) {
+        this.dealerRevealMs = dealerRevealMs;
     }
 }

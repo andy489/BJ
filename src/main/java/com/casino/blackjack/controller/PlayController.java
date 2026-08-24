@@ -25,6 +25,7 @@ public class PlayController extends BaseController {
     private final BetHistoryService betHistoryService;
     private final UserService userService;
     private final int resultDisplayMs;
+    private final int dealerRevealMs;
 
     public PlayController(GameService gameService,
                           BetHistoryService betHistoryService,
@@ -34,6 +35,7 @@ public class PlayController extends BaseController {
         this.betHistoryService = betHistoryService;
         this.userService = userService;
         this.resultDisplayMs = gameProperties.getResultDisplayMs();
+        this.dealerRevealMs = gameProperties.getDealerRevealMs();
     }
 
     @GetMapping
@@ -43,6 +45,7 @@ public class PlayController extends BaseController {
         mav.addObject("game", table);
         mav.addObject("betHistory", betHistoryService.getLast10(userService.getCurrentLoggedUserId()));
         mav.addObject("resultDisplayMs", resultDisplayMs);
+        mav.addObject("dealerRevealMs", dealerRevealMs);
         return super.view("play/bj-play", mav);
     }
 

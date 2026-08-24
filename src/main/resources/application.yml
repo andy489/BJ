@@ -70,6 +70,7 @@ game:
     max-splits: 4
     show-card-shuffler: true
     result-display-ms: 2500
+    dealer-reveal-ms: 500
     # Change to any DeckScenario enum value for local dev testing; must stay RANDOM in prod.
     deck-scenario: RANDOM
 

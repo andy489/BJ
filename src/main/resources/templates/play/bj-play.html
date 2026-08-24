@@ -463,7 +463,7 @@
                 </div>
             </div>
             <!-- ── Result overlay — fades out after BJ_RESULT_DISPLAY_MS; auto-reload then clears state ── -->
-            <div class="result-overlay" th:if="${game.finalized != null and game.finalized}" id="result-overlay">
+            <div class="result-overlay" th:if="${game.finalized != null and game.finalized}" id="result-overlay" style="visibility:hidden">
                 <span class="result-overlay-label result-overlay--win"
                       th:if="${game.handMultiplier != null and game.handMultiplier > 1.0}"
                       th:text="#{game.result.win}">WIN</span>
@@ -1179,6 +1179,7 @@
     var BJ_DPP_BET        = /*[[${game.wallet.dealerPerfectPairsBet}]]*/ 0;
     var BJ_HAND_MULTI     = /*[[${game.handMultiplier}]]*/ null;
     var BJ_RESULT_DISPLAY_MS = /*[[${resultDisplayMs}]]*/ 2500;
+    var BJ_DEALER_REVEAL_MS  = /*[[${dealerRevealMs}]]*/ 500;
 </script>
 <script>
     (function () {
@@ -1372,19 +1373,22 @@
             }
         }
 
-        /* ── Finalized result overlay: fade out and remove; cards stay until Deal or Clear ── */
+        /* ── Finalized result overlay: reveal after dealer-reveal delay, then fade out ── */
         if (BJ_FINALIZED) {
             var resultOverlay = document.getElementById('result-overlay');
             if (resultOverlay) {
                 var fadeDuration = 600; /* ms for CSS fade-out */
-                var displayDelay = BJ_RESULT_DISPLAY_MS - fadeDuration;
-                if (displayDelay < 0) displayDelay = 0;
                 setTimeout(function () {
-                    resultOverlay.classList.add('result-overlay--fade-out');
+                    resultOverlay.style.visibility = '';
+                    var displayDelay = BJ_RESULT_DISPLAY_MS - fadeDuration;
+                    if (displayDelay < 0) displayDelay = 0;
                     setTimeout(function () {
-                        resultOverlay.remove();
-                    }, fadeDuration);
-                }, displayDelay);
+                        resultOverlay.classList.add('result-overlay--fade-out');
+                        setTimeout(function () {
+                            resultOverlay.remove();
+                        }, fadeDuration);
+                    }, displayDelay);
+                }, BJ_DEALER_REVEAL_MS);
             }
         }
     })();
