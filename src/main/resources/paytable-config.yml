@@ -1,0 +1,22 @@
+game:
+  blackjack:
+    paytable:
+      # ── Main hand ────────────────────────────────────────────────────────
+      # Net-profit ratio per unit bet (e.g. bj: 1.5 = 3:2 payout)
+      bj: 1.5              # Blackjack 3:2
+      insurance: 2.0       # Insurance 2:1
+      surrender: 0.5       # Surrender: half bet returned
+
+      # ── Perfect Pairs ────────────────────────────────────────────────────
+      # Net-profit ratio per unit PP bet
+      pp-mixed: 5.0        # Mixed pair       5:1
+      pp-coloured: 10.0    # Coloured pair   10:1
+      pp-perfect: 30.0     # Perfect pair    30:1
+
+      # ── 21+3 ─────────────────────────────────────────────────────────────
+      # Net-profit ratio per unit 21+3 bet
+      t3-flush: 5.0                  # Flush             5:1
+      t3-straight: 10.0              # Straight         10:1
+      t3-three-of-a-kind: 30.0       # Three-of-a-Kind  30:1
+      t3-straight-flush: 40.0        # Straight Flush   40:1
+      t3-suited-three-of-a-kind: 100.0  # Suited 3oK    100:1

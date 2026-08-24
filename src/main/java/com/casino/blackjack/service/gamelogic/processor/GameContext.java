@@ -1,5 +1,6 @@
 package com.casino.blackjack.service.gamelogic.processor;
 
+import com.casino.blackjack.config.PaytableProperties;
 import com.casino.blackjack.model.entity.GameEntity;
 import com.casino.blackjack.model.entity.WalletEntity;
 import com.casino.blackjack.repo.LastGameRepository;
@@ -23,5 +24,6 @@ public record GameContext(
         LocalDateTimeProvider clock,
         ObjectMapper om,
         int maxSplits,
-        int resultDisplayMs
+        int resultDisplayMs,
+        PaytableProperties paytable
 ) {}

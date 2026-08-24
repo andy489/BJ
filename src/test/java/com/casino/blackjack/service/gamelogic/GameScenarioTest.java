@@ -1,9 +1,10 @@
 package com.casino.blackjack.service.gamelogic;
 
+import com.casino.blackjack.config.GameProperties;
+import com.casino.blackjack.config.PaytableProperties;
 import com.casino.blackjack.service.BasicStrategy;
 import com.casino.blackjack.service.gamelogic.dto.Card;
 import com.casino.blackjack.service.gamelogic.dto.Game;
-import com.casino.blackjack.config.GameProperties;
 import com.casino.blackjack.service.gamelogic.processor.DoubleDownConfirmProcessor;
 import com.casino.blackjack.service.gamelogic.processor.GameContext;
 import com.casino.blackjack.service.gamelogic.processor.GameStateProcessorChain;
@@ -42,10 +43,11 @@ class GameScenarioTest {
 
     private static final DoubleDownConfirmProcessor DD_CONFIRM = new DoubleDownConfirmProcessor();
     private static final BasicStrategy BASIC_STRATEGY = new BasicStrategy();
+    private static final PaytableProperties PT = new PaytableProperties();
 
     /** Minimal context for pure-logic tests — all wallet/repo fields are null (unused by pure processors). */
     private static GameContext ctx(Game game) {
-        return new GameContext(game, null, null, null, null, null, null, null, null, null, 4, 3000);
+        return new GameContext(game, null, null, null, null, null, null, null, null, null, 4, 3000, PT);
     }
 
     /** Convenience: build a freshly-dealt game with fixed cards and run the processor chain. */
@@ -176,7 +178,7 @@ class GameScenarioTest {
 
         // Dealer has no BJ → player BJ beats dealer → 3:2 payout (2.5×)
         assertThat(game.getFinalized()).isTrue();
-        assertThat(game.getHandMultiplier()).isEqualTo(BJ_MULTI);
+        assertThat(game.getHandMultiplier()).isEqualTo(PT.bjMulti());
         assertThat(game.getAvailableChoices())
                 .contains(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL);
     }
@@ -220,7 +222,7 @@ class GameScenarioTest {
 
         // Dealer upcard 6 cannot make BJ → player BJ auto-wins, game finalized at deal time
         assertThat(game.getFinalized()).isTrue();
-        assertThat(game.getHandMultiplier()).isEqualTo(BJ_MULTI);
+        assertThat(game.getHandMultiplier()).isEqualTo(PT.bjMulti());
         // No even-money choice — settled immediately
         assertThat(game.getAvailableChoices())
                 .doesNotContain(CHOICE_EVEN_MONEY_YES, CHOICE_EVEN_MONEY_NO);
@@ -521,7 +523,7 @@ class GameScenarioTest {
         CHAIN.process(ctx(game));
 
         assertThat(game.getFinalized()).isTrue();
-        assertThat(game.getHandMultiplier()).isEqualTo(SURRENDER_MULTI);
+        assertThat(game.getHandMultiplier()).isEqualTo(PT.surrenderMulti());
         assertThat(game.getAvailableChoices()).containsExactly(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL);
     }
 

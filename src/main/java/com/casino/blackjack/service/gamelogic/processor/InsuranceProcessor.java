@@ -14,7 +14,6 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURA
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_INSURANCE_YES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_SPLIT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_STAND;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.INSURANCE_MULTIPLIER;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 
 public class InsuranceProcessor implements GameStateProcessor {
@@ -40,7 +39,7 @@ public class InsuranceProcessor implements GameStateProcessor {
             game.setDealerSecondCard(null);
 
             if (game.getInsurance()) {
-                game.setInsuranceMultiplier(INSURANCE_MULTIPLIER);
+                game.setInsuranceMultiplier(ctx.paytable().insuranceMulti());
             }
 
             game.setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));

@@ -1,5 +1,6 @@
 package com.casino.blackjack.service.simulation;
 
+import com.casino.blackjack.config.PaytableProperties;
 import com.casino.blackjack.service.gamelogic.dto.Card;
 import com.casino.blackjack.service.gamelogic.dto.Count;
 import com.casino.blackjack.service.gamelogic.dto.Game;
@@ -17,6 +18,12 @@ import static com.casino.blackjack.service.simulation.BasicStrategyAdvisor.Actio
 
 @Service
 public class SimulationService {
+
+    private final double bjMulti;
+
+    public SimulationService(PaytableProperties paytableProperties) {
+        this.bjMulti = paytableProperties.bjMulti();
+    }
 
     public SimulationResult simulate(long n, double bet, int threads, SimulationStrategy strategy) {
         if (!strategy.isImplemented()) {
@@ -102,7 +109,7 @@ public class SimulationService {
             if (playerBust) {
                 returned = 0; losses++;
             } else if (playerBJ && !dealerBJ) {
-                returned = BET * BJ_MULTI; blackjacks++; wins++;
+                returned = BET * bjMulti; blackjacks++; wins++;
             } else if (playerBJ && dealerBJ) {
                 returned = BET * PUSH_MULTI; pushes++;
             } else if (dealerBust) {
@@ -147,7 +154,7 @@ public class SimulationService {
                 dealerCards.add(dealerHidden);
                 game.dealerPlayUntilSoft17Public();
                 boolean dealerBJ = game.checkBJCards(dealerCards);
-                double returned = dealerBJ ? BET * PUSH_MULTI : BET * BJ_MULTI;
+                double returned = dealerBJ ? BET * PUSH_MULTI : BET * bjMulti;
                 if (!dealerBJ) { blackjacks++; wins++; } else pushes++;
                 totalReturned += returned;
                 continue;

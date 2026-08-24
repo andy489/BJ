@@ -4,7 +4,6 @@ import com.casino.blackjack.service.gamelogic.dto.Game;
 
 import java.util.List;
 
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_EVEN_MONEY_NO;
@@ -29,7 +28,7 @@ public class EvenMoneyProcessor implements GameStateProcessor {
         if (game.getLastTakenChoicePublic().equals(CHOICE_EVEN_MONEY_YES)) {
             game.setHandMultiplier(DOUBLE_MULTI);
         } else {
-            game.setHandMultiplier(game.checkBJCards(game.getDealerCards()) ? PUSH_MULTI : BJ_MULTI);
+            game.setHandMultiplier(game.checkBJCards(game.getDealerCards()) ? PUSH_MULTI : ctx.paytable().bjMulti());
         }
 
         game.setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL));

@@ -23,8 +23,6 @@ import java.util.Optional;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ACE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_CARDS_CNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_CNT;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_DISPLAY_CNT;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_CHIP_OPERATIONS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
@@ -45,13 +43,12 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.DISPLAY_BUST_
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.DOUBLE_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ERRORS;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.INITIAL_DEALT_CARD_COUNT;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.INSURANCE_MULTIPLIER;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE_RANK;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_DISPLAY_CNT;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_ID_STR;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.NO_TAKEN_CHOICES;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ONE_CARD;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.PUSH_MULTI;
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.SURRENDER_MULTI;
+import static com.casino.blackjack.service.gamelogic.util.GameUtil.NINE_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.TEN_RANK;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 
@@ -60,6 +57,12 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.ZERO_MULTI;
 @Accessors(chain = true)
 @ToString
 public class Game {
+
+    // Default multipliers used in the self-contained autoPlay/autoFinalize path.
+    // Real processor-chain path reads these from PaytableProperties via GameContext.
+    private static final double BJ_MULTI           = 2.5;
+    private static final double SURRENDER_MULTI    = 0.5;
+    private static final double INSURANCE_MULTIPLIER = 3.0;
 
     @ToString.Exclude
     private transient CardSource cardSource = new RngCardSource();

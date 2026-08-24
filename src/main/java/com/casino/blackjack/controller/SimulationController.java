@@ -1,5 +1,6 @@
 package com.casino.blackjack.controller;
 
+import com.casino.blackjack.config.PaytableProperties;
 import com.casino.blackjack.service.simulation.SideBetRtpCalculator;
 import com.casino.blackjack.service.simulation.SimulationResult;
 import com.casino.blackjack.service.simulation.SimulationService;
@@ -28,15 +29,18 @@ public class SimulationController extends BaseController {
     private static final int    MAX_THREADS = 4;
 
     private final SimulationService simulationService;
+    private final PaytableProperties paytableProperties;
 
-    public SimulationController(SimulationService simulationService) {
-        this.simulationService = simulationService;
+    public SimulationController(SimulationService simulationService,
+                                PaytableProperties paytableProperties) {
+        this.simulationService   = simulationService;
+        this.paytableProperties  = paytableProperties;
     }
 
     @GetMapping
     public ModelAndView form(ModelAndView mav) {
         mav.addObject("strategies", SimulationStrategy.values());
-        mav.addObject("sideBetRtp", SideBetRtpCalculator.calculate());
+        mav.addObject("sideBetRtp", SideBetRtpCalculator.calculate(paytableProperties));
         return super.view("admin/simulation", mav);
     }
 
@@ -86,7 +90,7 @@ public class SimulationController extends BaseController {
         mav.addObject("threads", threads);
         mav.addObject("spins", spins);
         mav.addObject("selectedStrategy", strategy);
-        mav.addObject("sideBetRtp", SideBetRtpCalculator.calculate());
+        mav.addObject("sideBetRtp", SideBetRtpCalculator.calculate(paytableProperties));
         return super.view("admin/simulation", mav);
     }
 

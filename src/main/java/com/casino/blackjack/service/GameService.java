@@ -73,6 +73,7 @@ public class GameService {
     private final ObjectMapper om;
     private final int maxSplits;
     private final int resultDisplayMs;
+    private final com.casino.blackjack.config.PaytableProperties paytableProperties;
 
     public GameService(LastGameRepository lastGameRepository, PastGameRepository pastGameRepository,
                        WalletRepository walletRepository, UserService userService,
@@ -81,7 +82,8 @@ public class GameService {
                        GameStateProcessorChain processorChain, DisplayProcessorChain displayProcessorChain,
                        CardSource cardSource,
                        ObjectMapper om,
-                       GameProperties gameProperties) {
+                       GameProperties gameProperties,
+                       com.casino.blackjack.config.PaytableProperties paytableProperties) {
         this.lastGameRepository = lastGameRepository;
         this.pastGameRepository = pastGameRepository;
         this.walletRepository = walletRepository;
@@ -95,6 +97,7 @@ public class GameService {
         this.om = om;
         this.maxSplits = gameProperties.getMaxSplits();
         this.resultDisplayMs = gameProperties.getResultDisplayMs();
+        this.paytableProperties = paytableProperties;
     }
 
     public Game getTable() {
@@ -437,7 +440,8 @@ public class GameService {
     private GameContext buildContext(Game game, GameEntity gameEntity, WalletEntity walletEntity) {
         return new GameContext(game, gameEntity, walletEntity,
                 lastGameRepository, pastGameRepository, walletRepository,
-                betHistoryService, basicStrategy, localDateTimeProvider, om, maxSplits, resultDisplayMs);
+                betHistoryService, basicStrategy, localDateTimeProvider, om, maxSplits, resultDisplayMs,
+                paytableProperties);
     }
 
     private Optional<GameEntity> extractLastGame() {

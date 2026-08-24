@@ -32,7 +32,7 @@ class BetManagementProcessorTest {
 
     private static GameContext ctx(Game game, WalletEntity wallet) {
         // walletRepo and lastGameRepo are null — processors must not call them in error-free paths
-        return new GameContext(game, null, wallet, null, null, null, null, null, null, null, 4, 3000);
+        return new GameContext(game, null, wallet, null, null, null, null, null, null, null, 4, 3000, new com.casino.blackjack.config.PaytableProperties());
     }
 
     private static BigDecimal bd(double v) {

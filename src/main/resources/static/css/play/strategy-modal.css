@@ -13,7 +13,7 @@
 ──────────────────────────────────────────────── */
 .strategy-btn-row {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     width: min(var(--table-w, 900px), 100%);
     margin-bottom: 0.5em;
     padding: 0 2px;
@@ -22,11 +22,10 @@
 .strategy-info-btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px 11px 5px 8px;
+    padding: 4px 10px;
     background: rgba(0, 0, 0, 0.45);
     border: 1px solid rgba(255, 211, 71, 0.35);
-    border-radius: 2em;
+    border-radius: 5px;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     color: rgba(255, 211, 71, 0.85);
@@ -67,9 +66,9 @@
     position: fixed;
     inset: 0;
     z-index: 500;
-    background: rgba(0, 0, 0, 0.78);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
     align-items: center;
     justify-content: center;
     padding: 12px;
@@ -80,7 +79,7 @@
    Modal shell
 ──────────────────────────────────────────────── */
 .strategy-modal {
-    width: min(560px, 100%);
+    width: min(640px, 100%);
     max-height: calc(100vh - 24px);
     display: flex;
     flex-direction: column;
@@ -111,11 +110,10 @@
     line-height: 1;
 }
 .strategy-modal-subtitle {
-    font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.38);
+    font-size: 0.67rem;
+    color: rgba(255, 255, 255, 0.55);
     margin-top: 3px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 .strategy-modal-close {
     background: rgba(255,255,255,0.06);
@@ -178,6 +176,17 @@
     gap: 12px;
     flex: 1;
     min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 211, 71, 0.35) transparent;
+}
+.strategy-modal-body::-webkit-scrollbar { width: 5px; }
+.strategy-modal-body::-webkit-scrollbar-track { background: transparent; }
+.strategy-modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 211, 71, 0.35);
+    border-radius: 3px;
+}
+.strategy-modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 211, 71, 0.6);
 }
 
 /* ── Tab panels ── */
@@ -185,19 +194,19 @@
 .strategy-panel--active { display: block; }
 
 /* ── Dealer header row label ── */
-.strategy-dealer-label {
-    font-size: 0.6rem;
+
+/* ── Section titles ── */
+.strategy-section-title {
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: rgba(255, 211, 71, 0.5);
-    text-align: center;
-    margin-bottom: 3px;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 2px 0;
 }
 
-/* ── Table scroll wrapper ── */
+
 .strategy-table-scroll {
-    overflow-x: auto;
     border-radius: 8px;
     border: 1px solid rgba(255, 211, 71, 0.1);
     background: rgba(0,0,0,0.2);
@@ -207,7 +216,6 @@
 .strategy-table {
     border-collapse: collapse;
     width: 100%;
-    min-width: 360px;
     font-size: 0.68rem;
     table-layout: fixed;
 }
@@ -224,8 +232,8 @@
 }
 
 .strategy-hand-col {
-    text-align: right !important;
-    padding: 3px 7px 3px 4px !important;
+    text-align: center !important;
+    padding: 3px 4px !important;
     color: rgba(255, 255, 255, 0.72) !important;
     font-weight: 700;
     white-space: nowrap;
@@ -233,6 +241,10 @@
     background: rgba(0, 0, 0, 0.3) !important;
     border-right: 1px solid rgba(255, 211, 71, 0.18) !important;
     font-size: 0.65rem;
+}
+thead .strategy-hand-col {
+    padding: 2px 4px !important;
+    height: 1px;
 }
 
 .strategy-table td {
@@ -260,8 +272,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 5px 10px;
-    padding: 8px 10px;
+    gap: 6px 12px;
+    padding: 10px 12px;
     background: rgba(255, 211, 71, 0.04);
     border: 1px solid rgba(255, 211, 71, 0.1);
     border-radius: 8px;
@@ -269,29 +281,91 @@
 .strategy-legend-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     font-family: "Source Sans Pro", sans-serif;
-    font-size: 0.63rem;
-    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.75);
     letter-spacing: 0.02em;
 }
 .strategy-legend-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 16px;
+    width: 22px;
+    height: 18px;
     border-radius: 3px;
-    font-size: 0.6rem;
+    font-size: 0.65rem;
     font-weight: 800;
     flex-shrink: 0;
 }
 
+.strategy-legend-axis {
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 0.68rem;
+    color: rgba(255, 211, 71, 0.55);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
 /* ── Mobile: hide label text, icon only ── */
 @media (max-width: 480px) {
-    .strategy-info-label { display: none; }
-    .strategy-info-btn   { padding: 5px 8px; }
+    .strategy-info-btn   { padding: 4px 8px; }
     .strategy-modal-body { padding: 8px 10px 12px; }
     .strategy-modal-header { padding: 10px 12px 9px; }
     .strategy-tab { padding: 6px 10px; font-size: 0.62rem; }
 }
+
+/* ────────────────────────────────────────────────
+   Payout modal tables
+──────────────────────────────────────────────── */
+.payout-note {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: -6px 0 6px;
+    line-height: 1.4;
+}
+.payout-table-wrap {
+    border-radius: 8px;
+    border: 1px solid rgba(255, 211, 71, 0.1);
+    background: rgba(0,0,0,0.2);
+}
+.payout-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.7rem;
+}
+.payout-table thead th {
+    background: rgba(255, 211, 71, 0.09);
+    color: rgba(255, 211, 71, 0.8);
+    font-weight: 700;
+    text-align: left;
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.payout-table td {
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.75);
+    vertical-align: middle;
+}
+.payout-table tbody tr:hover td {
+    background: rgba(255, 211, 71, 0.04);
+}
+.payout-val {
+    font-weight: 800;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 0.75rem;
+}
+.payout-eg {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.45);
+    white-space: nowrap;
+}
+.payout-win  { color: #7ed9a0; }
+.payout-push { color: rgba(255, 211, 71, 0.8); }
+.payout-loss { color: #e87c7c; }

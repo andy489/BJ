@@ -1,5 +1,6 @@
 package com.casino.blackjack.service.gamelogic;
 
+import com.casino.blackjack.config.PaytableProperties;
 import com.casino.blackjack.service.gamelogic.dto.Card;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SideBetEvaluatorTest {
 
+    private static final PaytableProperties PT = new PaytableProperties();
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static Card card(int suit, int rank) {
@@ -36,14 +39,14 @@ class SideBetEvaluatorTest {
     void pp_noMatch_differentRanks() {
         Card c0 = card(CLUBS_SUIT, ACE_RANK);
         Card c1 = card(CLUBS_SUIT, TWO_RANK);
-        assertThat(evalPerfectPairs(c0, c1)).isEqualTo(0.0);
+        assertThat(evalPerfectPairs(c0, c1, PT)).isEqualTo(0.0);
     }
 
     @Test
     void pp_perfect_sameRankSameSuit() {
         Card c0 = card(HEARTS_SUIT, SEVEN_RANK);
         Card c1 = card(HEARTS_SUIT, SEVEN_RANK);
-        assertThat(evalPerfectPairs(c0, c1)).isEqualTo(PP_PERFECT_MULTI);
+        assertThat(evalPerfectPairs(c0, c1, PT)).isEqualTo(PT.ppPerfectMulti());
     }
 
     @Test
@@ -51,7 +54,7 @@ class SideBetEvaluatorTest {
         // Hearts (red) vs Diamonds (red)
         Card c0 = card(HEARTS_SUIT, KING_RANK);
         Card c1 = card(DIAMONDS_SUIT, KING_RANK);
-        assertThat(evalPerfectPairs(c0, c1)).isEqualTo(PP_COLOURED_MULTI);
+        assertThat(evalPerfectPairs(c0, c1, PT)).isEqualTo(PT.ppColouredMulti());
     }
 
     @Test
@@ -59,7 +62,7 @@ class SideBetEvaluatorTest {
         // Clubs (black) vs Spades (black)
         Card c0 = card(CLUBS_SUIT, TEN_RANK);
         Card c1 = card(SPADES_SUIT, TEN_RANK);
-        assertThat(evalPerfectPairs(c0, c1)).isEqualTo(PP_COLOURED_MULTI);
+        assertThat(evalPerfectPairs(c0, c1, PT)).isEqualTo(PT.ppColouredMulti());
     }
 
     @Test
@@ -67,7 +70,7 @@ class SideBetEvaluatorTest {
         // Clubs (black) vs Hearts (red)
         Card c0 = card(CLUBS_SUIT, ACE_RANK);
         Card c1 = card(HEARTS_SUIT, ACE_RANK);
-        assertThat(evalPerfectPairs(c0, c1)).isEqualTo(PP_MIXED_MULTI);
+        assertThat(evalPerfectPairs(c0, c1, PT)).isEqualTo(PT.ppMixedMulti());
     }
 
     @Test
@@ -75,7 +78,7 @@ class SideBetEvaluatorTest {
         // Spades (black) vs Diamonds (red)
         Card c0 = card(SPADES_SUIT, QUEEN_RANK);
         Card c1 = card(DIAMONDS_SUIT, QUEEN_RANK);
-        assertThat(evalPerfectPairs(c0, c1)).isEqualTo(PP_MIXED_MULTI);
+        assertThat(evalPerfectPairs(c0, c1, PT)).isEqualTo(PT.ppMixedMulti());
     }
 
     @Test
@@ -83,21 +86,21 @@ class SideBetEvaluatorTest {
         // 10 ≠ J — strict rank equality (not 10-value grouping)
         Card c0 = card(CLUBS_SUIT, TEN_RANK);
         Card c1 = card(CLUBS_SUIT, JAKE_RANK);
-        assertThat(evalPerfectPairs(c0, c1)).isEqualTo(0.0);
+        assertThat(evalPerfectPairs(c0, c1, PT)).isEqualTo(0.0);
     }
 
     @Test
     void pp_jackAndQueenAreNotAPair() {
         Card c0 = card(SPADES_SUIT, JAKE_RANK);
         Card c1 = card(SPADES_SUIT, QUEEN_RANK);
-        assertThat(evalPerfectPairs(c0, c1)).isEqualTo(0.0);
+        assertThat(evalPerfectPairs(c0, c1, PT)).isEqualTo(0.0);
     }
 
     @Test
     void pp_perfectPairAces() {
         Card c0 = card(SPADES_SUIT, ACE_RANK);
         Card c1 = card(SPADES_SUIT, ACE_RANK);
-        assertThat(evalPerfectPairs(c0, c1)).isEqualTo(PP_PERFECT_MULTI);
+        assertThat(evalPerfectPairs(c0, c1, PT)).isEqualTo(PT.ppPerfectMulti());
     }
 
     // ══ 21+3 ════════════════════════════════════════════════════════════════
@@ -108,7 +111,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(CLUBS_SUIT, TWO_RANK);
         Card p1 = card(DIAMONDS_SUIT, FIVE_RANK);
         Card d  = card(HEARTS_SUIT, NINE_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(0.0);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(0.0);
     }
 
     @Test
@@ -117,7 +120,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(SPADES_SUIT, TWO_RANK);
         Card p1 = card(SPADES_SUIT, FIVE_RANK);
         Card d  = card(SPADES_SUIT, NINE_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_FLUSH_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3FlushMulti());
     }
 
     @Test
@@ -126,7 +129,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(CLUBS_SUIT, SEVEN_RANK);
         Card p1 = card(DIAMONDS_SUIT, NINE_RANK);
         Card d  = card(HEARTS_SUIT, EIGHT_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_STRAIGHT_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3StraightMulti());
     }
 
     @Test
@@ -135,7 +138,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(CLUBS_SUIT, ACE_RANK);
         Card p1 = card(DIAMONDS_SUIT, TWO_RANK);
         Card d  = card(HEARTS_SUIT, THREE_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_STRAIGHT_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3StraightMulti());
     }
 
     @Test
@@ -144,7 +147,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(CLUBS_SUIT, TEN_RANK);
         Card p1 = card(DIAMONDS_SUIT, JAKE_RANK);
         Card d  = card(HEARTS_SUIT, QUEEN_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_STRAIGHT_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3StraightMulti());
     }
 
     @Test
@@ -153,7 +156,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(SPADES_SUIT, JAKE_RANK);
         Card p1 = card(CLUBS_SUIT, QUEEN_RANK);
         Card d  = card(DIAMONDS_SUIT, KING_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_STRAIGHT_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3StraightMulti());
     }
 
     @Test
@@ -162,7 +165,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(CLUBS_SUIT, SEVEN_RANK);
         Card p1 = card(DIAMONDS_SUIT, SEVEN_RANK);
         Card d  = card(HEARTS_SUIT, SEVEN_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_THREE_KIND_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3ThreeOfAKindMulti());
     }
 
     @Test
@@ -171,7 +174,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(CLUBS_SUIT, ACE_RANK);
         Card p1 = card(CLUBS_SUIT, ACE_RANK);
         Card d  = card(DIAMONDS_SUIT, ACE_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_THREE_KIND_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3ThreeOfAKindMulti());
     }
 
     @Test
@@ -180,7 +183,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(HEARTS_SUIT, EIGHT_RANK);
         Card p1 = card(HEARTS_SUIT, NINE_RANK);
         Card d  = card(HEARTS_SUIT, TEN_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_STR_FLUSH_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3StraightFlushMulti());
     }
 
     @Test
@@ -189,7 +192,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(DIAMONDS_SUIT, ACE_RANK);
         Card p1 = card(DIAMONDS_SUIT, TWO_RANK);
         Card d  = card(DIAMONDS_SUIT, THREE_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_STR_FLUSH_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3StraightFlushMulti());
     }
 
     @Test
@@ -198,7 +201,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(SPADES_SUIT, JAKE_RANK);
         Card p1 = card(SPADES_SUIT, QUEEN_RANK);
         Card d  = card(SPADES_SUIT, KING_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_STR_FLUSH_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3StraightFlushMulti());
     }
 
     @Test
@@ -207,7 +210,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(SPADES_SUIT, SEVEN_RANK);
         Card p1 = card(SPADES_SUIT, SEVEN_RANK);
         Card d  = card(SPADES_SUIT, SEVEN_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_SUITED_THREE_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3SuitedThreeMulti());
     }
 
     @Test
@@ -216,7 +219,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(DIAMONDS_SUIT, ACE_RANK);
         Card p1 = card(DIAMONDS_SUIT, ACE_RANK);
         Card d  = card(DIAMONDS_SUIT, ACE_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_SUITED_THREE_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3SuitedThreeMulti());
     }
 
     @Test
@@ -226,7 +229,7 @@ class SideBetEvaluatorTest {
         Card p1 = card(CLUBS_SUIT, JAKE_RANK);
         Card d  = card(CLUBS_SUIT, QUEEN_RANK);
         // Same suit + consecutive = Straight Flush (not 3K)
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_STR_FLUSH_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3StraightFlushMulti());
     }
 
     @Test
@@ -235,7 +238,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(CLUBS_SUIT, TEN_RANK);
         Card p1 = card(DIAMONDS_SUIT, QUEEN_RANK);
         Card d  = card(HEARTS_SUIT, KING_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(0.0);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(0.0);
     }
 
     @Test
@@ -243,7 +246,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(CLUBS_SUIT, NINE_RANK);
         Card p1 = card(DIAMONDS_SUIT, QUEEN_RANK);
         Card d  = card(HEARTS_SUIT, KING_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(0.0);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(0.0);
     }
 
     @Test
@@ -252,7 +255,7 @@ class SideBetEvaluatorTest {
         Card p0 = card(HEARTS_SUIT, NINE_RANK);
         Card p1 = card(HEARTS_SUIT, NINE_RANK);
         Card d  = card(HEARTS_SUIT, NINE_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_SUITED_THREE_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3SuitedThreeMulti());
     }
 
     @Test
@@ -262,6 +265,6 @@ class SideBetEvaluatorTest {
         Card p0 = card(HEARTS_SUIT, THREE_RANK);
         Card p1 = card(HEARTS_SUIT, FOUR_RANK);
         Card d  = card(HEARTS_SUIT, FIVE_RANK);
-        assertThat(eval21_3(p0, p1, d)).isEqualTo(T3_STR_FLUSH_MULTI);
+        assertThat(eval21_3(p0, p1, d, PT)).isEqualTo(PT.t3StraightFlushMulti());
     }
 }

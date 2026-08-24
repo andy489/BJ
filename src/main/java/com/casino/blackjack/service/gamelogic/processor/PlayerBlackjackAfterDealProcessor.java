@@ -4,7 +4,6 @@ import com.casino.blackjack.service.gamelogic.dto.Game;
 
 import java.util.List;
 
-import static com.casino.blackjack.service.gamelogic.util.GameUtil.BJ_MULTI;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_DEAL;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_EVEN_MONEY_NO;
 import static com.casino.blackjack.service.gamelogic.util.GameUtil.CHOICE_EVEN_MONEY_YES;
@@ -26,7 +25,7 @@ public class PlayerBlackjackAfterDealProcessor implements GameStateProcessor {
         if (game.dealerFirstCardCannotMakeBJ()) {
             game.dealerPlayOneCard();
             game.setFinalized(true);
-            game.setHandMultiplier(BJ_MULTI);
+            game.setHandMultiplier(ctx.paytable().bjMulti());
             game.setAvailableChoices(List.of(CHOICE_DEAL));
             return ctx;
         }

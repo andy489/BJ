@@ -114,7 +114,8 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
 
         return new GameContext(result, gameEntity, ctx.walletEntity(),
                 ctx.lastGameRepo(), ctx.pastGameRepo(), ctx.walletRepo(),
-                ctx.betHistoryService(), ctx.basicStrategy(), ctx.clock(), ctx.om(), ctx.maxSplits(), ctx.resultDisplayMs());
+                ctx.betHistoryService(), ctx.basicStrategy(), ctx.clock(), ctx.om(), ctx.maxSplits(), ctx.resultDisplayMs(),
+                ctx.paytable());
     }
 
     private void settleSideBets(GameContext ctx, GameEntity gameEntity) {
@@ -154,7 +155,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
             Card p1 = initialPlayerCards.get(1);
 
             if (hasPP) {
-                double multi = SideBetEvaluator.evalPerfectPairs(p0, p1);
+                double multi = SideBetEvaluator.evalPerfectPairs(p0, p1, ctx.paytable());
                 BigDecimal ppReturn = ppBet.multiply(BigDecimal.valueOf(multi));
                 BigDecimal ppNet = ppReturn.subtract(ppBet).max(BigDecimal.ZERO);
                 ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(ppReturn));
@@ -165,7 +166,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
             }
 
             if (hasT3) {
-                double multi = SideBetEvaluator.eval21_3(p0, p1, dealerUpCard);
+                double multi = SideBetEvaluator.eval21_3(p0, p1, dealerUpCard, ctx.paytable());
                 BigDecimal t3Return = t3Bet.multiply(BigDecimal.valueOf(multi));
                 BigDecimal t3Net = t3Return.subtract(t3Bet).max(BigDecimal.ZERO);
                 ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(t3Return));
@@ -178,7 +179,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
             if (hasDPP && initialDealerCardsJson != null) {
                 List<Card> initialDealerCards = ctx.om().readValue(initialDealerCardsJson, new TypeReference<>() {});
                 if (initialDealerCards.size() >= 2) {
-                    double multi = SideBetEvaluator.evalPerfectPairs(initialDealerCards.get(0), initialDealerCards.get(1));
+                    double multi = SideBetEvaluator.evalPerfectPairs(initialDealerCards.get(0), initialDealerCards.get(1), ctx.paytable());
                     BigDecimal dppReturn = dppBet.multiply(BigDecimal.valueOf(multi));
                     BigDecimal dppNet = dppReturn.subtract(dppBet).max(BigDecimal.ZERO);
                     ctx.walletEntity().setBalance(ctx.walletEntity().getBalance().add(dppReturn));

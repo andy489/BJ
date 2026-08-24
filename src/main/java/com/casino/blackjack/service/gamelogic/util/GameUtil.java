@@ -69,11 +69,8 @@ public class GameUtil {
     public static final String NO_ID_STR = "NO ID";
 
     public static final Double ZERO_MULTI = 0.0d;
-    public static final Double SURRENDER_MULTI = 0.5d;
     public static final Double PUSH_MULTI = 1.0d;
-    public static final Double INSURANCE_MULTIPLIER = 3.0d;
     public static final Double DOUBLE_MULTI = 2.0d;
-    public static final Double BJ_MULTI = 2.5d;
     /** Sentinel: multiplier not yet resolved — will be computed from score at finalization. */
     public static final Double PENDING_MULTI = -1.0d;
 

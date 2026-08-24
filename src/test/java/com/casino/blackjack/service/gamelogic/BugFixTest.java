@@ -124,7 +124,7 @@ class BugFixTest {
         GameContext ctx = new GameContext(
                 game, gameEntity, wallet,
                 null, null, null, null, null, null, null,
-                4, 3000
+                4, 3000, new com.casino.blackjack.config.PaytableProperties()
         );
 
         assertThat(processor.canProcess(ctx)).isFalse();
@@ -153,7 +153,7 @@ class BugFixTest {
         GameContext ctx = new GameContext(
                 game, gameEntity, wallet,
                 null, null, null, null, null, null, null,
-                4, 3000
+                4, 3000, new com.casino.blackjack.config.PaytableProperties()
         );
 
         assertThat(processor.canProcess(ctx)).isTrue();
@@ -184,7 +184,7 @@ class BugFixTest {
         GameContext ctx = new GameContext(
                 game, null, wallet,
                 null, null, null, null, null, null, null,
-                4, 3000
+                4, 3000, new com.casino.blackjack.config.PaytableProperties()
         );
 
         processor.process(ctx);
@@ -253,7 +253,7 @@ class BugFixTest {
 
         Game game = new Game().makeChoice(CHOICE_CLEAR_LAST_BET);
         GameContext ctx = new GameContext(game, null, walletEntity,
-                null, null, walletRepo, null, null, null, null, 4, 3000);
+                null, null, walletRepo, null, null, null, null, 4, 3000, new com.casino.blackjack.config.PaytableProperties());
 
         com.casino.blackjack.service.gamelogic.processor.ClearLastBetProcessor processor =
                 new com.casino.blackjack.service.gamelogic.processor.ClearLastBetProcessor();
@@ -489,7 +489,7 @@ class BugFixTest {
 
         com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
         GameContext ctx = new GameContext(game, gameEntity, wallet,
-                lastGameRepo, null, null, null, null, null, om, 4, 3000);
+                lastGameRepo, null, null, null, null, null, om, 4, 3000, new com.casino.blackjack.config.PaytableProperties());
 
         processor.process(ctx);
 
@@ -522,7 +522,7 @@ class BugFixTest {
 
         com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
         GameContext ctx = new GameContext(game, gameEntity, wallet,
-                buildNoOpLastGameRepo(), null, null, null, null, null, om, 4, 3000);
+                buildNoOpLastGameRepo(), null, null, null, null, null, om, 4, 3000, new com.casino.blackjack.config.PaytableProperties());
 
         processor.process(ctx);
 
