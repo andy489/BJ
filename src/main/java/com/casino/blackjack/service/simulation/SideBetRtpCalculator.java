@@ -51,7 +51,7 @@ public final class SideBetRtpCalculator {
         double pColoured = 1.0 / 4.0;   // given pair: same colour, diff suit
         double pMixed    = 1.0 / 2.0;   // given pair: diff colour
 
-        double expectedReturn = pPair * (pPerfect * 26.0 + pColoured * 13.0 + pMixed * 8.0);
+        double expectedReturn = pPair * (pPerfect * 31.0 + pColoured * 11.0 + pMixed * 6.0);
         return expectedReturn * 100.0;
     }
 

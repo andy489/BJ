@@ -21,10 +21,10 @@ import static com.casino.blackjack.service.gamelogic.util.GameUtil.SPADES_SUIT;
  */
 public class SideBetEvaluator {
 
-    // Perfect Pairs multipliers (total-return)
-    public static final double PP_MIXED_MULTI       = 8.0;   // 7:1
-    public static final double PP_COLOURED_MULTI    = 13.0;  // 12:1
-    public static final double PP_PERFECT_MULTI     = 26.0;  // 25:1
+    // Perfect Pairs multipliers (total-return) — Mixed 5:1, Coloured 10:1, Perfect 30:1
+    public static final double PP_MIXED_MULTI       = 6.0;   // 5:1
+    public static final double PP_COLOURED_MULTI    = 11.0;  // 10:1
+    public static final double PP_PERFECT_MULTI     = 31.0;  // 30:1
 
     // 21+3 multipliers (total-return)
     public static final double T3_FLUSH_MULTI       = 6.0;   // 5:1

@@ -28,7 +28,7 @@
         <div class="strategy-modal-body">
 
             <!-- ── HARD TOTALS ── -->
-            <div class="strategy-section-title" th:text="#{strategy.hard}">Hard Totals</div>
+            <div class="strategy-section-title" th:text="#{strategy.hard}">Hard Totals (no Ace, or Ace counts as 1)</div>
             <div class="strategy-table-scroll">
             <table class="strategy-table">
                 <thead>
@@ -54,7 +54,7 @@
             </div>
 
             <!-- ── SOFT TOTALS ── -->
-            <div class="strategy-section-title" th:text="#{strategy.soft}">Soft Totals</div>
+            <div class="strategy-section-title" th:text="#{strategy.soft}">Soft Totals (Ace counts as 11)</div>
             <div class="strategy-table-scroll">
             <table class="strategy-table">
                 <thead>
@@ -78,7 +78,7 @@
             </div>
 
             <!-- ── PAIRS ── -->
-            <div class="strategy-section-title" th:text="#{strategy.pairs}">Pairs</div>
+            <div class="strategy-section-title" th:text="#{strategy.pairs}">Pairs (split eligible hands)</div>
             <div class="strategy-table-scroll">
             <table class="strategy-table">
                 <thead>
@@ -105,11 +105,147 @@
 
             <!-- ── Legend ── -->
             <div class="strategy-legend">
-                <span class="sc-h">H</span> <span th:text="#{strategy.legend.h}">Hit</span>
-                <span class="sc-s">S</span> <span th:text="#{strategy.legend.s}">Stand</span>
-                <span class="sc-d">D</span> <span th:text="#{strategy.legend.d}">Double (Hit if not allowed)</span>
-                <span class="sc-ds">Ds</span> <span th:text="#{strategy.legend.ds}">Double (Stand if not allowed)</span>
-                <span class="sc-p">P</span> <span th:text="#{strategy.legend.p}">Split</span>
+                <span class="strategy-legend-item"><span class="strategy-legend-badge sc-h">H</span><span th:text="#{strategy.legend.h}">Hit</span></span>
+                <span class="strategy-legend-item"><span class="strategy-legend-badge sc-s">S</span><span th:text="#{strategy.legend.s}">Stand</span></span>
+                <span class="strategy-legend-item"><span class="strategy-legend-badge sc-d">D</span><span th:text="#{strategy.legend.d}">Double (Hit if not allowed)</span></span>
+                <span class="strategy-legend-item"><span class="strategy-legend-badge sc-ds">Ds</span><span th:text="#{strategy.legend.ds}">Double (Stand if not allowed)</span></span>
+                <span class="strategy-legend-item"><span class="strategy-legend-badge sc-p">P</span><span th:text="#{strategy.legend.p}">Split</span></span>
+                <span class="strategy-legend-axis" th:text="#{strategy.legend.cols}">Columns = Dealer's up card</span>
+                <span class="strategy-legend-axis" th:text="#{strategy.legend.rows}">Rows = Your hand</span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAYOUTS MODAL
+══════════════════════════════════════════════ -->
+<div class="strategy-modal-overlay" id="payoutsModalOverlay" role="dialog" aria-modal="true"
+     th:attr="aria-label=#{payouts.title}">
+    <div class="strategy-modal">
+        <div class="strategy-modal-header">
+            <div>
+                <div class="strategy-modal-title" th:text="#{payouts.title}">Payouts &amp; Multipliers</div>
+                <div class="strategy-modal-subtitle" th:text="#{payouts.subtitle}">What the game pays for every outcome</div>
+            </div>
+            <button class="strategy-modal-close" id="payoutsModalClose"
+                    th:attr="aria-label=#{strategy.close}">&#x2715;</button>
+        </div>
+        <div class="strategy-modal-body">
+
+            <!-- ── MAIN HAND ── -->
+            <div class="strategy-section-title" th:text="#{payouts.section.main}">Main Hand</div>
+            <div class="payout-table-wrap">
+                <table class="payout-table">
+                    <thead><tr>
+                        <th th:text="#{payouts.col.outcome}">Outcome</th>
+                        <th th:text="#{payouts.col.pays}">Pays</th>
+                        <th th:text="#{payouts.col.example}">Example (bet 10)</th>
+                    </tr></thead>
+                    <tbody>
+                    <tr><td th:text="#{payouts.main.bj}">Blackjack (3:2)</td>      <td class="payout-val payout-win">3 : 2</td><td class="payout-eg">bet 10 → return 25</td></tr>
+                    <tr><td th:text="#{payouts.main.win}">Win</td>                  <td class="payout-val payout-win">1 : 1</td><td class="payout-eg">bet 10 → return 20</td></tr>
+                    <tr><td th:text="#{payouts.main.push}">Push (tie)</td>          <td class="payout-val payout-push">0 : 1</td><td class="payout-eg">bet 10 → return 10</td></tr>
+                    <tr><td th:text="#{payouts.main.loss}">Loss</td>                <td class="payout-val payout-loss">−1 : 1</td><td class="payout-eg">bet 10 → return 0</td></tr>
+                    <tr><td th:text="#{payouts.main.surrender}">Surrender (½ back)</td><td class="payout-val payout-push">−½ : 1</td><td class="payout-eg">bet 10 → return 5</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ── DOUBLE DOWN ── -->
+            <div class="strategy-section-title" th:text="#{payouts.section.double}">Double Down</div>
+            <div class="payout-note" th:text="#{payouts.double.note}">Your bet is doubled after the first two cards. You receive exactly one more card.</div>
+            <div class="payout-table-wrap">
+                <table class="payout-table">
+                    <thead><tr>
+                        <th th:text="#{payouts.col.outcome}">Outcome</th>
+                        <th th:text="#{payouts.col.pays}">Pays</th>
+                        <th th:text="#{payouts.col.example}">Example (bet 10+10)</th>
+                    </tr></thead>
+                    <tbody>
+                    <tr><td th:text="#{payouts.double.win}">Win</td>   <td class="payout-val payout-win">1 : 1</td><td class="payout-eg">bet 10+10 → return 40</td></tr>
+                    <tr><td th:text="#{payouts.double.push}">Push</td>  <td class="payout-val payout-push">0 : 1</td><td class="payout-eg">bet 10+10 → return 20</td></tr>
+                    <tr><td th:text="#{payouts.double.loss}">Loss</td>  <td class="payout-val payout-loss">−1 : 1</td><td class="payout-eg">bet 10+10 → return 0</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ── INSURANCE / EVEN MONEY ── -->
+            <div class="strategy-section-title" th:text="#{payouts.section.insurance}">Insurance &amp; Even Money</div>
+            <div class="payout-note" th:text="#{payouts.insurance.note}">Available when the dealer shows an Ace. Insurance costs half your main bet. Even Money is offered when you hold Blackjack.</div>
+            <div class="payout-table-wrap">
+                <table class="payout-table">
+                    <thead><tr>
+                        <th th:text="#{payouts.col.outcome}">Outcome</th>
+                        <th th:text="#{payouts.col.pays}">Pays</th>
+                        <th th:text="#{payouts.col.example}">Example (ins bet 5)</th>
+                    </tr></thead>
+                    <tbody>
+                    <tr><td th:text="#{payouts.insurance.win}">Insurance wins (dealer BJ)</td>   <td class="payout-val payout-win">2 : 1</td><td class="payout-eg">ins 5 → return 15</td></tr>
+                    <tr><td th:text="#{payouts.insurance.lose}">Insurance loses (no dealer BJ)</td><td class="payout-val payout-loss">−1 : 1</td><td class="payout-eg">ins 5 → return 0</td></tr>
+                    <tr><td th:text="#{payouts.insurance.evenmoney}">Even Money (1:1 guaranteed)</td><td class="payout-val payout-win">1 : 1</td><td class="payout-eg">bet 10 → return 20</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ── PERFECT PAIRS (PP) ── -->
+            <div class="strategy-section-title" th:text="#{payouts.section.pp}">Perfect Pairs (PP)</div>
+            <div class="payout-note" th:text="#{payouts.pp.note}">Based on your first two cards only. Settled before the hand plays out.</div>
+            <div class="payout-table-wrap">
+                <table class="payout-table">
+                    <thead><tr>
+                        <th th:text="#{payouts.col.hand}">Hand</th>
+                        <th th:text="#{payouts.col.pays}">Pays</th>
+                        <th th:text="#{payouts.col.example}">Example (bet 10)</th>
+                    </tr></thead>
+                    <tbody>
+                    <tr><td th:text="#{payouts.pp.perfect}">Perfect Pair — same rank, same suit</td>   <td class="payout-val payout-win">30 : 1</td><td class="payout-eg">bet 10 → return 310</td></tr>
+                    <tr><td th:text="#{payouts.pp.coloured}">Coloured Pair — same rank, same colour</td><td class="payout-val payout-win">10 : 1</td><td class="payout-eg">bet 10 → return 110</td></tr>
+                    <tr><td th:text="#{payouts.pp.mixed}">Mixed Pair — same rank, different colour</td> <td class="payout-val payout-win">5 : 1</td> <td class="payout-eg">bet 10 → return 60</td></tr>
+                    <tr><td th:text="#{payouts.pp.loss}">No pair</td>                                   <td class="payout-val payout-loss">Loss</td>   <td class="payout-eg">bet 10 → return 0</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ── DEALER PERFECT PAIRS (DPP) ── -->
+            <div class="strategy-section-title" th:text="#{payouts.section.dpp}">Dealer Perfect Pairs (DPP)</div>
+            <div class="payout-note" th:text="#{payouts.dpp.note}">Same rules as Perfect Pairs, applied to the dealer's first two cards. Same paytable.</div>
+            <div class="payout-table-wrap">
+                <table class="payout-table">
+                    <thead><tr>
+                        <th th:text="#{payouts.col.hand}">Hand</th>
+                        <th th:text="#{payouts.col.pays}">Pays</th>
+                        <th th:text="#{payouts.col.example}">Example (bet 10)</th>
+                    </tr></thead>
+                    <tbody>
+                    <tr><td th:text="#{payouts.pp.perfect}">Perfect Pair — same rank, same suit</td>   <td class="payout-val payout-win">30 : 1</td><td class="payout-eg">bet 10 → return 310</td></tr>
+                    <tr><td th:text="#{payouts.pp.coloured}">Coloured Pair — same rank, same colour</td><td class="payout-val payout-win">10 : 1</td><td class="payout-eg">bet 10 → return 110</td></tr>
+                    <tr><td th:text="#{payouts.pp.mixed}">Mixed Pair — same rank, different colour</td> <td class="payout-val payout-win">5 : 1</td> <td class="payout-eg">bet 10 → return 60</td></tr>
+                    <tr><td th:text="#{payouts.pp.loss}">No pair</td>                                   <td class="payout-val payout-loss">Loss</td>   <td class="payout-eg">bet 10 → return 0</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ── 21+3 ── -->
+            <div class="strategy-section-title" th:text="#{payouts.section.t3}">21+3</div>
+            <div class="payout-note" th:text="#{payouts.t3.note}">Based on your first two cards plus the dealer's up-card forming a poker hand.</div>
+            <div class="payout-table-wrap">
+                <table class="payout-table">
+                    <thead><tr>
+                        <th th:text="#{payouts.col.hand}">Hand</th>
+                        <th th:text="#{payouts.col.pays}">Pays</th>
+                        <th th:text="#{payouts.col.example}">Example (bet 10)</th>
+                    </tr></thead>
+                    <tbody>
+                    <tr><td th:text="#{payouts.t3.suitedtok}">Suited Three-of-a-Kind — same rank, same suit</td><td class="payout-val payout-win">100 : 1</td><td class="payout-eg">bet 10 → return 1010</td></tr>
+                    <tr><td th:text="#{payouts.t3.strflush}">Straight Flush — same suit, consecutive ranks</td>  <td class="payout-val payout-win">40 : 1</td> <td class="payout-eg">bet 10 → return 410</td></tr>
+                    <tr><td th:text="#{payouts.t3.tok}">Three-of-a-Kind — same rank, any suits</td>              <td class="payout-val payout-win">30 : 1</td> <td class="payout-eg">bet 10 → return 310</td></tr>
+                    <tr><td th:text="#{payouts.t3.straight}">Straight — consecutive ranks, any suits</td>        <td class="payout-val payout-win">10 : 1</td> <td class="payout-eg">bet 10 → return 110</td></tr>
+                    <tr><td th:text="#{payouts.t3.flush}">Flush — same suit, any ranks</td>                      <td class="payout-val payout-win">5 : 1</td>  <td class="payout-eg">bet 10 → return 60</td></tr>
+                    <tr><td th:text="#{payouts.t3.loss}">No qualifying hand</td>                                 <td class="payout-val payout-loss">Loss</td>   <td class="payout-eg">bet 10 → return 0</td></tr>
+                    </tbody>
+                </table>
             </div>
 
         </div>
@@ -302,10 +438,12 @@
     <div class="strategy-btn-row">
         <button class="strategy-info-btn" id="strategyInfoBtn"
                 th:title="#{strategy.title}"
-                aria-label="Basic Strategy Chart">
-            <span class="strategy-info-icon">?</span>
-            <span class="strategy-info-label" th:text="#{dec.strategy}">Strategy</span>
-        </button>
+                aria-label="Basic Strategy Chart"
+                th:text="#{dec.strategy}">Strategy</button>
+        <button class="strategy-info-btn" id="payoutsInfoBtn"
+                th:title="#{payouts.title}"
+                aria-label="Payouts"
+                th:text="#{payouts.btn}">Payouts</button>
     </div>
 
     <!-- ── Controls panel — never scaled, always full-width ── -->
@@ -1131,6 +1269,29 @@
         var openBtn  = document.getElementById('strategyInfoBtn');
         var closeBtn = document.getElementById('strategyModalClose');
         var overlay  = document.getElementById('strategyModalOverlay');
+        if (!openBtn || !overlay) return;
+
+        openBtn.addEventListener('click', function () {
+            overlay.classList.add('strategy-modal-overlay--open');
+            document.body.style.overflow = 'hidden';
+        });
+        function closeModal() {
+            overlay.classList.remove('strategy-modal-overlay--open');
+            document.body.style.overflow = '';
+        }
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeModal();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    })();
+
+    (function () {
+        var openBtn  = document.getElementById('payoutsInfoBtn');
+        var closeBtn = document.getElementById('payoutsModalClose');
+        var overlay  = document.getElementById('payoutsModalOverlay');
         if (!openBtn || !overlay) return;
 
         openBtn.addEventListener('click', function () {
