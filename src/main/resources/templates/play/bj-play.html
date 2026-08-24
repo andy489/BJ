@@ -1194,25 +1194,30 @@
            Any other action (stand, insurance, even-money, etc.) must NOT
            trigger the deal+flip animation on already-visible cards.
         ── */
-        var CARD_DEALING_CHOICES = [2, 3, 6, 9, 10]; /* SPLIT, DOUBLE_DOWN, DOUBLE_DOWN_YES, HIT, DEAL */
+        /* Choice categories:
+           PLAYER_INSTANT  (9=HIT): card dealt to player on their request → no delay
+           COMPUTER_DEALT  (2=SPLIT, 6=DD_YES, 8=STAND, 19=AUTO_FINALIZE, 20=AUTO_PLAY): computer deals → delay
+           CHOICE_DEAL=10  : initial deal, interleaved order below */
+        var CARD_DEALING_CHOICES  = [2, 3, 6, 9, 10]; /* choices that produce a new visible card */
+        var COMPUTER_DEAL_CHOICES = [2, 6, 8, 19, 20]; /* computer deals the card → use BJ_DEALER_REVEAL_MS */
 
         var allCards = Array.from(document.querySelectorAll(
             '.dealer-cards .play-card:not(.double-down-card), ' +
             '.player-cards .play-card:not(.double-down-card), ' +
             '.split-hand-box .play-card:not(.double-down-card)'
         ));
-        var isInitialDeal = allCards.length <= 4 && BJ_LAST_CHOICE === 10; /* CHOICE_DEAL */
-        var isCardDealing  = CARD_DEALING_CHOICES.indexOf(BJ_LAST_CHOICE) !== -1;
+        var isInitialDeal    = allCards.length <= 4 && BJ_LAST_CHOICE === 10; /* CHOICE_DEAL */
+        var isCardDealing    = CARD_DEALING_CHOICES.indexOf(BJ_LAST_CHOICE) !== -1;
+        var isComputerDealt  = COMPUTER_DEAL_CHOICES.indexOf(BJ_LAST_CHOICE) !== -1;
+        var isDealerReveal   = isComputerDealt && !isInitialDeal; /* stand/auto/split/dd-yes: single delayed card */
 
         var totalDuration = 0;
 
         if (isInitialDeal) {
-            /* Deal order: dealer[0] → player[0] → dealer[1] → player[1].
-               Each card is hidden on load, then revealed one at a time
-               with BJ_DEALER_REVEAL_MS between each reveal. */
+            /* Visual deal order: player[0] immediately, dealer[0] after 1×delay,
+               player[1] after 1×delay, dealer[1] after 2×delay. */
             var dealerCards = Array.from(document.querySelectorAll('.dealer-cards .play-card:not(.double-down-card)'));
             var playerCards = Array.from(document.querySelectorAll('.player-cards .play-card:not(.double-down-card)'));
-            var dealOrder = [dealerCards[0], playerCards[0], dealerCards[1], playerCards[1]].filter(Boolean);
 
             allCards.forEach(function (c) {
                 c.style.visibility = 'hidden';
@@ -1220,22 +1225,25 @@
                 c.style.willChange = 'transform';
             });
 
-            dealOrder.forEach(function (c, i) {
-                setTimeout(function () {
-                    c.style.visibility = '';
-                }, (i + 1) * BJ_DEALER_REVEAL_MS);
+            /* Reveal times: player[0]=0, dealer[0]=1×, player[1]=1×, dealer[1]=2× */
+            var revealSchedule = [
+                { card: playerCards[0], t: 0 },
+                { card: dealerCards[0], t: 1 * BJ_DEALER_REVEAL_MS },
+                { card: playerCards[1], t: 1 * BJ_DEALER_REVEAL_MS },
+                { card: dealerCards[1], t: 2 * BJ_DEALER_REVEAL_MS }
+            ].filter(function (e) { return e.card; });
+
+            revealSchedule.forEach(function (e) {
+                setTimeout(function () { e.card.style.visibility = ''; }, e.t);
             });
 
-            totalDuration = (dealOrder.length + 1) * BJ_DEALER_REVEAL_MS + 420;
+            totalDuration = 2 * BJ_DEALER_REVEAL_MS + 420;
             setTimeout(function () {
                 allCards.forEach(function (c) { c.style.willChange = 'auto'; });
             }, totalDuration);
-        } else if (isCardDealing) {
-            /* only the last card is new — suppress animation on all others.
-               In split mode: find the box that received the card.
-               - If still active (no auto-advance), it has .active-hand.
-               - If hand auto-advanced (21/bust), .active-hand moved to next hand;
-                 the dealt box is the one with the most cards. */
+
+        } else if (isDealerReveal || isCardDealing) {
+            /* Find the single new card (last card in the relevant hand box). */
             var splitBoxes = Array.from(document.querySelectorAll('.split-hand-box'));
             var activeHandBox = null;
             if (splitBoxes.length > 0) {
@@ -1276,13 +1284,19 @@
                 if (c !== lastCard) {
                     c.style.animation = 'none';
                 } else {
-                    c.style.visibility = 'hidden';
                     c.style.willChange = 'transform';
-                    c.style.animationDelay = BJ_DEALER_REVEAL_MS + 'ms';
+                    if (isDealerReveal) {
+                        c.style.visibility = 'hidden';
+                        c.style.animationDelay = BJ_DEALER_REVEAL_MS + 'ms';
+                    }
                 }
             });
-            setTimeout(function () { lastCard.style.visibility = ''; }, BJ_DEALER_REVEAL_MS);
-            totalDuration = BJ_DEALER_REVEAL_MS + 420;
+            if (isDealerReveal) {
+                setTimeout(function () { lastCard.style.visibility = ''; }, BJ_DEALER_REVEAL_MS);
+                totalDuration = BJ_DEALER_REVEAL_MS + 420;
+            } else {
+                totalDuration = 420;
+            }
             setTimeout(function () { lastCard.style.willChange = 'auto'; }, totalDuration);
         } else {
             /* no new card dealt — suppress all card animations */
