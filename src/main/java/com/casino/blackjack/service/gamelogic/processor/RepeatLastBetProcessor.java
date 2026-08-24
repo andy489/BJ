@@ -42,19 +42,22 @@ public class RepeatLastBetProcessor implements GameStateProcessor {
         }
 
         Wallet wallet = Wallet.of(ctx.walletEntity());
-        wallet.placeHandBet(lastBet);
+        // Add lastBet on top of any chips already staged (additive, not replace)
+        wallet.setBalance(wallet.getBalance().subtract(lastBet));
+        wallet.setCurrentBet(wallet.getCurrentBet().add(lastBet));
+        wallet.setHandBet(wallet.getHandBet().add(lastBet));
 
         if (lastPpBet.compareTo(BigDecimal.ZERO) > 0) {
             wallet.setBalance(wallet.getBalance().subtract(lastPpBet));
-            wallet.setPerfectPairsBet(lastPpBet);
+            wallet.setPerfectPairsBet(nvl(wallet.getPerfectPairsBet()).add(lastPpBet));
         }
         if (lastT3Bet.compareTo(BigDecimal.ZERO) > 0) {
             wallet.setBalance(wallet.getBalance().subtract(lastT3Bet));
-            wallet.setTwentyOneThreeBet(lastT3Bet);
+            wallet.setTwentyOneThreeBet(nvl(wallet.getTwentyOneThreeBet()).add(lastT3Bet));
         }
         if (lastDppBet.compareTo(BigDecimal.ZERO) > 0) {
             wallet.setBalance(wallet.getBalance().subtract(lastDppBet));
-            wallet.setDealerPerfectPairsBet(lastDppBet);
+            wallet.setDealerPerfectPairsBet(nvl(wallet.getDealerPerfectPairsBet()).add(lastDppBet));
         }
 
         game.setAvailableChoices(List.of(CHOICE_CHIP_OPERATIONS, CHOICE_DEAL))
