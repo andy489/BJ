@@ -1,5 +1,6 @@
 package com.casino.blackjack.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,6 +19,11 @@ public class HomeController extends BaseController {
     public ModelAndView getRules() {
 
         return super.view("rules");
+    }
+
+    @GetMapping("/keep-alive")
+    public ResponseEntity<String> keepAlive() {
+        return ResponseEntity.ok("ok");
     }
 
 }

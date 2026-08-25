@@ -1,0 +1,45 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Insert dedicated admin user (username: admin, password: Andreiko4488911$, BCrypt cost 12) -->
+    <changeSet author="andy489" id="data-v1.2-1">
+        <insert tableName="users">
+            <column name="id" valueNumeric="6"/>
+            <column name="username" value="admin"/>
+            <column name="birth_date" value="1990-01-01 00:00:00"/>
+            <column name="gender" value="UNSPECIFIED"/>
+            <column name="email" value="admin@push365.com"/>
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="Admin"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="password" value="$2a$12$84sXZK.THDz8xMYD1UmpkukTsxK0bFvLrMf.FuPsyhMb88YKXOVQW"/>
+        </insert>
+    </changeSet>
+
+    <!-- Give admin user the ADMIN role -->
+    <changeSet author="andy489" id="data-v1.2-2">
+        <insert tableName="users_roles">
+            <column name="user_id" valueNumeric="6"/>
+            <column name="role_id" valueNumeric="1"/>
+        </insert>
+    </changeSet>
+
+    <!-- Give admin user a wallet -->
+    <changeSet author="andy489" id="data-v1.2-3">
+        <insert tableName="wallets">
+            <column name="id" valueNumeric="2"/>
+            <column name="balance" valueNumeric="1000.00"/>
+            <column name="current_bet" valueNumeric="0.00"/>
+            <column name="last_bet" valueNumeric="0.00"/>
+            <column name="last_win" valueNumeric="0.00"/>
+            <column name="hand_bet" valueNumeric="0.00"/>
+            <column name="double_bet" valueNumeric="0.00"/>
+            <column name="insurance_bet" valueNumeric="0.00"/>
+            <column name="owner_id" valueNumeric="6"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

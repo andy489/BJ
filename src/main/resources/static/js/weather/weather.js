@@ -116,7 +116,7 @@ function startClock(canvas, timeEl, utcOffsetSeconds) {
     }, 1000);
 }
 
-fetch('http://api.openweathermap.org/data/2.5/weather?q=sofia&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
+fetch('https://api.openweathermap.org/data/2.5/weather?q=sofia&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
     .then(data => data.json())
     .then(info => {
         boxTempA.innerText = Math.round(info.main.temp + KELVIN_ZERO)
@@ -124,7 +124,7 @@ fetch('http://api.openweathermap.org/data/2.5/weather?q=sofia&appid=8dd1b8c6c706
         startClock(document.getElementById('clock-a'), document.getElementById('clock-a-time'), info.timezone)
     })
 
-fetch('http://api.openweathermap.org/data/2.5/weather?q=lasvegas&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
+fetch('https://api.openweathermap.org/data/2.5/weather?q=lasvegas&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
     .then(data => data.json())
     .then(info => {
         boxTempB.innerText = Math.round(info.main.temp + KELVIN_ZERO)
@@ -132,7 +132,7 @@ fetch('http://api.openweathermap.org/data/2.5/weather?q=lasvegas&appid=8dd1b8c6c
         startClock(document.getElementById('clock-b'), document.getElementById('clock-b-time'), info.timezone)
     })
 
-fetch('http://api.openweathermap.org/data/2.5/weather?q=monaco&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
+fetch('https://api.openweathermap.org/data/2.5/weather?q=monaco&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
     .then(data => data.json())
     .then(info => {
         boxTempC.innerText = Math.round(info.main.temp + KELVIN_ZERO)
@@ -140,7 +140,7 @@ fetch('http://api.openweathermap.org/data/2.5/weather?q=monaco&appid=8dd1b8c6c70
         startClock(document.getElementById('clock-c'), document.getElementById('clock-c-time'), info.timezone)
     })
 
-fetch('http://api.openweathermap.org/data/2.5/weather?q=macao&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
+fetch('https://api.openweathermap.org/data/2.5/weather?q=macao&appid=8dd1b8c6c70655b59ef4f75b4d9fb753')
     .then(data => data.json())
     .then(info => {
         boxTempD.innerText = Math.round(info.main.temp + KELVIN_ZERO)
