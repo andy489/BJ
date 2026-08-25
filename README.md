@@ -116,17 +116,17 @@ Below the simulation results the page shows exact combinatorial RTP calculations
 
 ---
 
-### Original Design (June 2025)
+### Original Design (June 2024)
 
 The first version of the site had a different visual identity before the current casino-dark redesign.
 
 | Lobby | Login | Register |
 |---|---|---|
-| ![Original Lobby](assets/screenshots/2025-06/01-lobby.png) | ![Original Login](assets/screenshots/2025-06/02-login.gif) | ![Original Register](assets/screenshots/2025-06/03-register.gif) |
+| ![Original Lobby](assets/screenshots/2024-06/01-lobby.png) | ![Original Login](assets/screenshots/2024-06/02-login.gif) | ![Original Register](assets/screenshots/2024-06/03-register.gif) |
 
 | Deposit | Gameplay |
 |---|---|
-| ![Original Deposit](assets/screenshots/2025-06/04-deposit.gif) | ![Original Gameplay](assets/screenshots/2025-06/05-play.gif) |
+| ![Original Deposit](assets/screenshots/2024-06/04-deposit.gif) | ![Original Gameplay](assets/screenshots/2024-06/05-play.gif) |
 
 ---
 
