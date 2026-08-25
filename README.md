@@ -50,6 +50,10 @@ Settings panel open (language + theme toggle):
 
 ### Gameplay — Blackjack
 
+| Table — Idle | Table — Active |
+|---|---|
+| ![Table Idle](assets/screenshots/2026-08/play-table-idle.png) | ![Table Active](assets/screenshots/2026-08/play-table-active.png) |
+
 | Double Down | Double Down Win |
 |---|---|
 | ![Double Down](assets/screenshots/2026-08/play-double-down.png) | ![Double Down Win](assets/screenshots/2026-08/play-double-down-win.png) |
@@ -61,6 +65,16 @@ Settings panel open (language + theme toggle):
 | Even Money Offer | Push |
 |---|---|
 | ![Even Money](assets/screenshots/2026-08/play-bj-even-money.png) | ![Push](assets/screenshots/2026-08/play-bj-push.png) |
+
+Result overlay:
+
+![Result Overlay](assets/screenshots/2026-08/play-result-overlay.png)
+
+#### In-game Modals
+
+| Strategy Chart | Payouts | How to Play |
+|---|---|---|
+| ![Strategy Modal](assets/screenshots/2026-08/play-strategy-modal.png) | ![Payouts Modal](assets/screenshots/2026-08/play-payouts-modal.png) | ![How to Play Modal](assets/screenshots/2026-08/play-how-to-play-modal.png) |
 
 ---
 
@@ -93,6 +107,12 @@ Mathematically optimal multi-deck S17 decisions for every player hand vs every d
 Click the ⓘ button next to **Player strategy** to open a side-by-side comparison of both strategies, including typical decision differences and expected RTP.
 
 ![Strategy Comparison Modal](assets/screenshots/2026-08/sim-strategy-modal.png)
+
+#### Side Bet RTP — Analytical Exact Combinatorics
+
+Below the simulation results the page shows exact combinatorial RTP calculations for both side bets (Perfect Pairs and 21+3) across infinite, 6-deck, and 8-deck shoes, complete with formula breakdowns.
+
+![RTP Analytical](assets/screenshots/2026-08/sim-rtp-analytical.png)
 
 ---
 

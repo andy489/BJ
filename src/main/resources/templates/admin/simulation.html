@@ -85,6 +85,72 @@
             </button>
         </form>
 
+        <!-- ── Simulation results ── -->
+        <div th:if="${result}" class="sim-results sim-results--animate" id="simResults">
+
+            <h2 class="sim-results-title">Results</h2>
+
+            <div class="sim-stat-grid">
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Hands Played</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.hands(), 0, 'COMMA')}">0</div>
+                </div>
+                <div class="sim-stat sim-stat--rtp">
+                    <div class="sim-stat-label">RTP</div>
+                    <div class="sim-stat-value"
+                         th:text="${#numbers.formatDecimal(result.rtp(), 1, 2)} + '%'">0.00%</div>
+                </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Bet Size</div>
+                    <div class="sim-stat-value"
+                         th:text="'£' + ${#numbers.formatDecimal(bet, 1, 2)}">£1.00</div>
+                </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Total Wagered</div>
+                    <div class="sim-stat-value sim-stat-value--compact"
+                         th:text="'£' + ${#numbers.formatInteger(result.totalWagered().longValue(), 0, 'COMMA')}">£0</div>
+                </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Total Returned</div>
+                    <div class="sim-stat-value sim-stat-value--compact"
+                         th:text="'£' + ${#numbers.formatInteger(result.totalReturned().longValue(), 0, 'COMMA')}">£0</div>
+                </div>
+                <div class="sim-stat sim-stat--win">
+                    <div class="sim-stat-label">Wins</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.wins(), 0, 'COMMA')}">0</div>
+                </div>
+                <div class="sim-stat sim-stat--loss">
+                    <div class="sim-stat-label">Losses</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.losses(), 0, 'COMMA')}">0</div>
+                </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Pushes</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.pushes(), 0, 'COMMA')}">0</div>
+                </div>
+                <div class="sim-stat sim-stat--bj">
+                    <div class="sim-stat-label">Blackjacks</div>
+                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.blackjacks(), 0, 'COMMA')}">0</div>
+                </div>
+                <div class="sim-stat">
+                    <div class="sim-stat-label">Threads Used</div>
+                    <div class="sim-stat-value" th:text="${threads}">1</div>
+                </div>
+                <div class="sim-stat sim-stat--time">
+                    <div class="sim-stat-label">Elapsed Time</div>
+                    <div class="sim-stat-value"
+                         th:text="${result.elapsedMs() >= 1000}
+                                   ? ${#numbers.formatDecimal(result.elapsedMs() / 1000.0, 1, 3)} + ' s'
+                                   : ${result.elapsedMs()} + ' ms'">0 ms</div>
+                </div>
+            </div>
+
+            <div class="sim-strategy-box sim-strategy-box--result">
+                <span class="sim-strategy-label">Strategy used: </span>
+                <span class="sim-strategy-text" th:text="${result.strategy()}"></span>
+            </div>
+
+        </div>
+
         <!-- ── Side-bet analytical RTP ── -->
         <div class="sim-sidebet-rtp" th:if="${sideBetRtp}">
             <div class="sim-sidebet-rtp-title">
@@ -416,71 +482,6 @@
             <div class="sim-loading-grid">
                 <div class="sim-loading-card" th:each="i : ${#numbers.sequence(1,11)}"></div>
             </div>
-        </div>
-
-        <div th:if="${result}" class="sim-results sim-results--animate" id="simResults">
-
-            <h2 class="sim-results-title">Results</h2>
-
-            <div class="sim-stat-grid">
-                <div class="sim-stat">
-                    <div class="sim-stat-label">Hands Played</div>
-                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.hands(), 0, 'COMMA')}">0</div>
-                </div>
-                <div class="sim-stat sim-stat--rtp">
-                    <div class="sim-stat-label">RTP</div>
-                    <div class="sim-stat-value"
-                         th:text="${#numbers.formatDecimal(result.rtp(), 1, 2)} + '%'">0.00%</div>
-                </div>
-                <div class="sim-stat">
-                    <div class="sim-stat-label">Bet Size</div>
-                    <div class="sim-stat-value"
-                         th:text="'£' + ${#numbers.formatDecimal(bet, 1, 2)}">£1.00</div>
-                </div>
-                <div class="sim-stat">
-                    <div class="sim-stat-label">Total Wagered</div>
-                    <div class="sim-stat-value sim-stat-value--compact"
-                         th:text="'£' + ${#numbers.formatInteger(result.totalWagered().longValue(), 0, 'COMMA')}">£0</div>
-                </div>
-                <div class="sim-stat">
-                    <div class="sim-stat-label">Total Returned</div>
-                    <div class="sim-stat-value sim-stat-value--compact"
-                         th:text="'£' + ${#numbers.formatInteger(result.totalReturned().longValue(), 0, 'COMMA')}">£0</div>
-                </div>
-                <div class="sim-stat sim-stat--win">
-                    <div class="sim-stat-label">Wins</div>
-                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.wins(), 0, 'COMMA')}">0</div>
-                </div>
-                <div class="sim-stat sim-stat--loss">
-                    <div class="sim-stat-label">Losses</div>
-                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.losses(), 0, 'COMMA')}">0</div>
-                </div>
-                <div class="sim-stat">
-                    <div class="sim-stat-label">Pushes</div>
-                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.pushes(), 0, 'COMMA')}">0</div>
-                </div>
-                <div class="sim-stat sim-stat--bj">
-                    <div class="sim-stat-label">Blackjacks</div>
-                    <div class="sim-stat-value" th:text="${#numbers.formatInteger(result.blackjacks(), 0, 'COMMA')}">0</div>
-                </div>
-                <div class="sim-stat">
-                    <div class="sim-stat-label">Threads Used</div>
-                    <div class="sim-stat-value" th:text="${threads}">1</div>
-                </div>
-                <div class="sim-stat sim-stat--time">
-                    <div class="sim-stat-label">Elapsed Time</div>
-                    <div class="sim-stat-value"
-                         th:text="${result.elapsedMs() >= 1000}
-                                   ? ${#numbers.formatDecimal(result.elapsedMs() / 1000.0, 1, 3)} + ' s'
-                                   : ${result.elapsedMs()} + ' ms'">0 ms</div>
-                </div>
-            </div>
-
-            <div class="sim-strategy-box sim-strategy-box--result">
-                <span class="sim-strategy-label">Strategy used: </span>
-                <span class="sim-strategy-text" th:text="${result.strategy()}"></span>
-            </div>
-
         </div>
 
     </div>
