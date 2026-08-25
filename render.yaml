@@ -32,4 +32,6 @@ services:
       - key: MAIL_SMTP_AUTH
         value: true
       - key: MAIL_STARTTLS
+        value: false
+      - key: MAIL_SSL
         value: true

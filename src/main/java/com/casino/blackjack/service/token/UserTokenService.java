@@ -58,7 +58,7 @@ public class UserTokenService {
             mailService.sendRegistrationEmail(event.getEmail(), event.getUsername(), event.getUserFullName(),
                     event.getLocale(), token);
         } catch (Exception e) {
-            log.error("Failed to send registration email to {}: {}", event.getEmail(), e.getMessage());
+            log.error("Failed to send registration email to {}: {}", event.getEmail(), e.getMessage(), e);
         }
     }
 
@@ -70,7 +70,7 @@ public class UserTokenService {
             mailService.sendForgotPassEmail(event.getEmail(), event.getUsername(), event.getFullName(),
                     event.getLocale(), token);
         } catch (Exception e) {
-            log.error("Failed to send forgot-password email to {}: {}", event.getEmail(), e.getMessage());
+            log.error("Failed to send forgot-password email to {}: {}", event.getEmail(), e.getMessage(), e);
         }
     }
 

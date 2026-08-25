@@ -46,7 +46,7 @@ google.recaptcha:
 
 auth:
   register:
-    auto-login: true
+    auto-login: false
   login:
     remember-me-key: ${REMEMBER_ME_KEY:1234}
   activation-token:
@@ -66,6 +66,7 @@ mail:
   smtp-auth: ${MAIL_SMTP_AUTH:false}
   transport-protocol: smtp
   starttls-enable: ${MAIL_STARTTLS:false}
+  ssl-enable: ${MAIL_SSL:false}
 
 game:
   blackjack:

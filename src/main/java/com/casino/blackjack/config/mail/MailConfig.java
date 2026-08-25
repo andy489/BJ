@@ -32,6 +32,8 @@ public class MailConfig {
 
     private String starttlsEnable;
 
+    private String sslEnable;
+
     @Bean
     public JavaMailSender javaMailSender() {
 
@@ -55,11 +57,14 @@ public class MailConfig {
 
         properties.setProperty("mail.smtp.auth", smtpAuth);
         properties.setProperty("mail.transport.protocol", transportProtocol);
-        properties.setProperty("mail.smtp.connectiontimeout", "5000");
-        properties.setProperty("mail.smtp.timeout", "5000");
-        properties.setProperty("mail.smtp.writetimeout", "5000");
+        properties.setProperty("mail.smtp.connectiontimeout", "10000");
+        properties.setProperty("mail.smtp.timeout", "10000");
+        properties.setProperty("mail.smtp.writetimeout", "10000");
         if (starttlsEnable != null) {
             properties.setProperty("mail.smtp.starttls.enable", starttlsEnable);
+        }
+        if (sslEnable != null) {
+            properties.setProperty("mail.smtp.ssl.enable", sslEnable);
         }
 
         return properties;
