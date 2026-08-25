@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: push365-casino
+    runtime: java
+    plan: free
+    buildCommand: ./gradlew build -x test
+    startCommand: java -Xmx400m -jar build/libs/BJ-0.0.1-SNAPSHOT.jar
+    healthCheckPath: /
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: RECAPTCHA_ENABLED
+        value: true
+      - key: RECAPTCHA_SITE_KEY
+        sync: false
+      - key: RECAPTCHA_SITE_SECRET
+        sync: false
+      - key: REMEMBER_ME_KEY
+        generateValue: true
+      - key: APP_MAIL
+        sync: false
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_PORT
+        sync: false
+      - key: MAIL_USER
+        sync: false
+      - key: MAIL_PASS
+        sync: false

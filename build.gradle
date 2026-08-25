@@ -9,7 +9,8 @@ group = 'com.casino'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '25'
+    sourceCompatibility = '21'
+    targetCompatibility = '21'
 }
 
 repositories {

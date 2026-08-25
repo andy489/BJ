@@ -16,9 +16,9 @@ spring:
             paths: /**
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/bjdb?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/bjdb?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&sslMode=PREFERRED
     username: ${DB_USER:root}
-    password:
+    password: ${DB_PASS:}
   jpa:
     hibernate:
       ddl-auto: none
