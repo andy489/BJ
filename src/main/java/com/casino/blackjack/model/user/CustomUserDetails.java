@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -27,7 +26,7 @@ public class CustomUserDetails implements UserDetails {
 
     private String email;
 
-    private Date birthDate;
+    private Long birthDate;
 
     private String firstName;
 

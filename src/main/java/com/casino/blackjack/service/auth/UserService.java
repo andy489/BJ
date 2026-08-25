@@ -29,11 +29,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -122,7 +122,7 @@ public class UserService {
         OffsetDateTime odt = OffsetDateTime.now(ZoneId.systemDefault());
         ZoneOffset zoneOffset = odt.getOffset();
 
-        Date date = Date.from(localDate.atStartOfDay().toInstant(zoneOffset));
+        long birthDateMillis = localDate.atStartOfDay().toInstant(zoneOffset).toEpochMilli();
         // EO: map birthDate
 
         // START: map roles
@@ -135,7 +135,7 @@ public class UserService {
                 .setPassword(encoder.encode(userRegistrationDTO.getPassword()))
                 .setEmail(userRegistrationDTO.getEmail())
                 .setGender(userRegistrationDTO.getGender())
-                .setBirthDate(date)
+                .setBirthDate(birthDateMillis)
                 .setRoles(Set.of(regularRole))
                 .setFirstName(userRegistrationDTO.getFirstName())
                 .setLastName(userRegistrationDTO.getLastName())

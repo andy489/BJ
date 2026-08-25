@@ -18,7 +18,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,7 +39,7 @@ public class UserEntity extends BaseEntity {
     private GenderEnum gender;
 
     @Column(nullable = false)
-    private Date birthDate;
+    private Long birthDate;
 
     private String password;
 

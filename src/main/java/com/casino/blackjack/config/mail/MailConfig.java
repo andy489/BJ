@@ -55,6 +55,9 @@ public class MailConfig {
 
         properties.setProperty("mail.smtp.auth", smtpAuth);
         properties.setProperty("mail.transport.protocol", transportProtocol);
+        properties.setProperty("mail.smtp.connectiontimeout", "5000");
+        properties.setProperty("mail.smtp.timeout", "5000");
+        properties.setProperty("mail.smtp.writetimeout", "5000");
         if (starttlsEnable != null) {
             properties.setProperty("mail.smtp.starttls.enable", starttlsEnable);
         }

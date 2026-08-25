@@ -1,5 +1,6 @@
 package com.casino.blackjack.model.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -8,7 +9,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "reset_pass_tokens")
@@ -22,5 +22,6 @@ public class UserForgotPassEntity extends BaseEntity{
 
     private String token;
 
+    @Column(columnDefinition = "BIGINT")
     private Instant createdAt;
 }

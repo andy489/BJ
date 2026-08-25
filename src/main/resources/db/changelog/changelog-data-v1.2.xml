@@ -60,5 +60,12 @@
             <where>owner_id = 6 AND (split_bet IS NULL OR perfect_pairs_bet IS NULL)</where>
         </update>
     </changeSet>
+    <!-- Fix admin birth_date from datetime string to epoch millis (matching JPA java.util.Date storage format) -->
+    <changeSet author="andy489" id="data-v1.2-5">
+        <update tableName="users">
+            <column name="birth_date" value="631141200000"/>
+            <where>id = 6 AND birth_date = '1990-01-01 00:00:00'</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>

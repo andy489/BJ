@@ -16,7 +16,7 @@ spring:
             paths: /**
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: ${DB_URL:jdbc:sqlite:pushdb.db?date_string_format=yyyy-MM-dd%20HH:mm:ss}
+    url: ${DB_URL:jdbc:sqlite:pushdb.db}
     username:
     password:
   jpa:
@@ -63,7 +63,7 @@ mail:
   port: ${MAIL_PORT:1025}
   username: ${MAIL_USER:root}
   password: ${MAIL_PASS:root}
-  smtp-auth: true
+  smtp-auth: ${MAIL_SMTP_AUTH:false}
   transport-protocol: smtp
   starttls-enable: ${MAIL_STARTTLS:false}
 

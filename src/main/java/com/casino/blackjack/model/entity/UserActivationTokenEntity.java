@@ -9,8 +9,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "activation_tokens")
@@ -24,5 +22,6 @@ public class UserActivationTokenEntity extends BaseEntity {
 
     private String token;
 
+    @Column(columnDefinition = "BIGINT")
     private Instant createdAt;
 }
