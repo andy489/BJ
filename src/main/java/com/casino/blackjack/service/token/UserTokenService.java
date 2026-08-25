@@ -55,16 +55,24 @@ public class UserTokenService {
     public void userRegistered(UserRegisteredEvent event) {
         String token = createActivationToken(event.getEmail());
 
-        mailService.sendRegistrationEmail(event.getEmail(), event.getUsername(), event.getUserFullName(),
-                event.getLocale(), token);
+        try {
+            mailService.sendRegistrationEmail(event.getEmail(), event.getUsername(), event.getUserFullName(),
+                    event.getLocale(), token);
+        } catch (Exception e) {
+            log.error("Failed to send registration email to {}: {}", event.getEmail(), e.getMessage());
+        }
     }
 
     @EventListener(UserForgotPasswordEvent.class)
     public void userForgotPassword(UserForgotPasswordEvent event) {
         String token = createResetPassToken(event.getEmail());
 
-        mailService.sendForgotPassEmail(event.getEmail(), event.getUsername(), event.getFullName(),
-                event.getLocale(), token);
+        try {
+            mailService.sendForgotPassEmail(event.getEmail(), event.getUsername(), event.getFullName(),
+                    event.getLocale(), token);
+        } catch (Exception e) {
+            log.error("Failed to send forgot-password email to {}: {}", event.getEmail(), e.getMessage());
+        }
     }
 
     private String createActivationToken(String email) {
