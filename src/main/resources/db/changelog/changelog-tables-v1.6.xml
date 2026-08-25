@@ -4,10 +4,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!-- Total last bet (main + side bets) for display in the betting panel -->
     <changeSet author="stoevand" id="36">
         <addColumn tableName="wallets">
-            <column name="last_total_bet" type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="last_total_bet" type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
         </addColumn>

@@ -4,31 +4,29 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!-- Side bet amounts and payouts on bet_history for full hand replay -->
     <changeSet author="stoevand" id="37">
         <addColumn tableName="bet_history">
-            <column name="pp_bet"  type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="pp_bet"  type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
-            <column name="t3_bet"  type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="t3_bet"  type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
-            <column name="dpp_bet" type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="dpp_bet" type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
-            <column name="pp_win"  type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="pp_win"  type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
-            <column name="t3_win"  type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="t3_win"  type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
-            <column name="dpp_win" type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="dpp_win" type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
 
-    <!-- Initial deal cards on played_games for side-bet replay context -->
     <changeSet author="stoevand" id="38">
         <addColumn tableName="played_games">
             <column name="initial_player_cards"  type="VARCHAR(255)"/>
@@ -36,21 +34,17 @@
         </addColumn>
     </changeSet>
 
-
-    <!-- Last side bet amounts on wallets for repeat-last-bet to restore side bets -->
     <changeSet author="stoevand" id="39">
         <addColumn tableName="wallets">
-            <column name="last_pp_bet"  type="DECIMAL(38,2)" defaultValueNumeric="0.00"/>
-            <column name="last_t3_bet"  type="DECIMAL(38,2)" defaultValueNumeric="0.00"/>
-            <column name="last_dpp_bet" type="DECIMAL(38,2)" defaultValueNumeric="0.00"/>
+            <column name="last_pp_bet"  type="NUMERIC" defaultValueNumeric="0.00"/>
+            <column name="last_t3_bet"  type="NUMERIC" defaultValueNumeric="0.00"/>
+            <column name="last_dpp_bet" type="NUMERIC" defaultValueNumeric="0.00"/>
         </addColumn>
     </changeSet>
 
-    <!-- Main-hand-only gross return stored separately so breakdown in Last Win box
-         can show hand vs side-bet components; lastWin is now the combined total -->
     <changeSet author="stoevand" id="40">
         <addColumn tableName="wallets">
-            <column name="last_hand_win" type="DECIMAL(38,2)" defaultValueNumeric="0.00"/>
+            <column name="last_hand_win" type="NUMERIC" defaultValueNumeric="0.00"/>
         </addColumn>
     </changeSet>
 

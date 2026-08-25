@@ -6,7 +6,7 @@
 
     <changeSet author="stoevand" id="26">
         <addColumn tableName="wallets">
-            <column name="split_bet" type="DECIMAL(38, 2)" defaultValueNumeric="0.00">
+            <column name="split_bet" type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -17,10 +17,10 @@
             <column name="split_hands" type="TEXT"/>
             <column name="split_hand_multipliers" type="VARCHAR(1023)"/>
             <column name="split_double_down_flags" type="VARCHAR(255)"/>
-            <column name="split_active" type="BIT(1)" defaultValueBoolean="false"/>
+            <column name="split_active" type="BOOLEAN" defaultValueBoolean="false"/>
             <column name="active_split_hand_index" type="INT" defaultValueNumeric="0"/>
             <column name="split_count" type="INT" defaultValueNumeric="0"/>
-            <column name="split_aces" type="BIT(1)" defaultValueBoolean="false"/>
+            <column name="split_aces" type="BOOLEAN" defaultValueBoolean="false"/>
         </addColumn>
     </changeSet>
 

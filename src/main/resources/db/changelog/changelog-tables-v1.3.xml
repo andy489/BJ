@@ -4,18 +4,17 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!-- Add side bet columns for Perfect Pairs and 21+3 -->
     <changeSet author="stoevand" id="31">
         <addColumn tableName="wallets">
-            <column name="perfect_pairs_bet" type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="perfect_pairs_bet" type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
-            <column name="twenty_one_three_bet" type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="twenty_one_three_bet" type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
-    <!-- Store the initial two player cards and dealer up-card for side bet evaluation at settlement -->
+
     <changeSet author="stoevand" id="32">
         <addColumn tableName="last_games">
             <column name="initial_player_cards" type="VARCHAR(255)"/>

@@ -4,32 +4,19 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!-- Add NOT NULL + DEFAULT 0 to wallet monetary columns that were originally created nullable -->
-    <changeSet author="stoevand" id="28">
-        <addNotNullConstraint tableName="wallets" columnName="balance"
-                              columnDataType="DECIMAL(38,2)" defaultNullValue="0.00"/>
-        <addNotNullConstraint tableName="wallets" columnName="current_bet"
-                              columnDataType="DECIMAL(38,2)" defaultNullValue="0.00"/>
-        <addNotNullConstraint tableName="wallets" columnName="hand_bet"
-                              columnDataType="DECIMAL(38,2)" defaultNullValue="0.00"/>
-        <addNotNullConstraint tableName="wallets" columnName="double_bet"
-                              columnDataType="DECIMAL(38,2)" defaultNullValue="0.00"/>
-        <addNotNullConstraint tableName="wallets" columnName="insurance_bet"
-                              columnDataType="DECIMAL(38,2)" defaultNullValue="0.00"/>
-        <addNotNullConstraint tableName="wallets" columnName="last_bet"
-                              columnDataType="DECIMAL(38,2)" defaultNullValue="0.00"/>
-        <addNotNullConstraint tableName="wallets" columnName="last_win"
-                              columnDataType="DECIMAL(38,2)" defaultNullValue="0.00"/>
-    </changeSet>
-    <!-- Add split flag to bet_history to distinguish split-hand rounds -->
+    <!-- NOT NULL constraints on existing wallet columns are expressed as column definitions
+         in changelog-tables-v1.0.xml; SQLite cannot ALTER TABLE ADD CONSTRAINT, so these
+         changesets are preserved as no-ops to keep the Liquibase checksum history intact. -->
+    <changeSet author="stoevand" id="28"><sql>SELECT 1</sql></changeSet>
+
     <changeSet author="stoevand" id="29">
         <addColumn tableName="bet_history">
-            <column name="split" type="BIT(1)" defaultValueBoolean="false">
+            <column name="split" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
-    <!-- Add split hand data to played_games so history can show per-hand cards and results -->
+
     <changeSet author="stoevand" id="30">
         <addColumn tableName="played_games">
             <column name="split_hands" type="TEXT"/>

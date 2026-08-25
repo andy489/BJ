@@ -15,10 +15,10 @@ spring:
             enabled: true
             paths: /**
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/bjdb?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&sslMode=PREFERRED
-    username: ${DB_USER:root}
-    password: ${DB_PASS:}
+    driver-class-name: org.sqlite.JDBC
+    url: ${DB_URL:jdbc:sqlite:bjdb.db}
+    username:
+    password:
   jpa:
     hibernate:
       ddl-auto: none
@@ -28,6 +28,7 @@ spring:
           shared-cache:
             mode: UNSPECIFIED
       hibernate:
+        dialect: org.hibernate.community.dialect.SQLiteDialect
         format_sql: true
     open-in-view: false
   liquibase:

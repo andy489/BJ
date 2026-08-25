@@ -4,15 +4,14 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!-- Add Dealer Perfect Pairs side bet column -->
     <changeSet author="stoevand" id="33">
         <addColumn tableName="wallets">
-            <column name="dealer_perfect_pairs_bet" type="DECIMAL(38,2)" defaultValueNumeric="0.00">
+            <column name="dealer_perfect_pairs_bet" type="NUMERIC" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
-    <!-- Store the initial two dealer cards for Dealer PP evaluation at settlement -->
+
     <changeSet author="stoevand" id="34">
         <addColumn tableName="last_games">
             <column name="initial_dealer_cards" type="VARCHAR(255)"/>

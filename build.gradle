@@ -34,7 +34,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     runtimeOnly 'org.liquibase:liquibase-core'
-    implementation 'com.mysql:mysql-connector-j'
+    implementation 'org.xerial:sqlite-jdbc:3.49.1.0'
+    implementation 'org.hibernate.orm:hibernate-community-dialects:6.6.15.Final'
 
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
