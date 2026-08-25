@@ -10,16 +10,9 @@ This starts MySQL on `3306` and MailHog (SMTP on `1025`, web UI on `8025`).
 
 ## 2. Configure `.env` for local dev
 
-```properties
-RECAPTCHA_ENABLED=false
-MAIL_HOST=localhost
-MAIL_PORT=1025
-MAIL_USER=root
-MAIL_PASS=root
-MAIL_STARTTLS=false
-```
+No `.env` overrides needed — all defaults in `application.yml` point to local services (MailHog, SQLite, reCAPTCHA disabled). Just start Docker and run the app.
 
-These are already the defaults in `application.yml` so if you have no `.env` overrides for mail it works automatically.
+> **Production note:** ensure `RECAPTCHA_ENABLED=true` is set as an environment variable in Render.
 
 ## 3. Run in IntelliJ
 
