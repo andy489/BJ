@@ -151,6 +151,36 @@
     }
 </script>
 
+<!-- Registration success modal -->
+<th:block th:if="${registrationEmail}">
+    <div id="reg-success-overlay" style="
+        position:fixed;inset:0;background:rgba(0,0,0,0.65);
+        display:flex;align-items:center;justify-content:center;z-index:9999;">
+        <div style="
+            background:#1a1a2e;border:2px solid #ffd347;border-radius:12px;
+            padding:2rem 2.5rem;max-width:480px;width:90%;position:relative;
+            box-shadow:0 0 32px rgba(255,211,71,0.25);color:#f5f0e0;text-align:center;">
+            <button onclick="document.getElementById('reg-success-overlay').remove()" style="
+                position:absolute;top:0.6rem;right:0.8rem;background:none;border:none;
+                color:#ffd347;font-size:1.5rem;cursor:pointer;line-height:1;"
+                aria-label="Close">&#x2715;</button>
+            <h4 style="color:#ffd347;margin-bottom:1rem;" th:text="#{reg.success.complete}">Registration Complete</h4>
+            <p style="margin-bottom:0.5rem;" th:text="#{reg.success.account.created} + '.'">Your account has been created.</p>
+            <p style="margin-bottom:0.5rem;">
+                <span th:text="#{reg.success.email.sent}">An activation link has been sent to</span>
+                <strong style="color:#ffd347;" th:text="${registrationEmail}">email</strong>.
+            </p>
+            <p style="margin-bottom:0.5rem;" th:text="#{reg.success.please.check} + '.'">Please check your email to activate your account.</p>
+            <p style="font-size:0.9rem;color:rgba(245,240,224,0.6);" th:text="#{reg.success.spam.warn} + '.'">Check your spam folder if it doesn't arrive.</p>
+            <button onclick="document.getElementById('reg-success-overlay').remove()"
+                style="margin-top:1rem;padding:0.5rem 2rem;background:#ffd347;color:#1a1a2e;
+                       border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:1rem;">
+                OK
+            </button>
+        </div>
+    </div>
+</th:block>
+
 </body>
 
 </html>

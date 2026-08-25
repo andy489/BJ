@@ -23,15 +23,19 @@ public class MailService {
 
     private final String appMail;
 
+    private final String appBaseUrl;
+
     public MailService(TemplateEngine templateEngine,
                        MessageSource messageSource,
                        JavaMailSender javaMailSender,
-                       @Value("${mail.app-mail}") String appMail) {
+                       @Value("${mail.app-mail}") String appMail,
+                       @Value("${RENDER_EXTERNAL_URL:http://localhost:8080}") String appBaseUrl) {
 
         this.templateEngine = templateEngine;
         this.messageSource = messageSource;
         this.javaMailSender = javaMailSender;
         this.appMail = appMail;
+        this.appBaseUrl = appBaseUrl.stripTrailing().replaceAll("/$", "");
     }
 
     public void sendRegistrationEmail(String email, String username, String fullName, Locale locale,
@@ -91,6 +95,7 @@ public class MailService {
         context.setVariable("fullName", fullName);
         context.setVariable("token", activationToken);
         context.setVariable("rulesLink", "rules");
+        context.setVariable("appBaseUrl", appBaseUrl);
         context.setLocale(locale);
 
         return templateEngine.process("email/registration-activate", context);
@@ -102,6 +107,7 @@ public class MailService {
         context.setVariable("username", username);
         context.setVariable("fullName", fullName);
         context.setVariable("token", activationToken);
+        context.setVariable("appBaseUrl", appBaseUrl);
         context.setLocale(locale);
 
         return templateEngine.process("email/reset-pass", context);

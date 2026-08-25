@@ -42,7 +42,7 @@
         </div>
 
         <a class="m-auto mt-3 w-50 d-block font-weight-bold btn btn-outline-primary mb-4"
-           th:href="@{'http://localhost:8080/auth/activation?token=' + ${token}}" target="_blank"
+           th:href="${appBaseUrl + '/auth/activation?token=' + token}" target="_blank"
            th:text="#{email.login.btn}">
             Log in to your new account
         </a>
@@ -70,10 +70,10 @@
             <span th:text="#{footer.bj.learn.more}">Learn more about</span>
 
             <a th:if="${rulesLink} "class="text-link" th:text="#{footer.bj.rules.link}"
-               th:href="@{'http://localhost:8080/' + ${rulesLink}}" target="_blank">THE RULES
+               th:href="${appBaseUrl + '/' + rulesLink}" target="_blank">THE RULES
             </a>
             <a th:unless="${rulesLink} "class="text-link" th:text="#{footer.bj.rules.link}"
-               th:href="@{'http://localhost:8080/rules'}" target="_blank">THE RULES
+               th:href="${appBaseUrl + '/rules'}" target="_blank">THE RULES
             </a>
             <span th:text="#{footer.bj.current.rules} + '.'">of this particular blackjack game.</span>
         </span>

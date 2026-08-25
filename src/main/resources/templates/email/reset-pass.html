@@ -33,7 +33,7 @@
 
         <a class="m-auto mt-5 w-50 d-block font-weight-bold btn btn-outline-primary mb-5"
            th:text="#{email.forgot.btn}"
-           th:href="@{'http://localhost:8080/auth/reset_pass?token=' + ${token}}" target="_blank">
+           th:href="${appBaseUrl + '/auth/reset_pass?token=' + token}" target="_blank">
             Reset Password
         </a>
 

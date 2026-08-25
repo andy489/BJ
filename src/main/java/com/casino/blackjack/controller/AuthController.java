@@ -106,8 +106,8 @@ public class AuthController extends BaseController {
             securityContextRepository.saveContext(context, request, response);
         });
 
-        redirectAttributes.addFlashAttribute("email", userRegistrationDTO.getEmail());
-        return super.redirect("register-success");
+        redirectAttributes.addFlashAttribute("registrationEmail", userRegistrationDTO.getEmail());
+        return super.redirect("/auth/login");
     }
 
     @GetMapping("/register-success")
