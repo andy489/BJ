@@ -42,4 +42,23 @@
         </insert>
     </changeSet>
 
+    <!-- Fix NULLs in admin wallet on existing DBs where data-v1.2-3 ran without defaults -->
+    <changeSet author="andy489" id="data-v1.2-4">
+        <update tableName="wallets">
+            <column name="split_bet" valueNumeric="0.00"/>
+            <column name="perfect_pairs_bet" valueNumeric="0.00"/>
+            <column name="twenty_one_three_bet" valueNumeric="0.00"/>
+            <column name="dealer_perfect_pairs_bet" valueNumeric="0.00"/>
+            <column name="last_pp_win" valueNumeric="0.00"/>
+            <column name="last_t3_win" valueNumeric="0.00"/>
+            <column name="last_dpp_win" valueNumeric="0.00"/>
+            <column name="last_total_bet" valueNumeric="0.00"/>
+            <column name="last_pp_bet" valueNumeric="0.00"/>
+            <column name="last_t3_bet" valueNumeric="0.00"/>
+            <column name="last_dpp_bet" valueNumeric="0.00"/>
+            <column name="last_hand_win" valueNumeric="0.00"/>
+            <where>owner_id = 6 AND (split_bet IS NULL OR perfect_pairs_bet IS NULL)</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
