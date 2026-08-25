@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.time.Year;
 import java.util.Locale;
 
 @Service
@@ -96,6 +97,7 @@ public class MailService {
         context.setVariable("token", activationToken);
         context.setVariable("rulesLink", "rules");
         context.setVariable("appBaseUrl", appBaseUrl);
+        context.setVariable("currentYear", Year.now().getValue());
         context.setLocale(locale);
 
         return templateEngine.process("email/registration-activate", context);
@@ -108,6 +110,7 @@ public class MailService {
         context.setVariable("fullName", fullName);
         context.setVariable("token", activationToken);
         context.setVariable("appBaseUrl", appBaseUrl);
+        context.setVariable("currentYear", Year.now().getValue());
         context.setLocale(locale);
 
         return templateEngine.process("email/reset-pass", context);

@@ -46,7 +46,7 @@ google.recaptcha:
 
 auth:
   register:
-    auto-login: false
+    auto-login: true
   login:
     remember-me-key: ${REMEMBER_ME_KEY:1234}
   activation-token:
