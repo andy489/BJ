@@ -16,7 +16,7 @@ spring:
             paths: /**
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: ${DB_URL:jdbc:sqlite:pushdb.db}
+    url: ${DB_URL:jdbc:sqlite:pushdb.db?date_string_format=yyyy-MM-dd%20HH:mm:ss}
     username:
     password:
   jpa:
