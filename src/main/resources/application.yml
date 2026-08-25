@@ -16,7 +16,7 @@ spring:
             paths: /**
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: ${DB_URL:jdbc:sqlite:bjdb.db}
+    url: ${DB_URL:jdbc:sqlite:pushdb.db}
     username:
     password:
   jpa:
