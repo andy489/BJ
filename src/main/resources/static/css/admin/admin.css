@@ -8,6 +8,9 @@
     --danger-hover: #c43c3c;
     --danger-glow: rgba(224, 85, 85, 0.35);
     --success: #4caf7d;
+    --primary: #639c9c;
+    --primary-hover: #4e8080;
+    --primary-glow: rgba(99, 156, 156, 0.35);
 }
 
 .body-admin {
@@ -133,9 +136,21 @@
     background: rgba(255,255,255,.08);
     color: whitesmoke;
     border: 1px solid rgba(255,255,255,.18);
+    text-decoration: none;
 }
 .adm-btn--ghost:hover {
     background: rgba(255,255,255,.14);
+}
+
+.adm-btn--primary {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 0 0 transparent;
+    text-decoration: none;
+}
+.adm-btn--primary:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 0 14px var(--primary-glow);
 }
 
 /* ── Success banner ── */

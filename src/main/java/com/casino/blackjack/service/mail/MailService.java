@@ -80,6 +80,14 @@ public class MailService {
         }
     }
 
+    public String previewActivationEmail(Locale locale) {
+        return generateMessageContentActivation(locale, "johndoe", "John Doe", "preview-token-00000000");
+    }
+
+    public String previewForgotPassEmail(Locale locale) {
+        return generateMessageContentForgotPass(locale, "johndoe", "John Doe", "preview-token-00000000");
+    }
+
     private String getEmailActivationSubject(Locale locale) {
         return messageSource.getMessage("email.activation.subject", new Object[0], locale);
     }

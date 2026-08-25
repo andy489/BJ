@@ -14,6 +14,43 @@
 
         <h1 class="adm-title">Admin Panel</h1>
 
+        <!-- ── Email Previews ── -->
+        <section class="adm-section">
+            <h2 class="adm-section-title">Email Previews</h2>
+
+            <div class="adm-card">
+                <div class="adm-card-body">
+                    <div class="adm-card-info">
+                        <div class="adm-card-name">Registration Activation Email</div>
+                        <div class="adm-card-desc">
+                            Preview the HTML email sent to new users after registration,
+                            rendered with sample data in the current locale.
+                        </div>
+                    </div>
+                    <a href="/admin/email-preview?type=activation" target="_blank"
+                       class="adm-btn adm-btn--primary">
+                        Preview
+                    </a>
+                </div>
+            </div>
+
+            <div class="adm-card">
+                <div class="adm-card-body">
+                    <div class="adm-card-info">
+                        <div class="adm-card-name">Password Reset Email</div>
+                        <div class="adm-card-desc">
+                            Preview the HTML email sent when a user requests a password reset,
+                            rendered with sample data in the current locale.
+                        </div>
+                    </div>
+                    <a href="/admin/email-preview?type=reset-pass" target="_blank"
+                       class="adm-btn adm-btn--primary">
+                        Preview
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- ── Data Management ── -->
         <section class="adm-section">
             <h2 class="adm-section-title">Data Management</h2>
