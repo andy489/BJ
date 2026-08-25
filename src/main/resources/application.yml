@@ -56,15 +56,16 @@ auth:
     cleanup-cron: "*/60 */10 * * * *"
     expires-after-minutes: 30
 
-# mail-hog: "localhost:8025"
+# mail-hog local dev defaults; override via env vars for prod SMTP (e.g. Gmail port 587)
 mail:
-  app-mail: ${APP_MAIL:blackjack@bj.com}
+  app-mail: ${APP_MAIL:noreply@push365.com}
   host: ${MAIL_HOST:localhost}
   port: ${MAIL_PORT:1025}
   username: ${MAIL_USER:root}
   password: ${MAIL_PASS:root}
   smtp-auth: true
   transport-protocol: smtp
+  starttls-enable: ${MAIL_STARTTLS:false}
 
 game:
   blackjack:

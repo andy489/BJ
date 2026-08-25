@@ -30,6 +30,8 @@ public class MailConfig {
 
     private String transportProtocol;
 
+    private String starttlsEnable;
+
     @Bean
     public JavaMailSender javaMailSender() {
 
@@ -53,6 +55,9 @@ public class MailConfig {
 
         properties.setProperty("mail.smtp.auth", smtpAuth);
         properties.setProperty("mail.transport.protocol", transportProtocol);
+        if (starttlsEnable != null) {
+            properties.setProperty("mail.smtp.starttls.enable", starttlsEnable);
+        }
 
         return properties;
     }
