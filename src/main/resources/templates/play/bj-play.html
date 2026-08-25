@@ -1039,7 +1039,7 @@
 
                     <!-- ── Row header: hand number, time, bet/return, result badge ── -->
                     <div class="hist-row-header">
-                        <span class="hist-row-num" th:text="${betHistory.size - i.index}">#1</span>
+                        <span class="hist-row-num" th:text="${i.index + 1}">#1</span>
                         <span class="hist-row-time"
                               th:text="${h.finalizedTime != null} ? ${#temporals.format(h.finalizedTime, 'HH:mm dd MMM')} : '-'">12:00</span>
                         <span class="hist-row-amounts">
