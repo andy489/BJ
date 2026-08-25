@@ -2,6 +2,8 @@
 
 A full-stack Spring Boot casino web application featuring Blackjack with complete user management, wallet system, email verification, and support for 10 languages. Built as a portfolio project.
 
+> **Note:** This is a demo deployment. All hand history, bet records, and active game states are automatically wiped every **Sunday at midnight** to keep the database clean. Wallet balances and user accounts are preserved.
+
 ---
 
 ## Screenshots
