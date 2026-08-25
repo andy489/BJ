@@ -224,6 +224,20 @@
             </div>
         </div>
 
+        <!-- Admin panel — ADMIN only -->
+        <div sec:authorize="hasAuthority('ADMIN')">
+            <a class="nav-link active mb-0" th:href="@{/admin}">
+                <span class="nav-icon align-middle">
+                    <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M6 20v-2a6 6 0 0 1 12 0v2"/>
+                        <path d="M17 20h4M19 18v4"/>
+                    </svg>
+                </span>
+                <span class="nav-func align-middle">Admin</span>
+            </a>
+        </div>
+
         <!-- Simulation — ADMIN only, dropdown -->
         <div sec:authorize="hasAuthority('ADMIN')" class="nav-play-dropdown nav-sim-dropdown">
             <a class="nav-link active mb-0 nav-play-trigger">

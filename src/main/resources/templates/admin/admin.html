@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Panel</title>
+    <th:block th:insert="~{fragment/common::head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}"/>
+</head>
+<body class="body-admin">
+
+<header th:replace="~{fragment/common::navbar}"></header>
+
+<main class="adm-main">
+    <div class="adm-container">
+
+        <h1 class="adm-title">Admin Panel</h1>
+
+        <!-- ── Data Management ── -->
+        <section class="adm-section">
+            <h2 class="adm-section-title">Data Management</h2>
+
+            <div class="adm-card">
+                <div class="adm-card-body">
+                    <div class="adm-card-info">
+                        <div class="adm-card-name">Clear All Hand History</div>
+                        <div class="adm-card-desc">
+                            Permanently deletes every row in <code>bet_history</code> and <code>played_games</code>
+                            for all users, and resets all active in-progress games. This cannot be undone.
+                        </div>
+                    </div>
+
+                    <form th:action="@{/admin/clear-history}" method="post" class="adm-action-form" id="clearHistoryForm">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="button" class="adm-btn adm-btn--danger" id="clearHistoryBtn">
+                            Clear All History
+                        </button>
+                    </form>
+                </div>
+
+                <div th:if="${cleared}" class="adm-success">
+                    All hand history and active game states have been cleared.
+                </div>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<!-- Confirmation modal -->
+<div class="adm-modal-overlay" id="confirmOverlay" style="display:none">
+    <div class="adm-modal">
+        <div class="adm-modal-title">Are you sure?</div>
+        <div class="adm-modal-body">
+            This will permanently delete all hand history and played games for every user
+            and reset all active game sessions. This action cannot be undone.
+        </div>
+        <div class="adm-modal-actions">
+            <button class="adm-btn adm-btn--ghost" id="cancelBtn">Cancel</button>
+            <button class="adm-btn adm-btn--danger" id="confirmBtn">Yes, clear everything</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const clearBtn    = document.getElementById('clearHistoryBtn');
+    const overlay     = document.getElementById('confirmOverlay');
+    const cancelBtn   = document.getElementById('cancelBtn');
+    const confirmBtn  = document.getElementById('confirmBtn');
+    const form        = document.getElementById('clearHistoryForm');
+
+    clearBtn.addEventListener('click', () => overlay.style.display = 'flex');
+    cancelBtn.addEventListener('click', () => overlay.style.display = 'none');
+    confirmBtn.addEventListener('click', () => { overlay.style.display = 'none'; form.submit(); });
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.style.display = 'none'; });
+</script>
+
+</body>
+</html>
