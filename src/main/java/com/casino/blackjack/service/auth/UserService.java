@@ -22,7 +22,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -48,8 +47,6 @@ public class UserService {
 
     private final PasswordEncoder encoder;
 
-    private final UserDetailsService userDetailsService;
-
     private final AppUserDetailsService appUserDetailsService;
 
     private final Boolean autoLogin;
@@ -67,7 +64,7 @@ public class UserService {
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
                        PasswordEncoder encoder,
-                       UserDetailsService userDetailsService,
+                       AppUserDetailsService appUserDetailsService,
                        @Value("${auth.register.auto-login}") Boolean autoLogin,
                        ApplicationEventPublisher appEventPublisher,
                        UserActivationTokenRepository userActivationTokenRepository,
@@ -78,9 +75,8 @@ public class UserService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
-        this.userDetailsService = userDetailsService;
+        this.appUserDetailsService = appUserDetailsService;
         this.autoLogin = autoLogin;
-        this.appUserDetailsService = new AppUserDetailsService(userRepository);
         this.appEventPublisher = appEventPublisher;
         this.userActivationTokenRepository = userActivationTokenRepository;
         this.userResetPassTokenRepository = userResetPassTokenRepository;
@@ -151,7 +147,7 @@ public class UserService {
         appEventPublisher.publishEvent(userRegisteredEvent);
 
         if (autoLogin) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(newUser.getUsername());
+            UserDetails userDetails = appUserDetailsService.loadUserByUsername(newUser.getUsername());
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, // principal

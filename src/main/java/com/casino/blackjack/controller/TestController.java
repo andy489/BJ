@@ -38,9 +38,6 @@ public class TestController extends BaseController {
 
     @GetMapping({"/{statusCode}"})
     public ModelAndView getForbiddenPage(@PathVariable(name = "statusCode") Integer code) {
-
-        System.out.println("[DEBUG]: " + "error/" + code);
-
         return super.view("error/" + code);
     }
 }

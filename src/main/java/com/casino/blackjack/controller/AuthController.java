@@ -80,12 +80,7 @@ public class AuthController extends BaseController {
             @RequestParam(value = "g-recaptcha-response") String recaptchaResponse,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
-        boolean isBot = !recaptchaService.verify(recaptchaResponse)
-                .map(RecaptchaResponseDTO::isSuccess)
-                .orElse(false);
-
-        if (isBot) {
-            LOGGER.warn("reCAPTCHA protected your website from spam and abuse");
+        if (isBot(recaptchaResponse)) {
             return super.redirect("/");
         }
 
@@ -167,12 +162,7 @@ public class AuthController extends BaseController {
             HttpServletRequest request,
             @RequestParam(value = "g-recaptcha-response") String recaptchaResponse) {
 
-        boolean isBot = !recaptchaService.verify(recaptchaResponse)
-                .map(RecaptchaResponseDTO::isSuccess)
-                .orElse(false);
-
-        if (isBot) {
-            LOGGER.warn("reCAPTCHA protected your website from spam and abuse");
+        if (isBot(recaptchaResponse)) {
             return super.redirect("/");
         }
 
@@ -225,12 +215,7 @@ public class AuthController extends BaseController {
             @RequestParam(required = false) String token,
             @RequestParam(value = "g-recaptcha-response") String recaptchaResponse) {
 
-        boolean isBot = !recaptchaService.verify(recaptchaResponse)
-                .map(RecaptchaResponseDTO::isSuccess)
-                .orElse(false);
-
-        if (isBot) {
-            LOGGER.warn("reCAPTCHA protected your website from spam and abuse");
+        if (isBot(recaptchaResponse)) {
             return super.redirect("/");
         }
 
@@ -243,6 +228,16 @@ public class AuthController extends BaseController {
         }
 
         return redirect(userService.changePassword(token, resetPasswordDTO.getPassword()));
+    }
+
+    private boolean isBot(String recaptchaResponse) {
+        boolean isBot = !recaptchaService.verify(recaptchaResponse)
+                .map(RecaptchaResponseDTO::isSuccess)
+                .orElse(false);
+        if (isBot) {
+            LOGGER.warn("reCAPTCHA protected your website from spam and abuse");
+        }
+        return isBot;
     }
 
     @GetMapping("/pass")
