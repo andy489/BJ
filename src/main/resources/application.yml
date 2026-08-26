@@ -16,7 +16,7 @@ spring:
             paths: /**
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: ${DB_URL:jdbc:sqlite:pushdb.db?date_string_format=millis}
+    url: ${DB_URL:jdbc:sqlite:pushdb.db?date_class=long}
     username:
     password:
   jpa:
@@ -67,6 +67,7 @@ mail:
   transport-protocol: smtp
   starttls-enable: ${MAIL_STARTTLS:false}
   ssl-enable: ${MAIL_SSL:false}
+  ssl-trust: ${MAIL_SSL_TRUST:}
 
 game:
   blackjack:

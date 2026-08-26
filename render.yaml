@@ -10,7 +10,7 @@ services:
       sizeGB: 1
     envVars:
       - key: DB_URL
-        value: jdbc:sqlite:/data/pushdb.db?date_string_format=millis
+        value: jdbc:sqlite:/data/pushdb.db?date_class=long
       - key: RECAPTCHA_ENABLED
         value: true
       - key: RECAPTCHA_SITE_KEY
@@ -35,3 +35,5 @@ services:
         value: false
       - key: MAIL_SSL
         value: true
+      - key: MAIL_SSL_TRUST
+        sync: false

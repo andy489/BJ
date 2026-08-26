@@ -34,6 +34,8 @@ public class MailConfig {
 
     private String sslEnable;
 
+    private String sslTrust;
+
     @Bean
     public JavaMailSender javaMailSender() {
 
@@ -65,6 +67,9 @@ public class MailConfig {
         }
         if (sslEnable != null) {
             properties.setProperty("mail.smtp.ssl.enable", sslEnable);
+        }
+        if (sslTrust != null) {
+            properties.setProperty("mail.smtp.ssl.trust", sslTrust);
         }
 
         return properties;
