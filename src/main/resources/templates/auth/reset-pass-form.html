@@ -11,6 +11,7 @@
     <link rel="stylesheet" th:href="@{/css/auth/login-form.css}"/>
     <!--brands logos-->
     <link rel="stylesheet" th:href="@{https://use.fontawesome.com/releases/v5.0.6/css/all.css}">
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </head>
 
 <body class="body-auth">
@@ -66,6 +67,7 @@
                 <span></span>
                 <span></span>
                 <span></span>
+                <span class="btn-spinner" style="display:none;width:1em;height:1em;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.4em;"></span>
                 <th:block th:text="#{form.reset.password.btn}">RESET PASSWORD</th:block>
             </button>
         </div>
@@ -78,6 +80,9 @@
 
 <script>
     function onSubmit(token) {
+        const btn = document.querySelector('#reset-pass-form .g-recaptcha');
+        btn.disabled = true;
+        btn.querySelector('.btn-spinner').style.display = 'inline-block';
         document.getElementById("reset-pass-form").submit();
     }
 </script>
