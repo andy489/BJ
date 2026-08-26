@@ -4,6 +4,7 @@ import com.casino.blackjack.config.recaptcha.RecaptchaConfig;
 import com.casino.blackjack.model.dto.RecaptchaResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,7 +21,7 @@ public class RecaptchaService {
 
     private final RecaptchaConfig recaptchaConfig;
 
-    public RecaptchaService(WebClient webClient, RecaptchaConfig recaptchaConfig) {
+    public RecaptchaService(@Qualifier("formPostWebClient") WebClient webClient, RecaptchaConfig recaptchaConfig) {
         this.webClient = webClient;
         this.recaptchaConfig = recaptchaConfig;
     }
