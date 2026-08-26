@@ -4,6 +4,7 @@ import com.casino.blackjack.service.gamelogic.dto.Game;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -60,6 +61,7 @@ public class GameEntity extends BaseEntity implements Serializable {
 
     private Boolean finalized;
 
+    @Column(columnDefinition = "BIGINT")
     private LocalDateTime dealtTime;
 
     private String splitHands;

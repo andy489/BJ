@@ -43,8 +43,10 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
 
     private Double insuranceMultiplier;
 
+    @Column(columnDefinition = "BIGINT")
     private LocalDateTime dealtTime;
 
+    @Column(columnDefinition = "BIGINT")
     private LocalDateTime finalizedTime;
 
     private String splitHands;
