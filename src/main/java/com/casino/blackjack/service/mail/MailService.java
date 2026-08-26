@@ -86,7 +86,7 @@ public class MailService {
                 .bodyToMono(String.class)
                 .doOnSuccess(resp -> log.info("Resend accepted email to {}: {}", to, resp))
                 .doOnError(e -> log.error("Resend rejected email to {}: {}", to, e.getMessage()))
-                .block();
+                .subscribe(); // fire-and-forget — don't block the request thread
     }
 
     private String getEmailActivationSubject(Locale locale) {
