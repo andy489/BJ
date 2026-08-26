@@ -55,8 +55,10 @@ public class UserTokenService {
         String token = createActivationToken(event.getEmail());
 
         try {
+            log.info("Sending registration email to {}", event.getEmail());
             mailService.sendRegistrationEmail(event.getEmail(), event.getUsername(), event.getUserFullName(),
                     event.getLocale(), token);
+            log.info("Registration email sent successfully to {}", event.getEmail());
         } catch (Exception e) {
             log.error("Failed to send registration email to {}: {}", event.getEmail(), e.getMessage(), e);
         }
@@ -67,8 +69,10 @@ public class UserTokenService {
         String token = createResetPassToken(event.getEmail());
 
         try {
+            log.info("Sending forgot-password email to {}", event.getEmail());
             mailService.sendForgotPassEmail(event.getEmail(), event.getUsername(), event.getFullName(),
                     event.getLocale(), token);
+            log.info("Forgot-password email sent successfully to {}", event.getEmail());
         } catch (Exception e) {
             log.error("Failed to send forgot-password email to {}: {}", event.getEmail(), e.getMessage(), e);
         }
