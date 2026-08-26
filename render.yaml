@@ -4,13 +4,9 @@ services:
     runtime: docker
     plan: free
     healthCheckPath: /
-    disk:
-      name: sqlite-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: DB_URL
-        value: jdbc:sqlite:/data/pushdb.db?date_class=INTEGER
+        value: jdbc:sqlite:/app/pushdb.db?date_class=INTEGER
       - key: RECAPTCHA_ENABLED
         value: true
       - key: RECAPTCHA_SITE_KEY
