@@ -25,4 +25,10 @@ public class RestConsumerConfig {
                 .build();
     }
 
+    @Bean
+    public WebClient jsonWebClient() {
+        return WebClient.builder().defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
+
 }

@@ -17,19 +17,5 @@ services:
         generateValue: true
       - key: APP_MAIL
         sync: false
-      - key: MAIL_HOST
-        sync: false
-      - key: MAIL_PORT
-        sync: false
-      - key: MAIL_USER
-        sync: false
-      - key: MAIL_PASS
-        sync: false
-      - key: MAIL_SMTP_AUTH
-        value: true
-      - key: MAIL_STARTTLS
-        value: false
-      - key: MAIL_SSL
-        value: true
-      - key: MAIL_SSL_TRUST
+      - key: RESEND_API_KEY
         sync: false
