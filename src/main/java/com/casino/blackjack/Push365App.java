@@ -6,9 +6,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class BlackjackApplication {
+public class Push365App {
 
     public static void main(String[] args) {
-        SpringApplication.run(BlackjackApplication.class, args);
+        SpringApplication.run(Push365App.class, args);
     }
 }
