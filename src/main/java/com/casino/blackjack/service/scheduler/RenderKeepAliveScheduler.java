@@ -2,6 +2,7 @@ package com.casino.blackjack.service.scheduler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public class RenderKeepAliveScheduler {
     private final WebClient webClient;
     private final String appUrl;
 
-    public RenderKeepAliveScheduler(WebClient webClient,
+    public RenderKeepAliveScheduler(@Qualifier("jsonWebClient") WebClient webClient,
                                     @Value("${RENDER_EXTERNAL_URL:https://push365.onrender.com}") String appUrl) {
         this.webClient = webClient;
         this.appUrl = appUrl;
