@@ -210,18 +210,24 @@ public class Game {
         List<Boolean> splitDoubleDownFlags;
 
         try {
-            dealerCards = om.readValue(gameEntity.getDealerCards(), new TypeReference<>() {
-            });
-            playerCards = om.readValue(gameEntity.getPlayerCards(), new TypeReference<>() {
-            });
-            availableChoices = om.readValue(gameEntity.getAvailableChoices(), new TypeReference<>() {
-            });
-            takenChoices = om.readValue(gameEntity.getTakenChoices(), new TypeReference<>() {
-            });
-            errCodeList = om.readValue(gameEntity.getErrCodeList(), new TypeReference<>() {
-            });
-            dealerSecondCard = om.readValue(gameEntity.getDealerSecondCard(), new TypeReference<>() {
-            });
+            dealerCards = gameEntity.getDealerCards() != null
+                    ? om.readValue(gameEntity.getDealerCards(), new TypeReference<>() {})
+                    : new ArrayList<>();
+            playerCards = gameEntity.getPlayerCards() != null
+                    ? om.readValue(gameEntity.getPlayerCards(), new TypeReference<>() {})
+                    : new ArrayList<>();
+            availableChoices = gameEntity.getAvailableChoices() != null
+                    ? om.readValue(gameEntity.getAvailableChoices(), new TypeReference<>() {})
+                    : new ArrayList<>();
+            takenChoices = gameEntity.getTakenChoices() != null
+                    ? om.readValue(gameEntity.getTakenChoices(), new TypeReference<>() {})
+                    : new ArrayList<>();
+            errCodeList = gameEntity.getErrCodeList() != null
+                    ? om.readValue(gameEntity.getErrCodeList(), new TypeReference<>() {})
+                    : new ArrayList<>();
+            dealerSecondCard = gameEntity.getDealerSecondCard() != null
+                    ? om.readValue(gameEntity.getDealerSecondCard(), new TypeReference<>() {})
+                    : null;
             splitHands = gameEntity.getSplitHands() != null
                     ? om.readValue(gameEntity.getSplitHands(), new TypeReference<>() {})
                     : new ArrayList<>();
