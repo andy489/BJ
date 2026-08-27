@@ -72,7 +72,7 @@ public class MailService {
 
     private void send(String to, String subject, String html) {
         Map<String, Object> body = Map.of(
-                "from", appMail,
+                "from", "Push365 <" + appMail + ">",
                 "to", List.of(to),
                 "subject", subject,
                 "html", html
