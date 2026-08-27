@@ -143,6 +143,9 @@ The first version of the site had a different visual identity before the current
 - Auto-play button to let the dealer resolve the hand
 - Persistent game state — unfinished games resume on next visit
 - Collapsible **Last 10 Hands** history panel with cards, actions, bets, and payouts
+- **AJAX game loop** — all player actions (Hit, Stand, Deal, Double, Split, etc.) are fetch()-based; cards, scores, balance, and overlays update in-place with no page reload
+- **Side bets** — Perfect Pairs (PP), 21+3, and Dealer Perfect Pairs (DPP) placed before the deal; displayed as interactive bet circles with a per-deal breakdown of all committed amounts
+- WIN / PUSH / LOSS result overlay with auto-dismiss after a configurable delay
 
 ### RTP Simulator (Admin)
 - Simulates up to 10 million hands with configurable bet size (£0.10 – £10,000)
@@ -151,6 +154,10 @@ The first version of the site had a different visual identity before the current
 - Strategies: **Dealer Mirror** (~94.5% RTP) and **Basic Strategy** (~99.5% RTP)
 - Reports: RTP, total wagered/returned, wins, losses, pushes, blackjacks, elapsed time
 - Loading skeleton animation while simulation runs; results fade in on completion
+
+### Admin Panel
+- **Clear All History** — wipes all hand history, bet records, and active game states; resets last-hand wallet stats (last win, last bet, side-bet amounts) to zero for all users; wallet balances and accounts are preserved
+- **Weekly auto-wipe** — `WeeklyHistoryCleaner` scheduler runs `clearAllHistory()` every Sunday at midnight (server time) to keep the demo database clean
 
 ### User Management
 - Registration with email verification (activation link, 60 min expiry)
@@ -176,6 +183,8 @@ The first version of the site had a different visual identity before the current
 - Responsive layout — hamburger nav on mobile
 - Live weather widget (Sofia, Las Vegas, Monte Carlo, Macao) via OpenWeatherMap
 - Navbar settings dropdown: language switcher + theme toggle
+- Credit card deposit/cash-out pages support both light and dark themes
+- Card number field shows an info tooltip listing accepted card types (Visa, Mastercard, Amex, Discover, Troy)
 
 ### Internationalization
 10 languages — switched via cookie, no page reload required:
@@ -215,9 +224,14 @@ The first version of the site had a different visual identity before the current
 
 ## Architecture
 
-### MVC + Post-Redirect-Get
+### MVC + AJAX JSON API
 
-Every game action is a POST that mutates state, followed by a redirect to `GET /play`. The GET call re-hydrates the game from the database and renders the updated view. This prevents double-submission on refresh.
+Game actions are handled by a dual-mode `PlayController`:
+
+- **AJAX path** (default) — every player action is a `fetch()` POST with `Accept: application/json`. The controller calls the game service and returns a `GameStateDto` JSON snapshot. `bj-play-render.js` applies the diff to the DOM in-place (cards, scores, balance, buttons, overlays) with no page reload.
+- **PRG fallback** — requests without `Accept: application/json` follow the classic Post-Redirect-Get pattern (redirect to `GET /play`) for graceful degradation without JavaScript.
+
+`GameStateDtoMapper` converts the in-memory `Game` DTO to `GameStateDto` (cards, scores, wallet, split hands, available choices, etc.) for every JSON response.
 
 ### Game Engine — Chain of Responsibility
 
