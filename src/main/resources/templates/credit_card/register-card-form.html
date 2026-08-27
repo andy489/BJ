@@ -6,6 +6,44 @@
     <link th:href="@{/css/credit_card/cloudflare-ajax-mayer-reset.css}" rel="stylesheet">
     <link th:href="@{/css/credit_card/credit-card.css}" rel="stylesheet">
     <th:block th:insert="~{fragment/common::head}"></th:block>
+    <style>
+        .cc-info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.1em;
+            height: 1.1em;
+            margin-left: 6px;
+            font-size: 1rem;
+            color: #ffd347;
+            cursor: pointer;
+            position: relative;
+            vertical-align: middle;
+            user-select: none;
+        }
+        .cc-info-tooltip {
+            display: none;
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 8px);
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: #f5f0e0;
+            border: 1px solid #ffd347;
+            border-radius: 8px;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.82rem;
+            white-space: nowrap;
+            z-index: 100;
+            line-height: 1.7;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+        .cc-info-icon:hover .cc-info-tooltip,
+        .cc-info-icon:focus .cc-info-tooltip {
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
@@ -167,6 +205,14 @@
                 <div class="card-input">
                     <label for="cardNumber" class="card-input__label"
                            th:text="#{cc.reg.number}">Card Number</label>
+                    <span class="cc-info-icon" id="cc-number-info" tabindex="0" aria-label="Card number info">&#9432;
+                        <span class="cc-info-tooltip">
+                            <strong>Accepted cards:</strong><br>
+                            &bull; <strong>Visa</strong> — starts with 4, 16 digits<br>
+                            &bull; <strong>Mastercard</strong> — starts with 51–55 or 2221–2720, 16 digits<br>
+                            &bull; <strong>Amex</strong> — starts with 34 or 37, 15 digits
+                        </span>
+                    </span>
                     <input type="text" id="cardNumber" class="card-input__input" v-mask="generateCardNumberMask"
                            v-model="cardNumber" v-on:focus="focusInput" v-on:blur="blurInput" data-ref="cardNumber"
                            autocomplete="off"
