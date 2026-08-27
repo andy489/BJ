@@ -100,14 +100,14 @@ $(document).ready(function () {
             $('#split-weak-pair-modal').removeClass('d-none')
             $('.modal-overlay').addClass('active')
         } else {
-            $('#form-split').submit()
+            document.getElementById('form-split').requestSubmit()
         }
     })
 
     $('#btn-split-weak-yes').click(function () {
         $('#split-weak-pair-modal').addClass('d-none')
         $('.modal-overlay').removeClass('active')
-        $('#form-split').submit()
+        document.getElementById('form-split').requestSubmit()
     })
 
     $('#btn-split-weak-no').click(function () {
@@ -125,7 +125,7 @@ $(document).ready(function () {
     $('#btn-surrender-yes').click(function () {
         $('#surrender-confirm-modal').addClass('d-none')
         $('.modal-overlay').removeClass('active')
-        $('#form-surrender').submit()
+        document.getElementById('form-surrender').requestSubmit()
     })
 
     $('#btn-surrender-no').click(function () {
@@ -144,14 +144,14 @@ $(document).ready(function () {
             $('#hit-hard17-confirm-modal').removeClass('d-none')
             $('.modal-overlay').addClass('active')
         } else {
-            $('#form-hit').submit()
+            document.getElementById('form-hit').requestSubmit()
         }
     })
 
     $('#btn-hit-hard17-yes').click(function () {
         $('#hit-hard17-confirm-modal').addClass('d-none')
         $('.modal-overlay').removeClass('active')
-        $('#form-hit').submit()
+        document.getElementById('form-hit').requestSubmit()
     })
 
     $('#btn-hit-hard17-no').click(function () {
@@ -167,14 +167,14 @@ $(document).ready(function () {
             $('#stand-low-confirm-modal').removeClass('d-none')
             $('.modal-overlay').addClass('active')
         } else {
-            $('#form-stand').submit()
+            document.getElementById('form-stand').requestSubmit()
         }
     })
 
     $('#btn-stand-low-yes').click(function () {
         $('#stand-low-confirm-modal').addClass('d-none')
         $('.modal-overlay').removeClass('active')
-        $('#form-stand').submit()
+        document.getElementById('form-stand').requestSubmit()
     })
 
     $('#btn-stand-low-no').click(function () {
@@ -207,6 +207,14 @@ $(document).ready(function () {
     $('.chip-5000').click(function () { handleChip(CHIP_2XL, false) })
     $('.chip-10000').click(function () { handleChip(CHIP_3XL, false) })
     $('.btn-chip-double').click(function () { handleChip(null, true) })
+
+    /* Double bet — client-side only when not in an active dealt hand */
+    $('form[action*="/play/double-bet"]').on('submit', function (e) {
+        if (!BJ_GAME_DEALT) {
+            e.preventDefault()
+            // client-side doubling already done by the btn-chip-double click handler
+        }
+    })
 
     /* Repeat last bet — restores main hand bet and all side bets from previous hand */
     $('.form-repeat').on('submit', function (e) {
@@ -288,23 +296,7 @@ $(document).ready(function () {
         updateTotalStakeDisplay()
     })
 
-    /* Deal — populate hidden side bet fields and clear sessionStorage */
-    $('.form-deal').on('submit', function (e) {
-        var betVal = parseFloat($('.curr-bet-value').val())
-        if (isNaN(betVal) || betVal < MIN_BET) {
-            e.preventDefault()
-            return false
-        }
-        // Populate side bet hidden fields
-        $('#deal-pp-bet').val(ppStagedBet > 0 ? ppStagedBet.toFixed(2) : '0')
-        $('#deal-213-bet').val(t3StagedBet > 0 ? t3StagedBet.toFixed(2) : '0')
-        $('#deal-dpp-bet').val(dppStagedBet > 0 ? dppStagedBet.toFixed(2) : '0')
-        // Clear staged state — server now owns these amounts
-        sessionStorage.removeItem('bj-pp-staged')
-        sessionStorage.removeItem('bj-t3-staged')
-        sessionStorage.removeItem('bj-dpp-staged')
-        sessionStorage.removeItem('bj-chip-target')
-    })
+    /* Deal — side bet population handled by AJAX form-deal override below */
 
     refreshDealButton()
 })
@@ -433,3 +425,111 @@ function calcChip(chipValue, doubleChip) {
     updateTotalStakeDisplay()
     refreshDealButton()
 }
+
+/* ── AJAX fetch interceptor ─────────────────────────────────────────────── */
+
+var BJ_AJAX = (function () {
+
+    function getCsrfToken() {
+        var meta = document.querySelector('meta[name="_csrf"]')
+        if (meta) return meta.getAttribute('content')
+        var inp = document.querySelector('input[name="_csrf"]')
+        if (inp) return inp.value
+        return ''
+    }
+
+    function getCsrfHeader() {
+        var meta = document.querySelector('meta[name="_csrf_header"]')
+        return meta ? meta.getAttribute('content') : 'X-CSRF-TOKEN'
+    }
+
+    function showLoading() {
+        var cw = document.getElementById('cardsWrapper')
+        if (cw) cw.classList.add('ajax-loading')
+    }
+
+    function hideLoading() {
+        var cw = document.getElementById('cardsWrapper')
+        if (cw) cw.classList.remove('ajax-loading')
+    }
+
+    function submitForm(form) {
+        var url    = form.action
+        var method = (form.method || 'post').toUpperCase()
+        var body   = new FormData(form)
+
+        var csrfToken  = getCsrfToken()
+        var csrfHeader = getCsrfHeader()
+        if (csrfToken && !body.get('_csrf')) body.append('_csrf', csrfToken)
+
+        var headers = { 'Accept': 'application/json' }
+        if (csrfToken) headers[csrfHeader] = csrfToken
+
+        showLoading()
+
+        fetch(url, { method: method, headers: headers, body: body })
+            .then(function(resp) {
+                if (!resp.ok) throw new Error('HTTP ' + resp.status)
+                return resp.json()
+            })
+            .then(function(state) {
+                hideLoading()
+                BJ_RENDER.applyState(state)
+            })
+            .catch(function(err) {
+                hideLoading()
+                console.error('AJAX action failed:', err)
+                window.location.reload()
+            })
+    }
+
+    /* Intercept game-action form submits that need a server round-trip.
+       The forms below are handled client-side by the existing jQuery handlers
+       (they call e.preventDefault() themselves) and must NOT be intercepted here:
+         /play/deal         — handled in .form-deal jQuery + AJAX override below
+         /play/repeat-last-bet — fully client-side (calcChip), no server call
+         /play/clear-bet    — partially client-side; server path intercepted below
+       Everything else (/play/hit, /play/stand, etc.) goes through AJAX directly. */
+    document.addEventListener('submit', function(e) {
+        var form = e.target
+        if (!form || form.tagName !== 'FORM') return
+        var action = form.action || ''
+        if (action.indexOf('/play/') === -1) return
+        var skipPaths = ['/play/deal', '/play/repeat-last-bet', '/play/clear-bet', '/play/double-bet']
+        if (skipPaths.some(function(p) { return action.indexOf(p) !== -1 })) return
+        e.preventDefault()
+        submitForm(form)
+    }, true)
+
+    return { submitForm: submitForm }
+
+})()
+
+/* ── .form-deal: AJAX after client-side side-bet population ── */
+$('.form-deal').on('submit', function(e) {
+    var betVal = parseFloat($('.curr-bet-value').val())
+    if (isNaN(betVal) || betVal < BJ_CALC.MIN_BET) {
+        e.preventDefault()
+        return false
+    }
+    $('#deal-pp-bet').val(ppStagedBet > 0 ? ppStagedBet.toFixed(2) : '0')
+    $('#deal-213-bet').val(t3StagedBet > 0 ? t3StagedBet.toFixed(2) : '0')
+    $('#deal-dpp-bet').val(dppStagedBet > 0 ? dppStagedBet.toFixed(2) : '0')
+    sessionStorage.removeItem('bj-pp-staged')
+    sessionStorage.removeItem('bj-t3-staged')
+    sessionStorage.removeItem('bj-dpp-staged')
+    sessionStorage.removeItem('bj-chip-target')
+    e.preventDefault()
+    BJ_AJAX.submitForm(this)
+})
+
+/* ── .form-clear: AJAX when a server round-trip is needed ── */
+$('.form-clear').on('submit', function(e) {
+    var hasCards = BJ_GAME_DEALT && !BJ_FINALIZED && BJ_LAST_CHOICE >= 1 && BJ_LAST_CHOICE <= 15
+    var hasPostPayoutCards = !BJ_GAME_DEALT && !BJ_FINALIZED && BJ_LAST_CHOICE > 0
+    if (hasCards || BJ_FINALIZED || hasPostPayoutCards) {
+        e.preventDefault()
+        BJ_AJAX.submitForm(this)
+    }
+    // Otherwise the existing client-side jQuery handler has already called e.preventDefault()
+})

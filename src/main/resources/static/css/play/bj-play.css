@@ -1447,3 +1447,11 @@ body {
 [data-theme="light"] .result-overlay--win  { color: #006b2a; background: rgba(0, 200, 80, 0.2);  border-color: rgba(0, 150, 60, 0.6); }
 [data-theme="light"] .result-overlay--push { color: #6b4f00; background: rgba(220, 170, 0, 0.2); border-color: rgba(180, 130, 0, 0.6); }
 [data-theme="light"] .result-overlay--loss { color: #8b0000; background: rgba(200, 0, 0, 0.15);  border-color: rgba(180, 0, 0, 0.5); }
+
+/* ── AJAX loading state ── */
+#cardsWrapper.ajax-loading {
+    opacity: 0.65;
+    pointer-events: none;
+    cursor: wait;
+    transition: opacity 0.15s;
+}
