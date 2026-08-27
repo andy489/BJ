@@ -81,7 +81,7 @@ var BJ_RENDER = (function () {
         }
 
         var scoreEl = box.querySelector('.curr-result-box')
-        if (scoreEl && state.dealerScore != null) scoreEl.textContent = state.dealerScore
+        if (scoreEl) scoreEl.textContent = state.dealerScore != null ? state.dealerScore : '0'
     }
 
     /* ── Render player cards (non-split) ── */
@@ -134,7 +134,7 @@ var BJ_RENDER = (function () {
             }
 
             var scoreEl = normalBox.querySelector('.curr-result-box')
-            if (scoreEl && state.playerScore != null) scoreEl.textContent = state.playerScore
+            if (scoreEl) scoreEl.textContent = state.playerScore != null ? state.playerScore : '0'
         }
     }
 
@@ -413,9 +413,8 @@ var BJ_RENDER = (function () {
             }
         }
 
-        // deal button re-check after wallet update — skip when server already granted DEAL
-        var serverGrantsDeal = (state.availableChoices || []).includes(C.DEAL)
-        if (!serverGrantsDeal && typeof refreshDealButton === 'function') refreshDealButton()
+        // deal button re-check — refreshDealButton validates minimum bet client-side
+        if (typeof refreshDealButton === 'function') refreshDealButton()
     }
 
     /* ── Render result overlay ── */
@@ -463,9 +462,9 @@ var BJ_RENDER = (function () {
                         // Reveal bet circles now that overlay has faded
                         var bcwFade = document.querySelector('.bet-circles-wrapper')
                         if (bcwFade) bcwFade.classList.remove('bet-circles-wrapper--in-play')
-                        // Reset stale finalized state so Clear/Repeat work client-side again
-                        if (typeof BJ_FINALIZED   !== 'undefined') BJ_FINALIZED   = false
-                        if (typeof BJ_LAST_CHOICE !== 'undefined') BJ_LAST_CHOICE = -1
+                        // Transition to post-payout state so the chip panel and Clear button work correctly.
+                        if (typeof BJ_FINALIZED  !== 'undefined') BJ_FINALIZED  = false
+                        if (typeof BJ_GAME_DEALT !== 'undefined') BJ_GAME_DEALT = false
                     }, fadeDuration)
                 }, displayDelay)
             }, 50)
@@ -767,11 +766,11 @@ var BJ_RENDER = (function () {
             if (typeof BJ_PAIR_NOMINAL !== 'undefined')
                 BJ_PAIR_NOMINAL = r === 1 ? 11 : r >= 10 ? 10 : r
         }
-        // lastChoice
-        if (typeof BJ_LAST_CHOICE !== 'undefined') {
-            var avail = state.availableChoices || []
-            // We don't have takenChoices in GameStateDto; derive lastChoice from context
-            // Keep existing BJ_LAST_CHOICE — it's only used for card animation on initial SSR
+        // When finalized, set BJ_LAST_CHOICE > 0 so hasPostPayoutCards fires in the Clear handler.
+        // We don't have takenChoices in GameStateDto so we can't know the exact last choice,
+        // but any value > 0 (SURRENDER=1) is sufficient for the Clear guard in bj-play.js.
+        if (typeof BJ_LAST_CHOICE !== 'undefined' && state.finalized) {
+            BJ_LAST_CHOICE = 1
         }
 
         renderDealerCards(state)
