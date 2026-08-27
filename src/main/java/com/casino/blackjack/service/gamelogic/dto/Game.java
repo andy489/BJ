@@ -116,6 +116,8 @@ public class Game {
     private Integer splitCount;
     /** True when the original split was on Aces (one card per hand, no further action). */
     private Boolean splitAces;
+    /** Actions taken per split hand, indexed same as splitHands. */
+    private List<List<Integer>> splitHandTakenChoices;
 
     public Game() {
         hash = NO_ID_STR;
@@ -149,6 +151,7 @@ public class Game {
         activeSplitHandIndex = 0;
         splitCount = 0;
         splitAces = false;
+        splitHandTakenChoices = new ArrayList<>();
     }
 
     public Game(Game game) {
@@ -177,6 +180,7 @@ public class Game {
         this.activeSplitHandIndex = game.activeSplitHandIndex;
         this.splitCount = game.splitCount;
         this.splitAces = game.splitAces;
+        this.splitHandTakenChoices = game.splitHandTakenChoices;
     }
 
     public static Game of(GameEntity gameEntity, ObjectMapper om, WalletEntity walletEntity) {
@@ -208,6 +212,7 @@ public class Game {
         List<List<Card>> splitHands;
         List<Double> splitHandMultipliers;
         List<Boolean> splitDoubleDownFlags;
+        List<List<Integer>> splitHandTakenChoices;
 
         try {
             dealerCards = gameEntity.getDealerCards() != null
@@ -237,6 +242,9 @@ public class Game {
             splitDoubleDownFlags = gameEntity.getSplitDoubleDownFlags() != null
                     ? om.readValue(gameEntity.getSplitDoubleDownFlags(), new TypeReference<>() {})
                     : new ArrayList<>();
+            splitHandTakenChoices = gameEntity.getSplitHandTakenChoices() != null
+                    ? om.readValue(gameEntity.getSplitHandTakenChoices(), new TypeReference<>() {})
+                    : new ArrayList<>();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -262,7 +270,8 @@ public class Game {
                 .setSplitActive(gameEntity.getSplitActive() != null && gameEntity.getSplitActive())
                 .setActiveSplitHandIndex(gameEntity.getActiveSplitHandIndex() != null ? gameEntity.getActiveSplitHandIndex() : 0)
                 .setSplitCount(gameEntity.getSplitCount() != null ? gameEntity.getSplitCount() : 0)
-                .setSplitAces(gameEntity.getSplitAces() != null && gameEntity.getSplitAces());
+                .setSplitAces(gameEntity.getSplitAces() != null && gameEntity.getSplitAces())
+                .setSplitHandTakenChoices(splitHandTakenChoices);
     }
 
     public Game deal() {
@@ -725,9 +734,11 @@ public class Game {
             splitHands.add(leftHand);
             splitHandMultipliers.add(0.0d);
             splitDoubleDownFlags.add(false);
+            splitHandTakenChoices.add(new ArrayList<>());
             splitHands.add(rightHand);
             splitHandMultipliers.add(0.0d);
             splitDoubleDownFlags.add(false);
+            splitHandTakenChoices.add(new ArrayList<>());
             // Start with the rightmost hand (Hand 1).
             activeSplitHandIndex = 1;
         } else {
@@ -736,6 +747,7 @@ public class Game {
             splitHands.add(activeSplitHandIndex + 1, rightHand);
             splitHandMultipliers.add(activeSplitHandIndex + 1, 0.0d);
             splitDoubleDownFlags.add(activeSplitHandIndex + 1, false);
+            splitHandTakenChoices.add(activeSplitHandIndex + 1, new ArrayList<>());
             // Play the newly inserted right child first.
             activeSplitHandIndex++;
         }
@@ -822,6 +834,12 @@ public class Game {
 
     public Game makeChoice(Integer choice) {
         takenChoices.add(choice);
+        if (Boolean.TRUE.equals(splitActive)
+                && activeSplitHandIndex != null
+                && activeSplitHandIndex >= 0
+                && activeSplitHandIndex < splitHandTakenChoices.size()) {
+            splitHandTakenChoices.get(activeSplitHandIndex).add(choice);
+        }
         return this;
     }
 

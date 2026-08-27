@@ -53,6 +53,8 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
 
     private String splitHandMultipliers;
 
+    private String splitHandTakenChoices;
+
     private String initialPlayerCards;
 
     private String initialDealerCards;
@@ -73,6 +75,7 @@ public class PlayedGameEntity extends BaseEntity implements Serializable {
                 .setDealtTime(gameEntity.getDealtTime())
                 .setSplitHands(gameEntity.getSplitHands())
                 .setSplitHandMultipliers(gameEntity.getSplitHandMultipliers())
+                .setSplitHandTakenChoices(gameEntity.getSplitHandTakenChoices())
                 .setInitialPlayerCards(gameEntity.getInitialPlayerCards())
                 .setInitialDealerCards(gameEntity.getInitialDealerCards())
                 .setOwner(gameEntity.getOwner());

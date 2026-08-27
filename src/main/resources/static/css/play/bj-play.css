@@ -930,6 +930,14 @@ body {
 .hist-badge-push { background: rgba(255, 211, 71, 0.2);  color: #ffd347; }
 .hist-badge-loss { background: rgba(220, 50, 50, 0.2);   color: #ff7b7b; }
 
+.hist-hand-gross {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: rgba(110, 255, 158, 0.85);
+    margin-left: 2px;
+}
+
 /* ── Special action badges ── */
 .hist-tag {
     display: inline-block;

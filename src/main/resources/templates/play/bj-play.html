@@ -1054,7 +1054,7 @@
 
                     <!-- ── Cards: player hand vs dealer hand ── -->
                     <div class="hist-row-cards">
-                        <!-- split round: show each split hand + per-hand badge, then dealer -->
+                        <!-- split round: show each split hand + per-hand badge + actions + gross, then dealer -->
                         <th:block th:if="${not #lists.isEmpty(h.splitHandViews)}">
                             <th:block th:each="sh : ${h.splitHandViews}">
                                 <div class="hist-hand-group">
@@ -1066,6 +1066,11 @@
                                     <span th:classappend="${sh.resultBadgeClass}"
                                           class="hist-badge"
                                           th:text="${sh.resultLabel}">win</span>
+                                    <span th:each="action : ${sh.actionLabels}" class="hist-action-tag"
+                                          th:text="${action}">Hit</span>
+                                    <span th:if="${sh.grossAmount != null and sh.grossAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                          class="hist-hand-gross"
+                                          th:text="'£' + ${#numbers.formatDecimal(sh.grossAmount, 1, 'COMMA', 2, 'POINT')}">£10.00</span>
                                 </div>
                             </th:block>
                             <div class="hist-hand-group">
@@ -1094,7 +1099,9 @@
 
                     <!-- ── Action tags + special badges ── -->
                     <div class="hist-row-actions">
-                        <span th:each="action : ${h.actionLabels}" class="hist-action-tag"
+                        <!-- flat action tags only for non-split hands; split hands show actions per-hand above -->
+                        <span th:unless="${not #lists.isEmpty(h.splitHandViews)}"
+                              th:each="action : ${h.actionLabels}" class="hist-action-tag"
                               th:text="${action}">Hit</span>
                         <span th:if="${h.doubleDown}"  class="hist-tag hist-tag-dd"   th:text="#{history.tag.dd}">DD</span>
                         <span th:if="${h.split}"       class="hist-tag hist-tag-split" th:text="#{history.tag.split}">Split</span>

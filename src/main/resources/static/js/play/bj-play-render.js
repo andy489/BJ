@@ -520,11 +520,19 @@ var BJ_RENDER = (function () {
                 h.splitHandViews.forEach(function(sh) {
                     var g = document.createElement('div')
                     g.className = 'hist-hand-group'
+                    var actionsHtml = (sh.actionLabels || []).map(function(a) {
+                        return '<span class="hist-action-tag">' + escHtml(a) + '</span>'
+                    }).join('')
+                    var grossVal = parseFloat(sh.grossAmount)
+                    var grossHtml = (grossVal > 0)
+                        ? '<span class="hist-hand-gross">£' + grossVal.toFixed(2) + '</span>'
+                        : ''
                     g.innerHTML = '<span class="hist-hand-label">Hand ' + sh.handNumber + ':</span>' +
                         sh.cardLabels.map(function(c) {
                             return '<span class="' + histCardClass(c) + '">' + escHtml(c) + '</span>'
                         }).join('') +
-                        '<span class="hist-badge ' + shResultBadgeClass(sh) + '">' + sh.resultLabel + '</span>'
+                        '<span class="hist-badge ' + shResultBadgeClass(sh) + '">' + sh.resultLabel + '</span>' +
+                        actionsHtml + grossHtml
                     cardsDiv.appendChild(g)
                 })
                 var dg = document.createElement('div')
@@ -552,15 +560,17 @@ var BJ_RENDER = (function () {
             }
             row.appendChild(cardsDiv)
 
-            // actions
+            // actions: flat tags only for non-split hands; split hands show actions per-hand above
             var actDiv = document.createElement('div')
             actDiv.className = 'hist-row-actions'
-            ;(h.actionLabels || []).forEach(function(a) {
-                var s = document.createElement('span')
-                s.className = 'hist-action-tag'
-                s.textContent = a
-                actDiv.appendChild(s)
-            })
+            if (!h.splitHandViews || h.splitHandViews.length === 0) {
+                ;(h.actionLabels || []).forEach(function(a) {
+                    var s = document.createElement('span')
+                    s.className = 'hist-action-tag'
+                    s.textContent = a
+                    actDiv.appendChild(s)
+                })
+            }
             if (h.doubleDown)  actDiv.innerHTML += '<span class="hist-tag hist-tag-dd">DD</span>'
             if (h.split)       actDiv.innerHTML += '<span class="hist-tag hist-tag-split">Split</span>'
             if (h.insurance)   actDiv.innerHTML += '<span class="hist-tag hist-tag-ins">Ins</span>'

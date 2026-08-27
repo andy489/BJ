@@ -274,4 +274,19 @@
         </createIndex>
     </changeSet>
 
+    <changeSet author="stoevand" id="15">
+        <addColumn tableName="last_games">
+            <column name="split_hand_taken_choices" type="TEXT"/>
+        </addColumn>
+        <addColumn tableName="played_games">
+            <column name="split_hand_taken_choices" type="TEXT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="stoevand" id="16">
+        <addColumn tableName="bet_history">
+            <column name="hand_bet" type="NUMERIC" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

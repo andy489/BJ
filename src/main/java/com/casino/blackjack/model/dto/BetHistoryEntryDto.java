@@ -11,18 +11,25 @@ public class BetHistoryEntryDto {
         private final List<String> cardLabels;
         private final double multiplier;
         private final String resultLabel;
+        private final List<String> actionLabels;
+        private final BigDecimal grossAmount;
 
-        public SplitHandDto(int handNumber, List<String> cardLabels, double multiplier, String resultLabel) {
-            this.handNumber = handNumber;
-            this.cardLabels = cardLabels;
-            this.multiplier = multiplier;
-            this.resultLabel = resultLabel;
+        public SplitHandDto(int handNumber, List<String> cardLabels, double multiplier,
+                            String resultLabel, List<String> actionLabels, BigDecimal grossAmount) {
+            this.handNumber   = handNumber;
+            this.cardLabels   = cardLabels;
+            this.multiplier   = multiplier;
+            this.resultLabel  = resultLabel;
+            this.actionLabels = actionLabels;
+            this.grossAmount  = grossAmount;
         }
 
-        public int getHandNumber()          { return handNumber; }
-        public List<String> getCardLabels() { return cardLabels; }
-        public double getMultiplier()       { return multiplier; }
-        public String getResultLabel()      { return resultLabel; }
+        public int getHandNumber()             { return handNumber; }
+        public List<String> getCardLabels()    { return cardLabels; }
+        public double getMultiplier()          { return multiplier; }
+        public String getResultLabel()         { return resultLabel; }
+        public List<String> getActionLabels()  { return actionLabels; }
+        public BigDecimal getGrossAmount()     { return grossAmount; }
     }
 
     private final BigDecimal totalBet;
@@ -58,7 +65,8 @@ public class BetHistoryEntryDto {
         this.dealerCardLabels = v.getDealerCardLabels();
         this.actionLabels     = v.getActionLabels();
         this.splitHandViews   = v.getSplitHandViews().stream()
-                .map(s -> new SplitHandDto(s.getHandNumber(), s.getCardLabels(), s.getMultiplier(), s.getResultLabel()))
+                .map(s -> new SplitHandDto(s.getHandNumber(), s.getCardLabels(), s.getMultiplier(),
+                        s.getResultLabel(), s.getActionLabels(), s.getGrossAmount()))
                 .toList();
         this.ppBet  = v.getPpBet();
         this.t3Bet  = v.getT3Bet();

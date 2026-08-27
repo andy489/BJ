@@ -49,6 +49,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
         BigDecimal ppBetSnapshot  = nvl(ctx.walletEntity().getPerfectPairsBet());
         BigDecimal t3BetSnapshot  = nvl(ctx.walletEntity().getTwentyOneThreeBet());
         BigDecimal dppBetSnapshot = nvl(ctx.walletEntity().getDealerPerfectPairsBet());
+        BigDecimal handBetSnapshot = nvl(ctx.walletEntity().getHandBet());
 
         if (game.getSplitActive() == null || !game.getSplitActive()) {
             if (game.getSplitHands() != null && !game.getSplitHands().isEmpty()) {
@@ -100,6 +101,7 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 .setPpWin(nvl(ctx.walletEntity().getLastPpWin()))
                 .setT3Win(nvl(ctx.walletEntity().getLastT3Win()))
                 .setDppWin(nvl(ctx.walletEntity().getLastDppWin()))
+                .setHandBet(handBetSnapshot)
                 .setUser(playedGame.getOwner());
         ctx.betHistoryService().save(betHistory);
 

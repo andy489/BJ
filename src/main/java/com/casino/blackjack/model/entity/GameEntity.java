@@ -70,6 +70,8 @@ public class GameEntity extends BaseEntity implements Serializable {
 
     private String splitDoubleDownFlags;
 
+    private String splitHandTakenChoices;
+
     private Boolean splitActive;
 
     private Integer activeSplitHandIndex;
@@ -108,6 +110,7 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setSplitHands(splitJson[0])
                 .setSplitHandMultipliers(splitJson[1])
                 .setSplitDoubleDownFlags(splitJson[2])
+                .setSplitHandTakenChoices(splitJson[3])
                 .setSplitActive(game.getSplitActive())
                 .setActiveSplitHandIndex(game.getActiveSplitHandIndex())
                 .setSplitCount(game.getSplitCount())
@@ -136,6 +139,7 @@ public class GameEntity extends BaseEntity implements Serializable {
                 .setSplitHands(splitJson[0])
                 .setSplitHandMultipliers(splitJson[1])
                 .setSplitDoubleDownFlags(splitJson[2])
+                .setSplitHandTakenChoices(splitJson[3])
                 .setSplitActive(game.getSplitActive())
                 .setActiveSplitHandIndex(game.getActiveSplitHandIndex())
                 .setSplitCount(game.getSplitCount())
@@ -148,7 +152,8 @@ public class GameEntity extends BaseEntity implements Serializable {
             return new String[]{
                     om.writeValueAsString(game.getSplitHands()),
                     om.writeValueAsString(game.getSplitHandMultipliers()),
-                    om.writeValueAsString(game.getSplitDoubleDownFlags())
+                    om.writeValueAsString(game.getSplitDoubleDownFlags()),
+                    om.writeValueAsString(game.getSplitHandTakenChoices())
             };
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

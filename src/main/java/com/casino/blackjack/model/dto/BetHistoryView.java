@@ -38,21 +38,28 @@ public class BetHistoryView {
             Map.entry(15, "Insurance ✗")
     );
 
-    /** One split hand: its card labels and result multiplier. */
+    /** One split hand: its card labels, result multiplier, per-hand actions, and gross return. */
     public static class SplitHandView {
         private final int handNumber;
         private final List<String> cardLabels;
         private final double multiplier;
+        private final List<String> actionLabels;
+        private final BigDecimal grossAmount;
 
-        SplitHandView(int handNumber, List<String> cardLabels, double multiplier) {
-            this.handNumber = handNumber;
-            this.cardLabels = cardLabels;
-            this.multiplier = multiplier;
+        SplitHandView(int handNumber, List<String> cardLabels, double multiplier,
+                      List<String> actionLabels, BigDecimal grossAmount) {
+            this.handNumber   = handNumber;
+            this.cardLabels   = cardLabels;
+            this.multiplier   = multiplier;
+            this.actionLabels = actionLabels;
+            this.grossAmount  = grossAmount;
         }
 
-        public int getHandNumber()          { return handNumber; }
-        public List<String> getCardLabels() { return cardLabels; }
-        public double getMultiplier()       { return multiplier; }
+        public int getHandNumber()             { return handNumber; }
+        public List<String> getCardLabels()    { return cardLabels; }
+        public double getMultiplier()          { return multiplier; }
+        public List<String> getActionLabels()  { return actionLabels; }
+        public BigDecimal getGrossAmount()     { return grossAmount; }
 
         /** > 1.0 = win, == 1.0 = push, < 1.0 = loss (0 = bust/loss) */
         public String getResultClass() {
@@ -111,6 +118,8 @@ public class BetHistoryView {
         this.splitHandViews   = parseSplitHands(
                 h.getPlayedGame().getSplitHands(),
                 h.getPlayedGame().getSplitHandMultipliers(),
+                h.getPlayedGame().getSplitHandTakenChoices(),
+                nvl(h.getHandBet()),
                 om);
         this.initialPlayerCardLabels = parseCards(h.getPlayedGame().getInitialPlayerCards(), om);
         this.initialDealerCardLabels = parseCards(h.getPlayedGame().getInitialDealerCards(), om);
@@ -146,12 +155,17 @@ public class BetHistoryView {
         }
     }
 
-    private static List<SplitHandView> parseSplitHands(String handsJson, String multipliersJson, ObjectMapper om) {
+    private static List<SplitHandView> parseSplitHands(String handsJson, String multipliersJson,
+                                                        String splitHandTakenChoicesJson,
+                                                        BigDecimal handBet, ObjectMapper om) {
         if (handsJson == null || handsJson.isBlank()) return Collections.emptyList();
         try {
             List<List<Card>> hands = om.readValue(handsJson, new TypeReference<>() {});
             List<Double> multipliers = (multipliersJson != null && !multipliersJson.isBlank())
                     ? om.readValue(multipliersJson, new TypeReference<>() {})
+                    : Collections.emptyList();
+            List<List<Integer>> perHandChoices = (splitHandTakenChoicesJson != null && !splitHandTakenChoicesJson.isBlank())
+                    ? om.readValue(splitHandTakenChoicesJson, new TypeReference<>() {})
                     : Collections.emptyList();
 
             List<SplitHandView> result = new java.util.ArrayList<>();
@@ -161,7 +175,18 @@ public class BetHistoryView {
                                 + SUIT_SYMBOL.getOrDefault(c.getSuit(), "?"))
                         .collect(Collectors.toList());
                 double mult = (i < multipliers.size()) ? multipliers.get(i) : 0.0;
-                result.add(new SplitHandView(i + 1, labels, mult));
+
+                List<String> handActions = (i < perHandChoices.size())
+                        ? perHandChoices.get(i).stream()
+                              .filter(CHOICE_LABEL::containsKey)
+                              .map(CHOICE_LABEL::get)
+                              .collect(Collectors.toList())
+                        : Collections.emptyList();
+
+                // Gross return = handBet * multiplier (doubled hands use 2× handBet — multiplier already reflects net)
+                BigDecimal gross = handBet.multiply(BigDecimal.valueOf(mult));
+
+                result.add(new SplitHandView(i + 1, labels, mult, handActions, gross));
             }
             return result;
         } catch (Exception e) {
