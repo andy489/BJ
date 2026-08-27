@@ -36,9 +36,9 @@ $(document).ready(function () {
     // Sync staged amounts with server-side committed amounts.
     // Server is authoritative: if server reports 0 (post-payout or fresh), clear stale staged.
     // If server has a committed amount and staged is empty, seed from server (mid-hand reload).
-    var serverPP  = (typeof BJ_PP_BET  !== 'undefined') ? parseFloat(BJ_PP_BET)  : 0
-    var serverT3  = (typeof BJ_213_BET !== 'undefined') ? parseFloat(BJ_213_BET) : 0
-    var serverDPP = (typeof BJ_DPP_BET !== 'undefined') ? parseFloat(BJ_DPP_BET) : 0
+    var serverPP  = (typeof BJ_PP_BET  !== 'undefined' && BJ_PP_BET  != null) ? parseFloat(BJ_PP_BET)  : 0
+    var serverT3  = (typeof BJ_213_BET !== 'undefined' && BJ_213_BET != null) ? parseFloat(BJ_213_BET) : 0
+    var serverDPP = (typeof BJ_DPP_BET !== 'undefined' && BJ_DPP_BET != null) ? parseFloat(BJ_DPP_BET) : 0
 
     if (serverPP === 0) {
         ppStagedBet = 0.0; sessionStorage.removeItem('bj-pp-staged')
@@ -210,10 +210,10 @@ $(document).ready(function () {
 
     /* Repeat last bet — restores main hand bet and all side bets from previous hand */
     $('.form-repeat').on('submit', function (e) {
-        var lastBet    = (typeof BJ_LAST_BET     !== 'undefined') ? parseFloat(BJ_LAST_BET)     : 0
-        var lastPpBet  = (typeof BJ_LAST_PP_BET  !== 'undefined') ? parseFloat(BJ_LAST_PP_BET)  : 0
-        var lastT3Bet  = (typeof BJ_LAST_T3_BET  !== 'undefined') ? parseFloat(BJ_LAST_T3_BET)  : 0
-        var lastDppBet = (typeof BJ_LAST_DPP_BET !== 'undefined') ? parseFloat(BJ_LAST_DPP_BET) : 0
+        var lastBet    = (typeof BJ_LAST_BET     !== 'undefined' && BJ_LAST_BET     != null) ? parseFloat(BJ_LAST_BET)     : 0
+        var lastPpBet  = (typeof BJ_LAST_PP_BET  !== 'undefined' && BJ_LAST_PP_BET  != null) ? parseFloat(BJ_LAST_PP_BET)  : 0
+        var lastT3Bet  = (typeof BJ_LAST_T3_BET  !== 'undefined' && BJ_LAST_T3_BET  != null) ? parseFloat(BJ_LAST_T3_BET)  : 0
+        var lastDppBet = (typeof BJ_LAST_DPP_BET !== 'undefined' && BJ_LAST_DPP_BET != null) ? parseFloat(BJ_LAST_DPP_BET) : 0
         if (isNaN(lastBet) || lastBet <= 0) return
         e.preventDefault()
         calcChip(lastBet, false)
