@@ -294,12 +294,28 @@ body {
 .btn-back {
     color: var(--electric);
     font-weight: bolder;
+    border: 1px solid rgba(255, 211, 71, 0.4) !important;
+    border-radius: 8px !important;
+    padding: 6px 14px !important;
+    transition: background .25s, color .25s, border-color .25s;
 }
 
 .btn-back:hover {
     background-color: var(--electric);
     color: #1a1100 !important;
     font-weight: bolder;
+    border-color: var(--electric) !important;
+}
+
+[data-theme="light"] .btn-back {
+    color: #7a5c00;
+    border-color: rgba(180, 130, 0, 0.45) !important;
+}
+
+[data-theme="light"] .btn-back:hover {
+    background-color: #ffd347;
+    color: #1a1100 !important;
+    border-color: #b38200 !important;
 }
 
 /* Success/fail modals */
@@ -737,14 +753,7 @@ input[type=number] {
     border-color: #b38200 !important;
 }
 
-[data-theme="light"] .btn-back {
-    color: #7a5c00;
-}
 
-[data-theme="light"] .btn-back:hover {
-    background-color: #ffd347;
-    color: #1a1100 !important;
-}
 
 [data-theme="light"] .balance-display {
     background: rgba(180, 130, 0, 0.07);
