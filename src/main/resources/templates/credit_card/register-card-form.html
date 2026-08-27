@@ -13,13 +13,16 @@
             justify-content: center;
             width: 1.1em;
             height: 1.1em;
-            margin-left: 6px;
+            margin-left: 4px;
             font-size: 1rem;
             color: #ffd347;
             cursor: pointer;
             position: relative;
             vertical-align: middle;
             user-select: none;
+            text-transform: none;
+            letter-spacing: normal;
+            font-weight: normal;
         }
         .cc-info-tooltip {
             display: none;
@@ -203,16 +206,17 @@
                 </div>
 
                 <div class="card-input">
-                    <label for="cardNumber" class="card-input__label"
-                           th:text="#{cc.reg.number}">Card Number</label>
-                    <span class="cc-info-icon" id="cc-number-info" tabindex="0" aria-label="Card number info">&#9432;
-                        <span class="cc-info-tooltip">
-                            <strong>Accepted cards:</strong><br>
-                            &bull; <strong>Visa</strong> — starts with 4, 16 digits<br>
-                            &bull; <strong>Mastercard</strong> — starts with 51–55 or 2221–2720, 16 digits<br>
-                            &bull; <strong>Amex</strong> — starts with 34 or 37, 15 digits
+                    <label for="cardNumber" class="card-input__label">
+                        <span th:text="#{cc.reg.number}">Card Number</span>
+                        <span class="cc-info-icon" id="cc-number-info" tabindex="0" aria-label="Card number info">&#9432;
+                            <span class="cc-info-tooltip">
+                                <strong>Accepted cards:</strong><br>
+                                &bull; <strong>Visa</strong> — starts with 4, 16 digits<br>
+                                &bull; <strong>Mastercard</strong> — starts with 51–55 or 2221–2720, 16 digits<br>
+                                &bull; <strong>Amex</strong> — starts with 34 or 37, 15 digits
+                            </span>
                         </span>
-                    </span>
+                    </label>
                     <input type="text" id="cardNumber" class="card-input__input" v-mask="generateCardNumberMask"
                            v-model="cardNumber" v-on:focus="focusInput" v-on:blur="blurInput" data-ref="cardNumber"
                            autocomplete="off"
