@@ -276,6 +276,10 @@ var BJ_RENDER = (function () {
         var insYesCol = document.querySelector('.choice-modal-wrapper:has(form[action="/play/insurance"]) .col-4:first-of-type')
         if (insYesCol) insYesCol.classList.toggle('d-none', !avail.includes(C.INS_YES))
 
+        // double-down confirm YES button visibility
+        var ddYesCol = document.querySelector('.choice-modal-wrapper:has(form[action="/play/dd-confirm"]) .col-4:first-of-type')
+        if (ddYesCol) ddYesCol.classList.toggle('d-none', !avail.includes(C.DD_YES))
+
         // error modal
         var errModal = document.querySelector('.err-modal-wrapper:not(#no-funds-modal):not(#low-bet-modal)')
         if (errModal) {
@@ -375,7 +379,10 @@ var BJ_RENDER = (function () {
         if (bcw) {
             var avail = state.availableChoices || []
             bcw.classList.toggle('bet-circles-wrapper--locked', !avail.includes(0))
-            bcw.classList.toggle('bet-circles-wrapper--in-play', state.dealt)
+            // When finalized, keep circles hidden until the result overlay fades out
+            if (!state.finalized) {
+                bcw.classList.toggle('bet-circles-wrapper--in-play', state.dealt)
+            }
         }
 
         // deal button re-check after wallet update — skip when server already granted DEAL
@@ -425,6 +432,9 @@ var BJ_RENDER = (function () {
                     overlay.classList.add('result-overlay--fade-out')
                     setTimeout(function() {
                         overlay.remove()
+                        // Reveal bet circles now that overlay has faded
+                        var bcwFade = document.querySelector('.bet-circles-wrapper')
+                        if (bcwFade) bcwFade.classList.remove('bet-circles-wrapper--in-play')
                         // Reset stale finalized state so Clear/Repeat work client-side again
                         if (typeof BJ_FINALIZED   !== 'undefined') BJ_FINALIZED   = false
                         if (typeof BJ_LAST_CHOICE !== 'undefined') BJ_LAST_CHOICE = -1
