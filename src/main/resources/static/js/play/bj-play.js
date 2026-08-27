@@ -515,6 +515,8 @@ $('.form-deal').on('submit', function(e) {
     $('#deal-pp-bet').val(ppStagedBet > 0 ? ppStagedBet.toFixed(2) : '0')
     $('#deal-213-bet').val(t3StagedBet > 0 ? t3StagedBet.toFixed(2) : '0')
     $('#deal-dpp-bet').val(dppStagedBet > 0 ? dppStagedBet.toFixed(2) : '0')
+    // Reset staged vars so Repeat after finalization doesn't double-add
+    ppStagedBet = 0.0; t3StagedBet = 0.0; dppStagedBet = 0.0
     sessionStorage.removeItem('bj-pp-staged')
     sessionStorage.removeItem('bj-t3-staged')
     sessionStorage.removeItem('bj-dpp-staged')

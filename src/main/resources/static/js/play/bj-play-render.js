@@ -81,7 +81,7 @@ var BJ_RENDER = (function () {
         }
 
         var scoreEl = box.querySelector('.curr-result-box')
-        if (scoreEl && state.dealerScore) scoreEl.textContent = state.dealerScore
+        if (scoreEl && state.dealerScore != null) scoreEl.textContent = state.dealerScore
     }
 
     /* ── Render player cards (non-split) ── */
@@ -134,7 +134,7 @@ var BJ_RENDER = (function () {
             }
 
             var scoreEl = normalBox.querySelector('.curr-result-box')
-            if (scoreEl && state.playerScore) scoreEl.textContent = state.playerScore
+            if (scoreEl && state.playerScore != null) scoreEl.textContent = state.playerScore
         }
     }
 
@@ -363,6 +363,11 @@ var BJ_RENDER = (function () {
             updateSideCircleDisplay('pp',  parseFloat(w.perfectPairsBet)       || 0)
             updateSideCircleDisplay('213', parseFloat(w.twentyOneThreeBet)      || 0)
             updateSideCircleDisplay('dpp', parseFloat(w.dealerPerfectPairsBet) || 0)
+        } else if (state.finalized) {
+            // Hand just ended — clear committed side bet circles; staged vars already reset at Deal time
+            updateSideCircleDisplay('pp',  0)
+            updateSideCircleDisplay('213', 0)
+            updateSideCircleDisplay('dpp', 0)
         }
 
         // bet circles wrapper lock state

@@ -33,8 +33,8 @@ public class GameStateDtoMapper {
                 .setSplitHands(toSplitHandDtos(game.getSplitHands()))
                 .setSplitHandMultipliers(game.getSplitHandMultipliers() != null ? game.getSplitHandMultipliers() : Collections.emptyList())
                 .setSplitDoubleDownFlags(game.getSplitDoubleDownFlags() != null ? game.getSplitDoubleDownFlags() : Collections.emptyList())
-                .setPlayerScore(Boolean.TRUE.equals(game.getDealt()) ? game.playerScore() : null)
-                .setDealerScore(Boolean.TRUE.equals(game.getDealt()) ? game.dealerScore() : null)
+                .setPlayerScore(shouldShowScore(game) ? game.playerScore() : null)
+                .setDealerScore(shouldShowScore(game) ? game.dealerScore() : null)
                 .setSplitScores(buildSplitScores(game))
                 .setAvailableChoices(game.getAvailableChoices() != null ? game.getAvailableChoices() : Collections.emptyList())
                 .setErrCodeList(game.getErrCodeList() != null ? game.getErrCodeList() : Collections.emptyList())
@@ -47,6 +47,10 @@ public class GameStateDtoMapper {
         }
 
         return dto;
+    }
+
+    private boolean shouldShowScore(Game game) {
+        return Boolean.TRUE.equals(game.getDealt()) || Boolean.TRUE.equals(game.getFinalized());
     }
 
     private List<CardDto> toCardDtos(List<Card> cards) {
