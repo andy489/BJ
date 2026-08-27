@@ -6,11 +6,12 @@ import com.casino.blackjack.repo.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-// NOTE: This is not annotated as @Service, because we will return it as a bean.
+@Service
 public class AppUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
