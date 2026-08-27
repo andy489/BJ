@@ -292,29 +292,31 @@ body {
 
 /* Back button */
 .btn-back {
-    color: var(--electric);
+    color: var(--electric) !important;
     font-weight: bolder;
-    border: 1px solid rgba(255, 211, 71, 0.4) !important;
+    border: 1px solid var(--input-border) !important;
     border-radius: 8px !important;
     padding: 6px 14px !important;
     transition: background .25s, color .25s, border-color .25s;
 }
 
 .btn-back:hover {
-    background-color: var(--electric);
+    background-color: var(--electric) !important;
     color: #1a1100 !important;
     font-weight: bolder;
     border-color: var(--electric) !important;
 }
 
 [data-theme="light"] .btn-back {
-    color: #7a5c00;
-    border-color: rgba(180, 130, 0, 0.45) !important;
+    color: #7a5c00 !important;
+    border-color: rgba(180, 130, 0, 0.3) !important;
 }
 
 [data-theme="light"] .btn-back:hover {
-    background-color: #ffd347;
+    background-color: #ffd347 !important;
     color: #1a1100 !important;
+    border-color: #b38200 !important;
+}
     border-color: #b38200 !important;
 }
 
