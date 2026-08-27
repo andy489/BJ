@@ -645,3 +645,140 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+/* ── Light theme ─────────────────────────────────────────────────────────── */
+[data-theme="light"] body {
+    background-image: url('./../../images/background/06-credit-card-register.png');
+    background-color: #e8dfc8;
+}
+
+[data-theme="light"] .card-form__inner,
+[data-theme="light"] .card-form__inner_deposit {
+    background: rgba(255, 255, 255, 0.88);
+    border-color: rgba(180, 130, 0, 0.35);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(180, 130, 0, 0.12);
+}
+
+[data-theme="light"] .card-input__label,
+[data-theme="light"] .card-input label {
+    color: rgba(60, 40, 0, 0.65);
+}
+
+[data-theme="light"] .card-input__input {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(180, 130, 0, 0.3);
+    color: #1a1100;
+}
+
+[data-theme="light"] .card-input__input::placeholder {
+    color: rgba(60, 40, 0, 0.35);
+}
+
+[data-theme="light"] .card-input__input:hover {
+    border-color: rgba(180, 130, 0, 0.6);
+}
+
+[data-theme="light"] .card-input__input:focus {
+    border-color: #b38200;
+    box-shadow: 0 0 8px rgba(180, 130, 0, 0.25);
+}
+
+[data-theme="light"] .card-input__input option {
+    background: #fff;
+    color: #1a1100;
+}
+
+[data-theme="light"] .card-input__input.-select {
+    background-color: rgba(255, 255, 255, 0.9);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b38200' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+
+[data-theme="light"] .card-form__button {
+    color: #7a5c00;
+}
+
+[data-theme="light"] .card-form__button:hover {
+    background: #ffd347;
+    color: #1a1100;
+    box-shadow: 0 0 5px rgba(180,130,0,0.5), 0 0 25px rgba(180,130,0,0.3);
+}
+
+[data-theme="light"] .deposit-section-title {
+    color: #7a5c00;
+    text-shadow: 0 0 10px rgba(180,130,0,0.25);
+}
+
+[data-theme="light"] .deposit-section-hint {
+    color: rgba(60, 40, 0, 0.6);
+}
+
+[data-theme="light"] .dash {
+    border-color: rgba(180, 130, 0, 0.45) !important;
+    color: #7a5c00 !important;
+}
+
+[data-theme="light"] .dash:hover {
+    background: rgba(180, 130, 0, 0.08) !important;
+    border-color: #b38200 !important;
+}
+
+[data-theme="light"] .orange {
+    color: #7a5c00;
+}
+
+[data-theme="light"] .card-management-btn {
+    color: rgba(60, 40, 0, 0.75) !important;
+    border-color: rgba(60, 40, 0, 0.25) !important;
+}
+
+[data-theme="light"] .card-management-btn:hover {
+    color: #1a1100 !important;
+    background: #ffd347 !important;
+    border-color: #b38200 !important;
+}
+
+[data-theme="light"] .btn-back {
+    color: #7a5c00;
+}
+
+[data-theme="light"] .btn-back:hover {
+    background-color: #ffd347;
+    color: #1a1100 !important;
+}
+
+[data-theme="light"] .balance-display {
+    background: rgba(180, 130, 0, 0.07);
+    border-color: rgba(180, 130, 0, 0.3);
+    color: rgba(60, 40, 0, 0.75);
+}
+
+[data-theme="light"] .balance-amount {
+    color: #7a5c00;
+    text-shadow: none;
+}
+
+[data-theme="light"] .cc-info-icon {
+    color: #7a5c00;
+}
+
+[data-theme="light"] .cc-info-tooltip {
+    background: #fffbef;
+    color: #1a1100;
+    border-color: #b38200;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+[data-theme="light"] .invalid-feedback {
+    color: #c0392b;
+}
+
+[data-theme="light"] .card-input.fw-bolder {
+    color: #7a5c00;
+    text-shadow: 0 0 10px rgba(180,130,0,0.2);
+}
+
+[data-theme="light"] .card-input:not(.fw-bolder) > span:not(.invalid-feedback),
+[data-theme="light"] .card-form__inner_deposit > form > .card-input:nth-child(2) {
+    color: rgba(60, 40, 0, 0.6);
+}
+
