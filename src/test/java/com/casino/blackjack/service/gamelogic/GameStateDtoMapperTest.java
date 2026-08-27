@@ -333,6 +333,52 @@ class GameStateDtoMapperTest {
         assertThat(MAPPER.map(game, null).getActiveSplitHandIndex()).isZero();
     }
 
+    // ── bet breakdown data (post-deal wallet snapshot) ───────────────────────
+
+    @Test
+    void walletBetBreakdownAllFieldsPresentAfterDeal() {
+        // Mirrors the post-deal wallet state: handBet + side bets all committed
+        Game game = minimalGame();
+        game.setDealt(true);
+        game.setPlayerCards(List.of(Card.of(SPADES_SUIT, 10), Card.of(HEARTS_SUIT, 7)));
+        game.setDealerCards(List.of(Card.of(CLUBS_SUIT, 8)));
+        Wallet w = new Wallet()
+                .setCurrentBet(new BigDecimal("25.00"))
+                .setHandBet(new BigDecimal("25.00"))
+                .setPerfectPairsBet(new BigDecimal("5.00"))
+                .setTwentyOneThreeBet(new BigDecimal("10.00"))
+                .setDealerPerfectPairsBet(new BigDecimal("0.00"))
+                .setBalance(new BigDecimal("960.00"));
+        game.setWallet(w);
+        WalletStateDto wDto = MAPPER.map(game, null).getWallet();
+        assertThat(wDto.getCurrentBet()).isEqualByComparingTo("25.00");
+        assertThat(wDto.getHandBet()).isEqualByComparingTo("25.00");
+        assertThat(wDto.getPerfectPairsBet()).isEqualByComparingTo("5.00");
+        assertThat(wDto.getTwentyOneThreeBet()).isEqualByComparingTo("10.00");
+        assertThat(wDto.getDealerPerfectPairsBet()).isEqualByComparingTo("0.00");
+        assertThat(wDto.getBalance()).isEqualByComparingTo("960.00");
+    }
+
+    @Test
+    void walletBetBreakdownNullSideBetsDefaultToZeroNotHidden() {
+        // Side bets not placed: null fields must become ZERO so the breakdown hides them (amount==0)
+        Game game = minimalGame();
+        game.setDealt(true);
+        game.setPlayerCards(List.of(Card.of(SPADES_SUIT, 10), Card.of(HEARTS_SUIT, 7)));
+        game.setDealerCards(List.of(Card.of(CLUBS_SUIT, 8)));
+        Wallet w = new Wallet()
+                .setCurrentBet(new BigDecimal("10.00"))
+                .setHandBet(new BigDecimal("10.00"))
+                .setPerfectPairsBet(null)
+                .setTwentyOneThreeBet(null)
+                .setDealerPerfectPairsBet(null);
+        game.setWallet(w);
+        WalletStateDto wDto = MAPPER.map(game, null).getWallet();
+        assertThat(wDto.getPerfectPairsBet()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(wDto.getTwentyOneThreeBet()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(wDto.getDealerPerfectPairsBet()).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
     // ── multipliers ──────────────────────────────────────────────────────────
 
     @Test

@@ -985,29 +985,29 @@
                     <span class="curr-bet total-stake" th:text="'£' + ${#numbers.formatDecimal(game.wallet.totalStake(), 1, 'COMMA', 2, 'POINT')}">£1</span>
                 </div>
                 <!-- Bet breakdown — shown only during an active hand or on result screen -->
-                <div class="bet-breakdown" th:if="${game.dealt != null and game.dealt}">
+                <div class="bet-breakdown" th:classappend="${(game.dealt != null and game.dealt) ? '' : ' d-none'}">
                     <!-- 2×2 grid: Hand, PP, 21+3, DPP — plus Ins/Split when present -->
-                    <span class="bet-breakdown-item" th:if="${game.wallet.currentBet != null and game.wallet.currentBet > 0}">
+                    <span class="bet-breakdown-item" th:classappend="${(game.wallet.currentBet != null and game.wallet.currentBet > 0) ? '' : ' d-none'}">
                         <span class="bet-breakdown-label" th:text="#{bet.hand}">Hand</span>
                         <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.currentBet, 1, 'COMMA', 2, 'POINT')}">£10</span>
                     </span>
-                    <span class="bet-breakdown-item" th:if="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0}">
+                    <span class="bet-breakdown-item" th:classappend="${(game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0) ? '' : ' d-none'}">
                         <span class="bet-breakdown-label">PP</span>
                         <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.perfectPairsBet, 1, 'COMMA', 2, 'POINT')}">£5</span>
                     </span>
-                    <span class="bet-breakdown-item" th:if="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0}">
+                    <span class="bet-breakdown-item" th:classappend="${(game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0) ? '' : ' d-none'}">
                         <span class="bet-breakdown-label">21+3</span>
                         <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.twentyOneThreeBet, 1, 'COMMA', 2, 'POINT')}">£5</span>
                     </span>
-                    <span class="bet-breakdown-item" th:if="${game.wallet.dealerPerfectPairsBet != null and game.wallet.dealerPerfectPairsBet > 0}">
+                    <span class="bet-breakdown-item" th:classappend="${(game.wallet.dealerPerfectPairsBet != null and game.wallet.dealerPerfectPairsBet > 0) ? '' : ' d-none'}">
                         <span class="bet-breakdown-label">DPP</span>
                         <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.dealerPerfectPairsBet, 1, 'COMMA', 2, 'POINT')}">£5</span>
                     </span>
-                    <span class="bet-breakdown-item" th:if="${game.wallet.insuranceBet != null and game.wallet.insuranceBet > 0}">
+                    <span class="bet-breakdown-item" th:classappend="${(game.wallet.insuranceBet != null and game.wallet.insuranceBet > 0) ? '' : ' d-none'}">
                         <span class="bet-breakdown-label" th:text="#{history.tag.insurance}">Ins</span>
                         <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.insuranceBet, 1, 'COMMA', 2, 'POINT')}">£5</span>
                     </span>
-                    <span class="bet-breakdown-item" th:if="${game.wallet.splitBet != null and game.wallet.splitBet > 0}">
+                    <span class="bet-breakdown-item" th:classappend="${(game.wallet.splitBet != null and game.wallet.splitBet > 0) ? '' : ' d-none'}">
                         <span class="bet-breakdown-label" th:text="#{history.tag.split}">Split</span>
                         <span class="bet-breakdown-value" th:text="'£' + ${#numbers.formatDecimal(game.wallet.splitBet, 1, 'COMMA', 2, 'POINT')}">£10</span>
                     </span>

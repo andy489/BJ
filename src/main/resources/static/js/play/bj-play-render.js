@@ -322,6 +322,20 @@ var BJ_RENDER = (function () {
         else      el.classList.add('d-none')
     }
 
+    // Show/hide a bet-breakdown-item by index and update its value display
+    function setBdItem(breakdown, index, amount) {
+        var items = breakdown.querySelectorAll('.bet-breakdown-item')
+        if (index >= items.length) return
+        var item = items[index]
+        if (amount > 0) {
+            item.classList.remove('d-none')
+            var valEl = item.querySelector('.bet-breakdown-value')
+            if (valEl) valEl.textContent = fmt(amount)
+        } else {
+            item.classList.add('d-none')
+        }
+    }
+
     /* ── Render wallet ── */
     function renderWallet(state) {
         var w = state.wallet
@@ -340,6 +354,20 @@ var BJ_RENDER = (function () {
                        + parseFloat(w.twentyOneThreeBet||0) + parseFloat(w.dealerPerfectPairsBet||0)
         var tsEl = document.querySelector('.total-stake')
         if (tsEl) tsEl.textContent = fmt(totalStake)
+
+        // bet breakdown (shown during active hand; each item only when its amount > 0)
+        var breakdown = document.querySelector('.bet-breakdown')
+        if (breakdown) {
+            breakdown.classList.toggle('d-none', !state.dealt)
+            if (state.dealt) {
+                setBdItem(breakdown, 0, parseFloat(w.currentBet)            || 0)
+                setBdItem(breakdown, 1, parseFloat(w.perfectPairsBet)       || 0)
+                setBdItem(breakdown, 2, parseFloat(w.twentyOneThreeBet)     || 0)
+                setBdItem(breakdown, 3, parseFloat(w.dealerPerfectPairsBet) || 0)
+                setBdItem(breakdown, 4, parseFloat(w.insuranceBet)          || 0)
+                setBdItem(breakdown, 5, parseFloat(w.splitBet)              || 0)
+            }
+        }
 
         // hidden bet input
         var betInput = document.querySelector('.curr-bet-value')
