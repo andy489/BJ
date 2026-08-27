@@ -242,32 +242,47 @@ public enum DeckScenario {
     }
   },
 
-  // Player 8+8 vs dealer 6 — split → hand1 gets 8 (re-split!); then:
-  //   hand1 (from re-split left): 8+K = 18 → stand (win)
-  //   hand2 (from re-split right): 8+7 = 15 → hit → K → bust 25 (loss)
-  //   hand0 (original left): 8+3 = 11 → double-down → K → 21 (win)
-  //   dealer: 6+9 = 15 → draws 8 → bust 23
-  SPLIT_RESPLIT_HIT_BUST_DOUBLE("8+8 vs 6 — re-split, bust on one hand, double on another") {
+  // Player 9♠+9♣ vs dealer 6 — three splits, hand3 busts, hand1 hits to 18 with an Ace, dealer busts.
+  //
+  // Split tree:
+  //   deal:    hand0=9♠, hand1=9♣
+  //   split1:  hand0 draws 9♦ → 9+9=18 (re-split); hand1 draws 2♥ → 9+2=11
+  //   split2 (hand0 active): hand0 draws Q♣ → 9+Q=19 (stand); hand2 draws 9♥ → 9+9=18 (re-split)
+  //   split3 (hand2 active): hand2 draws J♠ → 9+J=19 (stand); hand3 draws 3♦ → 9+3=12 (must hit)
+  //
+  // Play order (left to right):
+  //   hand0 stand 19
+  //   hand2 stand 19
+  //   hand3 hits K → 12+10=22 BUST
+  //   hand1 hits A♦ → soft 12 (counted as 12), hits 6♣ → 18 → stand  (4 cards: 9,2,A,6)
+  // Dealer: 6+9=15 → draws 8 → 23 bust → hand0/hand2/hand1 win, hand3 loses
+  SPLIT_RESPLIT_HIT_BUST_DOUBLE("9+9 vs 6 — three splits, hand3 busts, hand1 hits Ace to 18, dealer busts") {
     @Override
     public CardSource source() {
       return new FixedCardSource(
-          Card.of(CLUBS_SUIT, SIX_RANK),        // dealer visible
-          Card.of(HEARTS_SUIT, NINE_RANK),       // dealer hidden → 15
-          Card.of(SPADES_SUIT, EIGHT_RANK),      // player card 0
-          Card.of(DIAMONDS_SUIT, EIGHT_RANK),    // player card 1 → pair 8s
-          // ── first split: hand0 draws [4], hand1 draws [5] ──
-          Card.of(CLUBS_SUIT, THREE_RANK),       // hand0 (left): 8+3 = 11 (double candidate)
-          Card.of(HEARTS_SUIT, EIGHT_RANK),      // hand1 (right): 8+8 = pair → re-split offered
-          // ── re-split of hand1: new left draws [6], new right draws [7] ──
-          Card.of(SPADES_SUIT, KING_RANK),       // hand1 left: 8+K = 18 → stand
-          Card.of(DIAMONDS_SUIT, SEVEN_RANK),    // hand2 right: 8+7 = 15 → hit
-          // ── play hand2 (right of re-split, played first): hit ──
-          Card.of(CLUBS_SUIT, KING_RANK),        // hand2 hit → 15+K = 25 bust
-          // ── play hand1 left: stand on 18 (no card needed) ──
-          // ── play hand0: double-down on 11 ──
-          Card.of(HEARTS_SUIT, KING_RANK),       // hand0 double → 11+K = 21
+          Card.of(CLUBS_SUIT, SIX_RANK),          // dealer visible
+          Card.of(HEARTS_SUIT, NINE_RANK),         // dealer hidden → 15
+          Card.of(SPADES_SUIT, NINE_RANK),         // player card 0
+          Card.of(CLUBS_SUIT, NINE_RANK),          // player card 1 → pair 9s
+          // ── split 1: hand0 (left) draws [4], hand1 (right) draws [5] ──
+          Card.of(DIAMONDS_SUIT, NINE_RANK),       // hand0: 9+9 = 18 → re-split offered
+          Card.of(HEARTS_SUIT, TWO_RANK),          // hand1: 9+2 = 11
+          // ── split 2 (hand0 active): hand0 draws [6], hand2 (new right) draws [7] ──
+          Card.of(CLUBS_SUIT, QUEEN_RANK),         // hand0: 9+Q = 19 → stand
+          Card.of(HEARTS_SUIT, NINE_RANK),         // hand2: 9+9 = 18 → re-split offered
+          // ── split 3 (hand2 active): hand2 draws [8], hand3 (new right) draws [9] ──
+          Card.of(SPADES_SUIT, JAKE_RANK),         // hand2: 9+J = 19 → stand
+          Card.of(DIAMONDS_SUIT, THREE_RANK),      // hand3: 9+3 = 12 → must hit
+          // ── play hands left to right ──
+          // hand0 stands on 19 (no card needed)
+          // hand2 stands on 19 (no card needed)
+          // hand3 hits → bust ──
+          Card.of(CLUBS_SUIT, KING_RANK),          // hand3 hit → 12+10 = 22 bust
+          // hand1 hits twice to 18 (4 cards: 9,2,A,6) ──
+          Card.of(DIAMONDS_SUIT, ACE_RANK),        // hand1 hit → 9+2+A = soft 12 (counted as 12)
+          Card.of(CLUBS_SUIT, SIX_RANK),           // hand1 hit → 12+6 = 18 → stand
           // ── dealer draws ──
-          Card.of(SPADES_SUIT, EIGHT_RANK)       // dealer → 15+8 = 23 bust
+          Card.of(SPADES_SUIT, EIGHT_RANK)         // dealer → 15+8 = 23 bust
       );
     }
   };

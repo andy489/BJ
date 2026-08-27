@@ -177,6 +177,7 @@ The first version of the site had a different visual identity before the current
 - Google reCAPTCHA v2 on registration and login
 - Remember-me persistent login
 - Session fixation protection
+- **Dealer hidden card never leaves the server** — `PlayController.getTable()` calls `game.setDealerSecondCard(null)` before adding the `Game` object to the Thymeleaf model and before serialising it into the AJAX `GameStateDto` response. The hole card exists only in the server-side `last_games` JSON blob; it is never included in any HTTP response, so a player inspecting network traffic or the page source cannot determine its value.
 
 ### UI / UX
 - Light ♥ and dark ♠ themes — persisted in localStorage, default light

@@ -16,6 +16,7 @@
             </column>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="2">
         <createTable tableName="bet_history">
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -28,12 +29,34 @@
                 <constraints nullable="false"/>
             </column>
             <column name="double_down" type="BOOLEAN"/>
+            <column name="split" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
             <column name="game_hash" type="VARCHAR(255)">
                 <constraints unique="true"/>
             </column>
             <column name="user_id" type="INTEGER"/>
+            <column name="pp_bet"  type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="t3_bet"  type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dpp_bet" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pp_win"  type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="t3_win"  type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dpp_win" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="3">
         <createTable tableName="credit_cards">
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -59,6 +82,7 @@
             </column>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="4">
         <createTable tableName="last_games">
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -80,8 +104,19 @@
             <column name="owner_id" type="INTEGER">
                 <constraints unique="true"/>
             </column>
+            <column name="split_hands" type="TEXT"/>
+            <column name="split_hand_multipliers" type="VARCHAR(1023)"/>
+            <column name="split_double_down_flags" type="VARCHAR(255)"/>
+            <column name="split_active" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="active_split_hand_index" type="INT" defaultValueNumeric="0"/>
+            <column name="split_count" type="INT" defaultValueNumeric="0"/>
+            <column name="split_aces" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="initial_player_cards" type="VARCHAR(255)"/>
+            <column name="initial_dealer_up_card" type="VARCHAR(255)"/>
+            <column name="initial_dealer_cards" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="5">
         <createTable tableName="played_games">
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -100,8 +135,13 @@
             <column name="player_cards" type="VARCHAR(255)"/>
             <column name="taken_choices" type="VARCHAR(255)"/>
             <column name="owner_id" type="INTEGER"/>
+            <column name="split_hands" type="TEXT"/>
+            <column name="split_hand_multipliers" type="VARCHAR(1023)"/>
+            <column name="initial_player_cards" type="VARCHAR(255)"/>
+            <column name="initial_dealer_cards" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="6">
         <createTable tableName="reset_pass_tokens">
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -114,6 +154,7 @@
             </column>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="7">
         <createTable tableName="roles">
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -124,6 +165,7 @@
             </column>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="8">
         <createTable tableName="users">
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -150,6 +192,7 @@
             </column>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="9">
         <createTable tableName="users_roles">
             <column name="user_id" type="INTEGER">
@@ -160,6 +203,7 @@
             </column>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="10">
         <createTable tableName="wallets">
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -172,41 +216,62 @@
             <column name="insurance_bet" type="NUMERIC"/>
             <column name="last_bet" type="NUMERIC"/>
             <column name="last_win" type="NUMERIC"/>
+            <column name="split_bet" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="perfect_pairs_bet" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="twenty_one_three_bet" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dealer_perfect_pairs_bet" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_pp_win" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_t3_win" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_dpp_win" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_total_bet" type="NUMERIC" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_pp_bet" type="NUMERIC" defaultValueNumeric="0.00"/>
+            <column name="last_t3_bet" type="NUMERIC" defaultValueNumeric="0.00"/>
+            <column name="last_dpp_bet" type="NUMERIC" defaultValueNumeric="0.00"/>
+            <column name="last_hand_win" type="NUMERIC" defaultValueNumeric="0.00"/>
             <column name="owner_id" type="INTEGER">
                 <constraints unique="true"/>
             </column>
         </createTable>
     </changeSet>
+
     <changeSet author="stoevand" id="11">
         <createIndex associatedWith="" indexName="FK2ycif7hrrfm42c8vbt5mhk6do" tableName="credit_cards">
             <column name="owner_id"/>
         </createIndex>
     </changeSet>
+
     <changeSet author="stoevand" id="12">
         <createIndex associatedWith="" indexName="FKdmcpuojdom24p10ql69t7u1lt" tableName="bet_history">
             <column name="user_id"/>
         </createIndex>
     </changeSet>
+
     <changeSet author="stoevand" id="13">
         <createIndex associatedWith="" indexName="FKge83d5ruenla5b6d8rkt3y368" tableName="played_games">
             <column name="owner_id"/>
         </createIndex>
     </changeSet>
+
     <changeSet author="stoevand" id="14">
         <createIndex associatedWith="" indexName="FKj6m8fwv7oqv74fcehir1a9ffy" tableName="users_roles">
             <column name="role_id"/>
         </createIndex>
     </changeSet>
-    <!-- Changesets 15-25: foreign key constraints omitted — SQLite does not enforce them -->
-    <changeSet author="stoevand" id="15"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="16"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="17"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="18"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="19"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="20"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="21"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="22"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="23"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="24"><sql>SELECT 1</sql></changeSet>
-    <changeSet author="stoevand" id="25"><sql>SELECT 1</sql></changeSet>
+
 </databaseChangeLog>

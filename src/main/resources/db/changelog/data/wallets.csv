@@ -1,2 +1,2 @@
-id,balance,current_bet,last_bet,last_win,hand_bet,double_bet,insurance_bet,owner_id
-1,200.00,0.00,0.00,0.00,0.00,0.00,0.00,1
+id,balance,current_bet,last_bet,last_win,hand_bet,double_bet,insurance_bet,split_bet,perfect_pairs_bet,twenty_one_three_bet,dealer_perfect_pairs_bet,last_pp_win,last_t3_win,last_dpp_win,last_total_bet,last_pp_bet,last_t3_bet,last_dpp_bet,last_hand_win,owner_id
+1,200.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,1

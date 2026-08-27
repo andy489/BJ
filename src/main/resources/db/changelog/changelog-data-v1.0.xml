@@ -77,9 +77,87 @@
             <column header="last_bet" name="last_bet" type="NUMERIC"/>
             <column header="last_win" name="last_win" type="NUMERIC"/>
             <column header="hand_bet" name="hand_bet" type="NUMERIC"/>
+            <column header="double_bet" name="double_bet" type="NUMERIC"/>
             <column header="insurance_bet" name="insurance_bet" type="NUMERIC"/>
+            <column header="split_bet" name="split_bet" type="NUMERIC"/>
+            <column header="perfect_pairs_bet" name="perfect_pairs_bet" type="NUMERIC"/>
+            <column header="twenty_one_three_bet" name="twenty_one_three_bet" type="NUMERIC"/>
+            <column header="dealer_perfect_pairs_bet" name="dealer_perfect_pairs_bet" type="NUMERIC"/>
+            <column header="last_pp_win" name="last_pp_win" type="NUMERIC"/>
+            <column header="last_t3_win" name="last_t3_win" type="NUMERIC"/>
+            <column header="last_dpp_win" name="last_dpp_win" type="NUMERIC"/>
+            <column header="last_total_bet" name="last_total_bet" type="NUMERIC"/>
+            <column header="last_pp_bet" name="last_pp_bet" type="NUMERIC"/>
+            <column header="last_t3_bet" name="last_t3_bet" type="NUMERIC"/>
+            <column header="last_dpp_bet" name="last_dpp_bet" type="NUMERIC"/>
+            <column header="last_hand_win" name="last_hand_win" type="NUMERIC"/>
             <column header="owner_id" name="owner_id" type="NUMERIC"/>
         </loadData>
+    </changeSet>
+
+    <!-- Grant ADMIN role (id=1) to pesho (user id=1) -->
+    <changeSet author="andy489" id="8">
+        <insert tableName="users_roles">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <!-- Set yana's password to 1234 (BCrypt cost 10) and activate her account -->
+    <changeSet author="andy489" id="9">
+        <update tableName="users">
+            <column name="password" value="$2a$10$PpCMfnywF6yNyKPuOibWT.CsKT8zJ54i4D80Yt1isICJWEh9mrj7S"/>
+            <column name="is_active" valueBoolean="true"/>
+            <where>id = 2</where>
+        </update>
+    </changeSet>
+
+    <!-- Dedicated admin user (username: admin, BCrypt cost 12) -->
+    <changeSet author="andy489" id="10">
+        <insert tableName="users">
+            <column name="id" valueNumeric="6"/>
+            <column name="username" value="admin"/>
+            <column name="birth_date" value="631141200000"/>
+            <column name="gender" value="UNSPECIFIED"/>
+            <column name="email" value="admin@push365.com"/>
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="Admin"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="password" value="$2a$12$84sXZK.THDz8xMYD1UmpkukTsxK0bFvLrMf.FuPsyhMb88YKXOVQW"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="andy489" id="11">
+        <insert tableName="users_roles">
+            <column name="user_id" valueNumeric="6"/>
+            <column name="role_id" valueNumeric="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="andy489" id="12">
+        <insert tableName="wallets">
+            <column name="id" valueNumeric="2"/>
+            <column name="balance" valueNumeric="1000.00"/>
+            <column name="current_bet" valueNumeric="0.00"/>
+            <column name="last_bet" valueNumeric="0.00"/>
+            <column name="last_win" valueNumeric="0.00"/>
+            <column name="hand_bet" valueNumeric="0.00"/>
+            <column name="double_bet" valueNumeric="0.00"/>
+            <column name="insurance_bet" valueNumeric="0.00"/>
+            <column name="split_bet" valueNumeric="0.00"/>
+            <column name="perfect_pairs_bet" valueNumeric="0.00"/>
+            <column name="twenty_one_three_bet" valueNumeric="0.00"/>
+            <column name="dealer_perfect_pairs_bet" valueNumeric="0.00"/>
+            <column name="last_pp_win" valueNumeric="0.00"/>
+            <column name="last_t3_win" valueNumeric="0.00"/>
+            <column name="last_dpp_win" valueNumeric="0.00"/>
+            <column name="last_total_bet" valueNumeric="0.00"/>
+            <column name="last_pp_bet" valueNumeric="0.00"/>
+            <column name="last_t3_bet" valueNumeric="0.00"/>
+            <column name="last_dpp_bet" valueNumeric="0.00"/>
+            <column name="last_hand_win" valueNumeric="0.00"/>
+            <column name="owner_id" valueNumeric="6"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>

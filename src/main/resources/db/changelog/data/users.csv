@@ -1,6 +1,3 @@
 "id","username","birth_date","gender","email","first_name","last_name","is_active","password"
 "1","pesho","1992-03-03","MALE","pesho@gmail.com","Pesho","Petrov","1","$2a$10$XidGL7zn5/H8QmzLFvp0oO/GYstQ2doVa4zUntoAZz9vS64H.n64C"
 "2","yana","1993-05-06","FEMALE","yana@gmail.com","Yana","Petrova","0","$2a$10$laqf6AWijpJSUM5DNey1luFH/0EdZsfey6mOa7joT/zkJ8jb/Gc.a"
-"3","nteacy2","1994-04-05","MALE","nteacy2@theatlantic.com","Nils","Teacy	","1","$2a$12$O8zOXDfbe1JxT/Utqybowe1Y.HsqcakLPQGoadvC5y4Mk7PC2JCTy"
-"4","jiddonsf","1986-12-02","UNSPECIFIED","jiddonsf@gravatar.com","Jeff","Iddons","0","$2a$12$ufoz6M0S5FaCMwgBrw2Vy.k6w8S9y8zUtYouwSIu14xGiHC6O4ZJ6"
-"5","penka","2002-08-13","FEMALE","penka@gmail.com","Penka","Peneva","1","$2a$12$KzdudAusPPEmzUoCIvFDyuqyuHm15sK2lwgPu4If9.Nl6nboqNtOi"
