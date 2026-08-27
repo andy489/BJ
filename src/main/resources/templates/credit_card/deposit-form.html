@@ -6,6 +6,22 @@
     <link th:href="@{/css/credit_card/cloudflare-ajax-mayer-reset.css}" rel="stylesheet">
     <link th:href="@{/css/credit_card/credit-card.css}" rel="stylesheet">
     <th:block th:insert="~{fragment/common::head}"></th:block>
+    <link rel="stylesheet" th:href="@{https://use.fontawesome.com/releases/v5.0.6/css/all.css}">
+    <style>
+        .deposit-section-title {
+            color: var(--electric);
+            text-shadow: 0 0 14px var(--electric-glow);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.3rem;
+        }
+        .deposit-section-hint {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 
@@ -30,13 +46,20 @@
                   th:method="post"
                   th:object="${depositDTO}">
 
-                <div class="card-input fw-bolder fw-bolder fs-3"
-                     th:text="#{cc.dep.form.cd.card}">
+                <div id="deposit-back-btn" class="card-input">
+                    <a class="btn btn-back" th:href="@{/}">
+                        <span class="align-middle">
+                            <i class="fa-solid fa-chevron-left chevron-left"></i>
+                            <span th:text="#{cc.dep.form.back}">Back</span>
+                        </span>
+                    </a>
+                </div>
+
+                <div class="deposit-section-title" th:text="#{cc.dep.form.cd.card}">
                     Credit / Debit card
                 </div>
 
-                <div class="card-input"
-                     th:text="#{cc.dep.form.hint}">
+                <div class="deposit-section-hint" th:text="#{cc.dep.form.hint}">
                     Make a deposit from an already used card or make a new one
                 </div>
 
