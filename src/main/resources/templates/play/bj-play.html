@@ -1043,9 +1043,9 @@
                         <span class="hist-row-time"
                               th:text="${h.finalizedTime != null} ? ${#temporals.format(h.finalizedTime, 'HH:mm dd MMM')} : '-'">12:00</span>
                         <span class="hist-row-amounts">
-                            <span th:text="'£' + ${#numbers.formatDecimal(h.totalBet, 1, 'COMMA', 2, 'POINT')}">£10</span>
+                            <span th:text="'£' + ${#numbers.formatDecimal(h.displayTotalStaked(), 1, 'COMMA', 2, 'POINT')}">£10</span>
                             <span class="hist-arrow">→</span>
-                            <span th:text="'£' + ${#numbers.formatDecimal(h.returnAmount, 1, 'COMMA', 2, 'POINT')}">£20</span>
+                            <span th:text="'£' + ${#numbers.formatDecimal(h.displayGrossReturn(), 1, 'COMMA', 2, 'POINT')}">£20</span>
                         </span>
                         <span th:if="${h.resultSign() > 0}"  class="hist-badge hist-badge-win"  th:text="#{history.result.win}">Win</span>
                         <span th:if="${h.resultSign() == 0}" class="hist-badge hist-badge-push" th:text="#{history.result.push}">Push</span>
@@ -1078,6 +1078,7 @@
                                 <span th:each="card : ${h.dealerCardLabels}"
                                       th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red' : 'hist-card'"
                                       th:text="${card}">K♣</span>
+                                <span th:if="${h.dealerBust}" class="hist-badge hist-badge-loss">Bust</span>
                             </div>
                         </th:block>
                         <!-- normal round: player cards vs dealer cards -->
@@ -1093,6 +1094,7 @@
                                 <span th:each="card : ${h.dealerCardLabels}"
                                       th:classappend="${card.contains('♥') or card.contains('♦')} ? 'hist-card hist-card-red' : 'hist-card'"
                                       th:text="${card}">K♣</span>
+                                <span th:if="${h.dealerBust}" class="hist-badge hist-badge-loss">Bust</span>
                             </div>
                         </th:block>
                     </div>

@@ -118,6 +118,7 @@ public class BetHistoryView {
         this.splitHandViews   = parseSplitHands(
                 h.getPlayedGame().getSplitHands(),
                 h.getPlayedGame().getSplitHandMultipliers(),
+                h.getPlayedGame().getSplitDoubleDownFlags(),
                 h.getPlayedGame().getSplitHandTakenChoices(),
                 nvl(h.getHandBet()),
                 om);
@@ -156,6 +157,7 @@ public class BetHistoryView {
     }
 
     private static List<SplitHandView> parseSplitHands(String handsJson, String multipliersJson,
+                                                        String splitDoubleDownFlagsJson,
                                                         String splitHandTakenChoicesJson,
                                                         BigDecimal handBet, ObjectMapper om) {
         if (handsJson == null || handsJson.isBlank()) return Collections.emptyList();
@@ -163,6 +165,9 @@ public class BetHistoryView {
             List<List<Card>> hands = om.readValue(handsJson, new TypeReference<>() {});
             List<Double> multipliers = (multipliersJson != null && !multipliersJson.isBlank())
                     ? om.readValue(multipliersJson, new TypeReference<>() {})
+                    : Collections.emptyList();
+            List<Boolean> doubledFlags = (splitDoubleDownFlagsJson != null && !splitDoubleDownFlagsJson.isBlank())
+                    ? om.readValue(splitDoubleDownFlagsJson, new TypeReference<>() {})
                     : Collections.emptyList();
             List<List<Integer>> perHandChoices = (splitHandTakenChoicesJson != null && !splitHandTakenChoicesJson.isBlank())
                     ? om.readValue(splitHandTakenChoicesJson, new TypeReference<>() {})
@@ -176,15 +181,24 @@ public class BetHistoryView {
                         .collect(Collectors.toList());
                 double mult = (i < multipliers.size()) ? multipliers.get(i) : 0.0;
 
-                List<String> handActions = (i < perHandChoices.size())
-                        ? perHandChoices.get(i).stream()
-                              .filter(CHOICE_LABEL::containsKey)
-                              .map(CHOICE_LABEL::get)
-                              .collect(Collectors.toList())
-                        : Collections.emptyList();
+                List<Integer> handChoices = (i < perHandChoices.size()) ? perHandChoices.get(i) : Collections.emptyList();
 
-                // Gross return = handBet * multiplier (doubled hands use 2× handBet — multiplier already reflects net)
-                BigDecimal gross = handBet.multiply(BigDecimal.valueOf(mult));
+                // Prefer explicit flag; fall back to inferring from per-hand choices (3=DD, 6=DD confirmed)
+                boolean doubled;
+                if (i < doubledFlags.size()) {
+                    doubled = Boolean.TRUE.equals(doubledFlags.get(i));
+                } else {
+                    doubled = handChoices.contains(3) || handChoices.contains(6);
+                }
+
+                List<String> handActions = handChoices.stream()
+                        .filter(CHOICE_LABEL::containsKey)
+                        .map(CHOICE_LABEL::get)
+                        .collect(Collectors.toList());
+
+                // Doubled hands stake 2×handBet; gross return = stake × multiplier
+                BigDecimal stake = doubled ? handBet.multiply(BigDecimal.TWO) : handBet;
+                BigDecimal gross = stake.multiply(BigDecimal.valueOf(mult));
 
                 result.add(new SplitHandView(i + 1, labels, mult, handActions, gross));
             }
@@ -230,9 +244,46 @@ public class BetHistoryView {
         return ppWin.add(t3Win).add(dppWin);
     }
 
+    /** Dealer busted: sum of dealer cards > 21 (using standard BJ hard totals). */
+    public boolean isDealerBust() {
+        if (dealerCardLabels.isEmpty()) return false;
+        // Re-parse dealer cards from stored JSON via dealerCardLabels approximation:
+        // rank chars are in the label (A=11/1, 2-9=face, 10/J/Q/K=10)
+        int total = 0;
+        int aces = 0;
+        for (String label : dealerCardLabels) {
+            String rank = label.substring(0, label.length() - 1); // strip suit symbol
+            int val;
+            switch (rank) {
+                case "A" -> { val = 11; aces++; }
+                case "J", "Q", "K", "10" -> val = 10;
+                default -> val = Integer.parseInt(rank);
+            }
+            total += val;
+        }
+        while (total > 21 && aces > 0) { total -= 10; aces--; }
+        return total > 21;
+    }
+
+    /**
+     * Total amount the player actually staked this round (main hand + side bets).
+     * Use this for the header "staked → returned" display.
+     */
+    public BigDecimal displayTotalStaked() {
+        return totalBet.add(ppBet).add(t3Bet).add(dppBet);
+    }
+
+    /**
+     * Total gross money returned to balance this round (main hand gross + side bet gross).
+     * returnAmount = net_main + sidebet_gross, so gross_main = returnAmount + totalBet.
+     */
+    public BigDecimal displayGrossReturn() {
+        return returnAmount.add(totalBet);
+    }
+
     /** Net result for the whole round: positive = win, zero = push, negative = loss */
     public int resultSign() {
-        return returnAmount.compareTo(totalBet);
+        return displayGrossReturn().compareTo(displayTotalStaked());
     }
 
     private static BigDecimal nvl(BigDecimal v) {

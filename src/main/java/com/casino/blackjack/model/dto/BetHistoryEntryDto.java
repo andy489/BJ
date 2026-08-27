@@ -51,10 +51,11 @@ public class BetHistoryEntryDto {
     private final List<String> initialPlayerCardLabels;
     private final List<String> initialDealerCardLabels;
     private final int resultSign;
+    private final boolean dealerBust;
 
     public BetHistoryEntryDto(BetHistoryView v) {
-        this.totalBet     = v.getTotalBet();
-        this.returnAmount = v.getReturnAmount();
+        this.totalBet     = v.displayTotalStaked();
+        this.returnAmount = v.displayGrossReturn();
         this.doubleDown   = v.isDoubleDown();
         this.split        = v.isSplit();
         this.insurance    = v.isInsurance();
@@ -77,6 +78,7 @@ public class BetHistoryEntryDto {
         this.initialPlayerCardLabels = v.getInitialPlayerCardLabels();
         this.initialDealerCardLabels = v.getInitialDealerCardLabels();
         this.resultSign = v.resultSign();
+        this.dealerBust = v.isDealerBust();
     }
 
     public BigDecimal getTotalBet()                   { return totalBet; }
@@ -84,7 +86,7 @@ public class BetHistoryEntryDto {
     public boolean isDoubleDown()                     { return doubleDown; }
     public boolean isSplit()                          { return split; }
     public boolean isInsurance()                      { return insurance; }
-    public String getFinalizedTime()              { return finalizedTime; }
+    public String getFinalizedTime()                  { return finalizedTime; }
     public List<String> getPlayerCardLabels()         { return playerCardLabels; }
     public List<String> getDealerCardLabels()         { return dealerCardLabels; }
     public List<String> getActionLabels()             { return actionLabels; }
@@ -98,4 +100,5 @@ public class BetHistoryEntryDto {
     public List<String> getInitialPlayerCardLabels()  { return initialPlayerCardLabels; }
     public List<String> getInitialDealerCardLabels()  { return initialDealerCardLabels; }
     public int getResultSign()                        { return resultSign; }
+    public boolean isDealerBust()                     { return dealerBust; }
 }

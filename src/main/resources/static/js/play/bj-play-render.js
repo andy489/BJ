@@ -540,7 +540,8 @@ var BJ_RENDER = (function () {
                 dg.innerHTML = '<span class="hist-hand-label">Dealer:</span>' +
                     (h.dealerCardLabels || []).map(function(c) {
                         return '<span class="' + histCardClass(c) + '">' + escHtml(c) + '</span>'
-                    }).join('')
+                    }).join('') +
+                    (h.dealerBust ? '<span class="hist-badge hist-badge-loss">Bust</span>' : '')
                 cardsDiv.appendChild(dg)
             } else {
                 var pg = document.createElement('div')
@@ -555,7 +556,8 @@ var BJ_RENDER = (function () {
                 dg.innerHTML = '<span class="hist-hand-label">Dealer:</span>' +
                     (h.dealerCardLabels || []).map(function(c) {
                         return '<span class="' + histCardClass(c) + '">' + escHtml(c) + '</span>'
-                    }).join('')
+                    }).join('') +
+                    (h.dealerBust ? '<span class="hist-badge hist-badge-loss">Bust</span>' : '')
                 cardsDiv.appendChild(dg)
             }
             row.appendChild(cardsDiv)

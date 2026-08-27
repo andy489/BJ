@@ -289,4 +289,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="stoevand" id="17">
+        <addColumn tableName="played_games">
+            <column name="split_double_down_flags" type="TEXT"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
