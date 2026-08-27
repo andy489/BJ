@@ -66,7 +66,9 @@ var BJ_RENDER = (function () {
         var cards = state.dealerCards || []
         if (cards.length === 1) {
             wrapper.className = 'play-card-wrapper'
-            var par = parity(1)
+            // Thymeleaf uses dealerCardsOdd = (size+1)%2, which counts the hidden card,
+            // so 1 visible card → (1+1)%2 = 0 (even). Classes are d-0-6, d-0-7.
+            var par = (cards.length + 1) % 2
             wrapper.appendChild(cardImg(cards[0], 'd-' + par + '-6'))
             wrapper.appendChild(backImg('d-' + par + '-7'))
         } else {
@@ -416,7 +418,12 @@ var BJ_RENDER = (function () {
                 if (displayDelay < 0) displayDelay = 0
                 setTimeout(function() {
                     overlay.classList.add('result-overlay--fade-out')
-                    setTimeout(function() { overlay.remove() }, fadeDuration)
+                    setTimeout(function() {
+                        overlay.remove()
+                        // Reset stale finalized state so Clear/Repeat work client-side again
+                        if (typeof BJ_FINALIZED   !== 'undefined') BJ_FINALIZED   = false
+                        if (typeof BJ_LAST_CHOICE !== 'undefined') BJ_LAST_CHOICE = -1
+                    }, fadeDuration)
                 }, displayDelay)
             }, 50)
         } else {
