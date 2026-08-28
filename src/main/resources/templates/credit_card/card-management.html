@@ -3,100 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="#{card.man.tab.title}">Card Management</title>
+    <link th:href="@{/css/credit_card/cloudflare-ajax-mayer-reset.css}" rel="stylesheet">
+    <link th:href="@{/css/credit_card/credit-card.css}" rel="stylesheet">
     <th:block th:insert="~{fragment/common::head}"></th:block>
-    <link th:href="@{/css/credit_card/card-manage.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{https://use.fontawesome.com/releases/v5.0.6/css/all.css}">
+    <style>
+        .deposit-section-title {
+            color: var(--electric);
+            text-shadow: 0 0 14px var(--electric-glow);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.3rem;
+        }
+        .deposit-section-hint {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+        [data-theme="light"] .manage-card-row {
+            background: rgba(0,0,0,0.06);
+            border-color: rgba(180,130,0,0.3);
+        }
+        [data-theme="light"] .manage-card-number {
+            color: #7a5c00;
+        }
+        [data-theme="light"] .manage-card-holder {
+            color: rgba(40,25,0,0.8);
+        }
+        [data-theme="light"] .manage-card-expiry {
+            color: rgba(40,25,0,0.6);
+        }
+        [data-theme="light"] .manage-card-actions .btn-deposit {
+            border-color: #b38200;
+            color: #7a5c00;
+        }
+        [data-theme="light"] .manage-card-actions .btn-deposit:hover {
+            background: #ffd347;
+            color: #1a1100;
+        }
+        [data-theme="light"] .no-card-msg {
+            color: rgba(40,25,0,0.5);
+        }
+        .manage-card-row {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,211,71,0.25);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .manage-card-row:last-of-type {
+            margin-bottom: 0;
+        }
+        .manage-card-logo {
+            width: 72px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px;
+            flex-shrink: 0;
+        }
+        .manage-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .manage-card-number {
+            color: var(--electric);
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+        .manage-card-holder {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.88rem;
+            margin-top: 2px;
+        }
+        .manage-card-expiry {
+            font-size: 0.85rem;
+            margin-top: 2px;
+            color: rgba(255,255,255,0.7);
+        }
+        .manage-card-expiry .valid   { color: #4cde7a; }
+        .manage-card-expiry .expired { color: #ff5f5f; }
+        .manage-card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .manage-card-actions .btn-deposit {
+            background: transparent;
+            border: 1px solid var(--electric);
+            color: var(--electric);
+            border-radius: 8px;
+            padding: 5px 18px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+        .manage-card-actions .btn-deposit:hover {
+            background: var(--electric);
+            color: #1a1a2e;
+        }
+        .manage-card-actions .btn-delete {
+            background: transparent;
+            border: 1px solid #ff5f5f;
+            color: #ff5f5f;
+            border-radius: 8px;
+            padding: 5px 18px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .manage-card-actions .btn-delete:hover {
+            background: #ff5f5f;
+            color: #fff;
+        }
+        .no-card-msg {
+            color: rgba(255,255,255,0.55);
+            text-align: center;
+            padding: 28px 0 12px;
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
 
 <header th:replace="~{fragment/common::navbar}"></header>
 
 <div class="wrapper">
+    <div class="card-form col-6 mt-5">
+        <div class="card-form__inner_deposit">
 
-    <div class="container-card-manage rounded mt-4">
-
-        <div class="d-flex text-center">
-            <div class="col-1">
+            <div class="card-input">
                 <a class="btn btn-back" th:href="@{/credit-card/deposit}">
-                    <span class="align-left">
+                    <span class="align-middle">
                         <i class="fa-solid fa-chevron-left chevron-left"></i>
                         <span th:text="#{cc.dep.form.back}">Back</span>
                     </span>
                 </a>
             </div>
-            <div class="col-10">
-                <span class="fs-4" th:text="#{card.man.page.title}">Credit Card Management</span>
-            </div>
-            <div class="col-1"></div>
-        </div>
 
-        <div th:if="${cards.size() == 0}">
-            <div class="card-container">
-                <span class="m-auto p-5 no-card-msg" th:text="#{card.man.not.yet}">No credit cards registered yet</span>
+            <div class="deposit-section-title" th:text="#{card.man.page.title}">
+                Credit Card Management
             </div>
-        </div>
-
-        <div class="card-container" th:each="c: ${cards}" th:object="${c}">
-            <div class="card-template-holder col-3">
-                <img th:src="@{/images/credit_card/template.png}" alt="card_template" src=""/>
+            <div class="deposit-section-hint" th:text="#{card.man.hint}">
+                Manage your registered cards
             </div>
 
-            <div class="card-data col-3">
-                <div class="card-num" th:text="*{getCardNumberPartlyHidden()}">
-                    1234 56XX XXXX 7890
+            <div th:if="${cards.size() == 0}" class="no-card-msg" th:text="#{card.man.not.yet}">
+                No credit cards registered yet
+            </div>
+
+            <div th:each="c: ${cards}" th:object="${c}" class="manage-card-row">
+                <img class="manage-card-logo"
+                     th:src="@{${'/images/credit_card/type_logo/' + c.getTypeLogo() + '.png'}}"
+                     alt="card_logo">
+                <div class="manage-card-info">
+                    <div class="manage-card-number" th:text="*{getCardNumberPartlyHidden()}">
+                        1234 **** **** 5678
+                    </div>
+                    <div class="manage-card-holder" th:text="${#strings.toUpperCase(c.getCardHolder())}">
+                        FULL NAME
+                    </div>
+                    <div class="manage-card-expiry">
+                        <span th:text="${c.getExpiredMonthAndYear()}">09/2032</span>
+                        <span th:unless="${c.notExpired()}" class="expired"
+                              th:text="'(' + #{card.man.expired} + ')'"> (expired)</span>
+                        <span th:if="${c.notExpired()}" class="valid"
+                              th:text="'(' + #{card.man.valid} + ')'"> (valid)</span>
+                    </div>
                 </div>
-
-                <div class="card-name col-12" th:text="${#strings.toUpperCase(c.getCardHolder())}">
-                    PESHO PESHEV
-                </div>
-
-                <div class="card-date col-12">
-                    <span th:text="${c.getExpiredMonthAndYear()}">09/2032</span>
-                    <span th:unless="${c.notExpired()}"
-                          class="expired" th:text="'(' + #{card.man.expired} + ')'">
-                        (expired)
-                    </span>
-                    <span th:if="${c.notExpired()}"
-                          class="valid" th:text="'(' + #{card.man.valid} + ')'">
-                        (valid)
-                    </span>
-                </div>
-            </div>
-
-            <div class="card-logo-wrapper col-3">
-                <img class="card-logo-img"
-                     th:src="@{${'/images/credit_card/type_logo/' + c.getTypeLogo() + '.png'}}" alt="card_logo"
-                     src="">
-            </div>
-
-            <div class="card-btn col-3">
-                <div>
+                <div class="manage-card-actions">
                     <form th:method="get"
                           th:action="@{/credit-card/deposit/{cardNumber}(cardNumber=*{cardNumber})}">
-
-                        <button class="btn btn-outline-success w-50"
-                                th:text="#{card.man.deposit}">
-                            Deposit
-                        </button>
+                        <button type="submit" class="btn-deposit"
+                                th:text="#{card.man.deposit}">Deposit</button>
                     </form>
-                </div>
-
-                <div class="mt-3">
                     <form th:method="delete"
                           th:action="@{/credit-card/{cardId}(cardId=*{id})}">
-
-                        <button class="btn btn-outline-danger w-50"
-                                th:text="#{card.man.delete}">
-                            Delete
-                        </button>
+                        <button type="submit" class="btn-delete"
+                                th:text="#{card.man.delete}">Delete</button>
                     </form>
                 </div>
             </div>
-        </div>
 
-        <div class="">
-            <a class="add-card-btn" th:href="@{/credit-card/register}" th:text="#{card.man.add.new}">
-                Add new card
-            </a>
+            <div class="card-input" style="margin-top: 18px;">
+                <a class="btn btn-outline-secondary w-100 dash add-btn" th:href="@{/credit-card/register}">
+                    <span class="fw-bolder orange">+ </span>
+                    <span class="orange fw-bolder" th:text="#{card.man.add.new}">Add new card</span>
+                </a>
+            </div>
+
         </div>
     </div>
 </div>

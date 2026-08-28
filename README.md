@@ -72,6 +72,12 @@ Result overlay:
 
 ![Result Overlay](assets/screenshots/2026-08/play-result-overlay.png)
 
+#### Winning Hand — Showcase
+
+| Wide | Mobile |
+|---|---|
+| ![Good Hand Wide](assets/screenshots/2026-08/good-hand-wide.png) | ![Good Hand Mobile](assets/screenshots/2026-08/good-hand-mobile.png) |
+
 #### In-game Modals
 
 | Strategy Chart | Payouts | How to Play |
@@ -85,6 +91,18 @@ Result overlay:
 The collapsible **Last 10 Hands** panel shows every completed hand in reverse chronological order — cards dealt, action taken, bet staked, and payout received, colour-coded by outcome (green = win, red = loss, neutral = push).
 
 ![Hand History Panel](assets/screenshots/2026-08/play-history-panel.png)
+
+---
+
+### Admin Panel
+
+The admin panel (`/admin`) provides data-management controls: **Email Previews** for inspecting the last activation and password-reset emails sent by the server, and **Clear History** to wipe all hand history, bet records, and active game states across all users (wallet balances are preserved). A one-click weekly-wipe is also available manually.
+
+![Admin Panel](assets/screenshots/2026-08/admin-panel.png)
+
+The **Blackjack Simulation** tab (`/admin/simulation`) exposes the RTP simulator and the side-bet analytical tables directly from the admin dashboard.
+
+![Admin Simulation](assets/screenshots/2026-08/admin-simulation.png)
 
 ---
 
