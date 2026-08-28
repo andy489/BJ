@@ -198,7 +198,7 @@ The first version of the site had a different visual identity before the current
 - **Dealer hidden card never leaves the server** — `PlayController.getTable()` calls `game.setDealerSecondCard(null)` before adding the `Game` object to the Thymeleaf model and before serialising it into the AJAX `GameStateDto` response. The hole card exists only in the server-side `last_games` JSON blob; it is never included in any HTTP response, so a player inspecting network traffic or the page source cannot determine its value.
 
 ### UI / UX
-- Light ♥ and dark ♠ themes — persisted in localStorage, default light
+- Light ♥ and dark ♠ themes — persisted in localStorage, default light; toggle with **Alt+Tab** from anywhere on the site
 - Responsive layout — hamburger nav on mobile
 - Live weather widget (Sofia, Las Vegas, Monte Carlo, Macao) via OpenWeatherMap
 - Navbar settings dropdown: language switcher + theme toggle
