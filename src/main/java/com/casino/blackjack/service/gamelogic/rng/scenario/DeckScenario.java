@@ -272,15 +272,15 @@ public enum DeckScenario {
           Card.of(HEARTS_SUIT, NINE_RANK),         // hand2: 9+9 = 18 → re-split offered
           // ── split 3 (hand2 active): hand2 draws [8], hand3 (new right) draws [9] ──
           Card.of(SPADES_SUIT, JAKE_RANK),         // hand2: 9+J = 19 → stand
-          Card.of(DIAMONDS_SUIT, THREE_RANK),      // hand3: 9+3 = 12 → must hit
+          Card.of(HEARTS_SUIT, KING_RANK),          // hand3 hit → 12+10 = 22 bust
           // ── play hands left to right ──
           // hand0 stands on 19 (no card needed)
           // hand2 stands on 19 (no card needed)
           // hand3 hits → bust ──
-          Card.of(CLUBS_SUIT, KING_RANK),          // hand3 hit → 12+10 = 22 bust
           // hand1 hits twice to 18 (4 cards: 9,2,A,6) ──
+          Card.of(DIAMONDS_SUIT, THREE_RANK),      // hand3: 9+3 = 12 → must hit
           Card.of(DIAMONDS_SUIT, ACE_RANK),        // hand1 hit → 9+2+A = soft 12 (counted as 12)
-          Card.of(CLUBS_SUIT, SIX_RANK),           // hand1 hit → 12+6 = 18 → stand
+          Card.of(CLUBS_SUIT, TEN_RANK),           // hand1 hit → 12+6 = 18 → stand
           // ── dealer draws ──
           Card.of(SPADES_SUIT, EIGHT_RANK)         // dealer → 15+8 = 23 bust
       );

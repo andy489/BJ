@@ -191,6 +191,14 @@ public class GameService {
 
         lastGameRepository.save(GameEntity.map(gameEntity, game, om));
         Wallet.map(walletEntity, wallet);
+
+        // Evaluate side bet outcomes immediately at deal time so the breakdown
+        // shows under Last Win during play — finalization overwrites with authoritative values.
+        // Skip if the game already finalized (BJ/surrender instant payout already set them).
+        if (!Boolean.TRUE.equals(game.getFinalized())) {
+            previewSideBetResults(wallet, walletEntity, gameEntity);
+        }
+
         walletRepository.save(walletEntity);
     }
 
@@ -333,6 +341,9 @@ public class GameService {
             w.setPerfectPairsBet(java.math.BigDecimal.ZERO);
             w.setTwentyOneThreeBet(java.math.BigDecimal.ZERO);
             w.setDealerPerfectPairsBet(java.math.BigDecimal.ZERO);
+            w.setPpPreviewWin(java.math.BigDecimal.ZERO);
+            w.setT3PreviewWin(java.math.BigDecimal.ZERO);
+            w.setDppPreviewWin(java.math.BigDecimal.ZERO);
             walletRepository.save(w);
         });
     }
@@ -483,5 +494,76 @@ public class GameService {
 
     private static BigDecimal nvl(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    private void previewSideBetResults(Wallet wallet, WalletEntity walletEntity, GameEntity gameEntity) {
+        BigDecimal ppBet  = nvl(wallet.getPerfectPairsBet());
+        BigDecimal t3Bet  = nvl(wallet.getTwentyOneThreeBet());
+        BigDecimal dppBet = nvl(wallet.getDealerPerfectPairsBet());
+
+        boolean hasPP  = ppBet.compareTo(BigDecimal.ZERO)  > 0;
+        boolean hasT3  = t3Bet.compareTo(BigDecimal.ZERO)  > 0;
+        boolean hasDPP = dppBet.compareTo(BigDecimal.ZERO) > 0;
+
+        if (!hasPP && !hasT3 && !hasDPP) {
+            walletEntity.setPpPreviewWin(BigDecimal.ZERO);
+            walletEntity.setT3PreviewWin(BigDecimal.ZERO);
+            walletEntity.setDppPreviewWin(BigDecimal.ZERO);
+            return;
+        }
+
+        String initialPlayerCardsJson = gameEntity.getInitialPlayerCards();
+        String initialDealerUpCardJson = gameEntity.getInitialDealerUpCard();
+        String initialDealerCardsJson  = gameEntity.getInitialDealerCards();
+
+        if (initialPlayerCardsJson == null || initialDealerUpCardJson == null) {
+            walletEntity.setPpPreviewWin(BigDecimal.ZERO);
+            walletEntity.setT3PreviewWin(BigDecimal.ZERO);
+            walletEntity.setDppPreviewWin(BigDecimal.ZERO);
+            return;
+        }
+
+        try {
+            List<com.casino.blackjack.service.gamelogic.dto.Card> initialPlayerCards =
+                    om.readValue(initialPlayerCardsJson, new com.fasterxml.jackson.core.type.TypeReference<>() {});
+            com.casino.blackjack.service.gamelogic.dto.Card dealerUpCard =
+                    om.readValue(initialDealerUpCardJson, com.casino.blackjack.service.gamelogic.dto.Card.class);
+
+            if (initialPlayerCards.size() < 2) return;
+            com.casino.blackjack.service.gamelogic.dto.Card p0 = initialPlayerCards.get(0);
+            com.casino.blackjack.service.gamelogic.dto.Card p1 = initialPlayerCards.get(1);
+
+            if (hasPP) {
+                double multi = com.casino.blackjack.service.gamelogic.SideBetEvaluator.evalPerfectPairs(p0, p1, paytableProperties);
+                walletEntity.setPpPreviewWin(ppBet.multiply(BigDecimal.valueOf(multi)));
+            } else {
+                walletEntity.setPpPreviewWin(BigDecimal.ZERO);
+            }
+
+            if (hasT3) {
+                double multi = com.casino.blackjack.service.gamelogic.SideBetEvaluator.eval21_3(p0, p1, dealerUpCard, paytableProperties);
+                walletEntity.setT3PreviewWin(t3Bet.multiply(BigDecimal.valueOf(multi)));
+            } else {
+                walletEntity.setT3PreviewWin(BigDecimal.ZERO);
+            }
+
+            if (hasDPP && initialDealerCardsJson != null) {
+                List<com.casino.blackjack.service.gamelogic.dto.Card> initialDealerCards =
+                        om.readValue(initialDealerCardsJson, new com.fasterxml.jackson.core.type.TypeReference<>() {});
+                if (initialDealerCards.size() >= 2) {
+                    double multi = com.casino.blackjack.service.gamelogic.SideBetEvaluator.evalPerfectPairs(
+                            initialDealerCards.get(0), initialDealerCards.get(1), paytableProperties);
+                    walletEntity.setDppPreviewWin(dppBet.multiply(BigDecimal.valueOf(multi)));
+                } else {
+                    walletEntity.setDppPreviewWin(BigDecimal.ZERO);
+                }
+            } else {
+                walletEntity.setDppPreviewWin(BigDecimal.ZERO);
+            }
+        } catch (Exception e) {
+            walletEntity.setPpPreviewWin(BigDecimal.ZERO);
+            walletEntity.setT3PreviewWin(BigDecimal.ZERO);
+            walletEntity.setDppPreviewWin(BigDecimal.ZERO);
+        }
     }
 }

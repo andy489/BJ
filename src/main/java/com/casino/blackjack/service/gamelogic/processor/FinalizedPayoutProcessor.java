@@ -79,6 +79,11 @@ public class FinalizedPayoutProcessor implements GameStateProcessor {
                 .add(ppGross).add(t3Gross).add(dppGross);
         ctx.walletEntity().setLastWin(combinedLastWin);
 
+        // Preview wins no longer needed — authoritative values are now in lastPpWin/T3Win/DppWin
+        ctx.walletEntity().setPpPreviewWin(BigDecimal.ZERO);
+        ctx.walletEntity().setT3PreviewWin(BigDecimal.ZERO);
+        ctx.walletEntity().setDppPreviewWin(BigDecimal.ZERO);
+
         // lastBet = main hand bet (for Repeat); lastTotalBet = all bets combined (for display)
         BigDecimal lastTotalBet = ctx.walletEntity().getLastBet()
                 .add(ppBetSnapshot).add(t3BetSnapshot).add(dppBetSnapshot);

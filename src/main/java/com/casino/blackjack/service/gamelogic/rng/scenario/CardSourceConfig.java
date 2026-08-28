@@ -13,7 +13,7 @@ public class CardSourceConfig {
   @Bean
   public CardSource cardSource(GameProperties props, Environment env) {
     DeckScenario scenario = props.getDeckScenario();
-    if (scenario != DeckScenario.SPLIT_RESPLIT_HIT_BUST_DOUBLE && env.acceptsProfiles(Profiles.of("prod"))) {
+    if (scenario != DeckScenario.RANDOM && env.acceptsProfiles(Profiles.of("prod"))) {
       throw new IllegalStateException(
           "FixedCardSource must not run in production — set game.blackjack.deck-scenario=RANDOM");
     }

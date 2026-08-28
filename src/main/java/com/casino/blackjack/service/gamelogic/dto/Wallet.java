@@ -52,6 +52,12 @@ public class Wallet {
 
     private BigDecimal dealerPerfectPairsBet;
 
+    private BigDecimal ppPreviewWin;
+
+    private BigDecimal t3PreviewWin;
+
+    private BigDecimal dppPreviewWin;
+
     public Wallet() {
         balance = BigDecimal.ZERO;
         lastWin = BigDecimal.ZERO;
@@ -72,6 +78,9 @@ public class Wallet {
         perfectPairsBet = BigDecimal.ZERO;
         twentyOneThreeBet = BigDecimal.ZERO;
         dealerPerfectPairsBet = BigDecimal.ZERO;
+        ppPreviewWin = BigDecimal.ZERO;
+        t3PreviewWin = BigDecimal.ZERO;
+        dppPreviewWin = BigDecimal.ZERO;
     }
 
     public static Wallet of(WalletEntity walletEntity) {
@@ -94,7 +103,10 @@ public class Wallet {
                 .setSplitBet(walletEntity.getSplitBet())
                 .setPerfectPairsBet(walletEntity.getPerfectPairsBet())
                 .setTwentyOneThreeBet(walletEntity.getTwentyOneThreeBet())
-                .setDealerPerfectPairsBet(walletEntity.getDealerPerfectPairsBet());
+                .setDealerPerfectPairsBet(walletEntity.getDealerPerfectPairsBet())
+                .setPpPreviewWin(nvl(walletEntity.getPpPreviewWin()))
+                .setT3PreviewWin(nvl(walletEntity.getT3PreviewWin()))
+                .setDppPreviewWin(nvl(walletEntity.getDppPreviewWin()));
     }
 
     public static WalletEntity map(WalletEntity walletEntity, Wallet wallet) {
@@ -117,7 +129,10 @@ public class Wallet {
                 .setSplitBet(wallet.getSplitBet())
                 .setPerfectPairsBet(wallet.getPerfectPairsBet())
                 .setTwentyOneThreeBet(wallet.getTwentyOneThreeBet())
-                .setDealerPerfectPairsBet(wallet.getDealerPerfectPairsBet());
+                .setDealerPerfectPairsBet(wallet.getDealerPerfectPairsBet())
+                .setPpPreviewWin(nvl(wallet.getPpPreviewWin()))
+                .setT3PreviewWin(nvl(wallet.getT3PreviewWin()))
+                .setDppPreviewWin(nvl(wallet.getDppPreviewWin()));
     }
 
     public Wallet deposit(BigDecimal depositSum) {

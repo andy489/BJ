@@ -57,6 +57,13 @@ public class WalletEntity extends BaseEntity {
 
     private BigDecimal dealerPerfectPairsBet;
 
+    private BigDecimal ppPreviewWin;
+
+    @jakarta.persistence.Column(name = "t3_preview_win")
+    private BigDecimal t3PreviewWin;
+
+    private BigDecimal dppPreviewWin;
+
     @OneToOne
     private UserEntity owner;
 
@@ -80,6 +87,9 @@ public class WalletEntity extends BaseEntity {
         perfectPairsBet = BigDecimal.ZERO;
         twentyOneThreeBet = BigDecimal.ZERO;
         dealerPerfectPairsBet = BigDecimal.ZERO;
+        ppPreviewWin = BigDecimal.ZERO;
+        t3PreviewWin = BigDecimal.ZERO;
+        dppPreviewWin = BigDecimal.ZERO;
     }
 
     public static WalletEntity of(Wallet wallet) {
@@ -102,7 +112,10 @@ public class WalletEntity extends BaseEntity {
                 .setSplitBet(wallet.getSplitBet())
                 .setPerfectPairsBet(wallet.getPerfectPairsBet())
                 .setTwentyOneThreeBet(wallet.getTwentyOneThreeBet())
-                .setDealerPerfectPairsBet(wallet.getDealerPerfectPairsBet());
+                .setDealerPerfectPairsBet(wallet.getDealerPerfectPairsBet())
+                .setPpPreviewWin(wallet.getPpPreviewWin())
+                .setT3PreviewWin(wallet.getT3PreviewWin())
+                .setDppPreviewWin(wallet.getDppPreviewWin());
     }
 
     public static void map(WalletEntity walletEntity, Wallet wallet) {
@@ -124,7 +137,10 @@ public class WalletEntity extends BaseEntity {
                 .setSplitBet(wallet.getSplitBet())
                 .setPerfectPairsBet(wallet.getPerfectPairsBet())
                 .setTwentyOneThreeBet(wallet.getTwentyOneThreeBet())
-                .setDealerPerfectPairsBet(wallet.getDealerPerfectPairsBet());
+                .setDealerPerfectPairsBet(wallet.getDealerPerfectPairsBet())
+                .setPpPreviewWin(wallet.getPpPreviewWin())
+                .setT3PreviewWin(wallet.getT3PreviewWin())
+                .setDppPreviewWin(wallet.getDppPreviewWin());
     }
 
     public BigDecimal deposit(BigDecimal depositSum) {

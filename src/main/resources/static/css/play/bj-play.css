@@ -508,6 +508,17 @@ body {
     color: #7aff7a;
 }
 
+.bet-breakdown-value--loss {
+    color: rgba(255, 100, 100, 0.9);
+}
+
+.curr-win-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 2px;
+}
+
 .bet-breakdown-item {
     display: flex;
     align-items: center;

@@ -295,4 +295,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="stoevand" id="18">
+        <addColumn tableName="wallets">
+            <column name="pp_preview_win" type="NUMERIC(19,4)" defaultValueNumeric="0"/>
+            <column name="t3_preview_win" type="NUMERIC(19,4)" defaultValueNumeric="0"/>
+            <column name="dpp_preview_win" type="NUMERIC(19,4)" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -89,7 +89,10 @@ public class GameStateDtoMapper {
                 .setHandBet(nvl(w.getHandBet()))
                 .setDoubleBet(nvl(w.getDoubleBet()))
                 .setInsuranceBet(nvl(w.getInsuranceBet()))
-                .setSplitBet(nvl(w.getSplitBet()));
+                .setSplitBet(nvl(w.getSplitBet()))
+                .setPpPreviewWin(nvl(w.getPpPreviewWin()))
+                .setT3PreviewWin(nvl(w.getT3PreviewWin()))
+                .setDppPreviewWin(nvl(w.getDppPreviewWin()));
     }
 
     private static BigDecimal nvl(BigDecimal v) {

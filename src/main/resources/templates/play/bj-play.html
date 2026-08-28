@@ -973,6 +973,40 @@
                     </span>
                 </div>
             </div>
+            <!-- Current Win: side bet preview shown immediately after deal, cleared on finalization -->
+            <div class="cash-stat curr-win-stat"
+                 th:if="${game.dealt != null and game.dealt
+                          and ((game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0)
+                            or (game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0)
+                            or (game.wallet.dealerPerfectPairsBet != null and game.wallet.dealerPerfectPairsBet > 0))}">
+                <div class="last-bet-box-title">Side Bets:</div>
+                <div class="bet-breakdown win-breakdown curr-win-breakdown">
+                    <span class="bet-breakdown-item" th:if="${game.wallet.perfectPairsBet != null and game.wallet.perfectPairsBet > 0}">
+                        <span class="bet-breakdown-label">PP</span>
+                        <span th:if="${game.wallet.ppPreviewWin != null and game.wallet.ppPreviewWin > 0}"
+                              class="bet-breakdown-value"
+                              th:text="'£' + ${#numbers.formatDecimal(game.wallet.ppPreviewWin, 1, 'COMMA', 2, 'POINT')}">£5</span>
+                        <span th:unless="${game.wallet.ppPreviewWin != null and game.wallet.ppPreviewWin > 0}"
+                              class="bet-breakdown-value bet-breakdown-value--loss">Loss</span>
+                    </span>
+                    <span class="bet-breakdown-item" th:if="${game.wallet.twentyOneThreeBet != null and game.wallet.twentyOneThreeBet > 0}">
+                        <span class="bet-breakdown-label">21+3</span>
+                        <span th:if="${game.wallet.t3PreviewWin != null and game.wallet.t3PreviewWin > 0}"
+                              class="bet-breakdown-value"
+                              th:text="'£' + ${#numbers.formatDecimal(game.wallet.t3PreviewWin, 1, 'COMMA', 2, 'POINT')}">£5</span>
+                        <span th:unless="${game.wallet.t3PreviewWin != null and game.wallet.t3PreviewWin > 0}"
+                              class="bet-breakdown-value bet-breakdown-value--loss">Loss</span>
+                    </span>
+                    <span class="bet-breakdown-item" th:if="${game.wallet.dealerPerfectPairsBet != null and game.wallet.dealerPerfectPairsBet > 0}">
+                        <span class="bet-breakdown-label">DPP</span>
+                        <span th:if="${game.wallet.dppPreviewWin != null and game.wallet.dppPreviewWin > 0}"
+                              class="bet-breakdown-value"
+                              th:text="'£' + ${#numbers.formatDecimal(game.wallet.dppPreviewWin, 1, 'COMMA', 2, 'POINT')}">£5</span>
+                        <span th:unless="${game.wallet.dppPreviewWin != null and game.wallet.dppPreviewWin > 0}"
+                              class="bet-breakdown-value bet-breakdown-value--loss">Loss</span>
+                    </span>
+                </div>
+            </div>
             <div class="cash-stat">
                 <div class="last-bet-box-title" th:text="#{bet.last.bet} + ':'">Last Bet</div>
                 <div class="last-bet-box-value">

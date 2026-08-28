@@ -101,12 +101,12 @@
                         <label for="cardNumber" class="card-item__number" ref="cardNumber">
                             <template v-if="getCardType === 'amex'">
                  <span v-for="(n, $index) in amexCardMask" :key="$index">
-                  <transition name="slide-fade-up">
-                    <div class="card-item__numberItem"
-                         v-if="$index > 4 && $index < 14 && cardNumber.length > $index && n.trim() !== ''">*</div>
+                  <div class="card-item__numberItem"
+                       v-if="$index > 4 && $index < 14 && cardNumber.length > $index && n.trim() !== ''">*</div>
+                  <transition name="slide-fade-up" v-else>
                     <div class="card-item__numberItem"
                          :class="{ '-active' : n.trim() === '' }"
-                         :key="$index" v-else-if="cardNumber.length > $index">
+                         :key="$index" v-if="cardNumber.length > $index">
                       {{cardNumber[$index]}}
                     </div>
                     <div class="card-item__numberItem"
@@ -119,12 +119,12 @@
                             <template v-else>
 
                   <span v-for="(n, $index) in otherCardMask" :key="$index">
-                    <transition name="slide-fade-up">
-                      <div class="card-item__numberItem"
-                           v-if="$index > 4 && $index < 15 && cardNumber.length > $index && n.trim() !== ''">*</div>
+                    <div class="card-item__numberItem"
+                         v-if="$index > 4 && $index < 15 && cardNumber.length > $index && n.trim() !== ''">*</div>
+                    <transition name="slide-fade-up" v-else>
                       <div class="card-item__numberItem"
                            :class="{ '-active' : n.trim() === '' }"
-                           :key="$index" v-else-if="cardNumber.length > $index">{{cardNumber[$index]}}
+                           :key="$index" v-if="cardNumber.length > $index">{{cardNumber[$index]}}
                       </div>
                       <div class="card-item__numberItem"
                            :class="{ '-active' : n.trim() === '' }"
@@ -217,11 +217,11 @@
                             </span>
                         </span>
                     </label>
-                    <input type="text" id="cardNumber" class="card-input__input" v-mask="generateCardNumberMask"
-                           v-model="cardNumber" v-on:focus="focusInput" v-on:blur="blurInput" data-ref="cardNumber"
-                           autocomplete="off"
-                           th:field="*{cardNumber}"
-                           th:errorclass="'is-invalid'">
+                    <input type="text" id="cardNumber" class="card-input__input"
+                           :value="maskedCardNumberDisplay"
+                           v-on:keydown="onCardNumberKeydown" v-on:focus="focusInput" v-on:blur="blurInput"
+                           data-ref="cardNumber" autocomplete="off">
+                    <input type="hidden" name="cardNumber" :value="cardNumber">
                     <span class="invalid-feedback alert alert-danger fs-6 p-1">
                     <span th:if="${#fields.errors('cardNumber').size() > 0}"
                           th:text="${#fields.errors('cardNumber').get(0)}"></span>
@@ -342,7 +342,9 @@
         },
         mounted() {
             this.cardNumberTemp = this.otherCardMask;
-            document.getElementById("cardNumber").focus();
+            const el = document.getElementById("cardNumber");
+            el.value = this.maskedCardNumberDisplay;
+            el.focus();
         },
         computed: {
             getCardType() {
@@ -367,6 +369,29 @@
             generateCardNumberMask() {
                 return this.getCardType === "amex" ? this.amexCardMask : this.otherCardMask;
             },
+            maskedCardNumberDisplay() {
+                const raw = this.cardNumber.replace(/\s/g, '');
+                const isAmex = this.getCardType === 'amex';
+                // amex: 4-6-5, mask positions 4-9; other: 4-4-4-4, mask positions 4-11
+                const maskStart = 4;
+                const maskEnd = isAmex ? 10 : 12;
+                let masked = '';
+                for (let i = 0; i < raw.length; i++) {
+                    masked += (i >= maskStart && i < maskEnd) ? '*' : raw[i];
+                }
+                // reformat with spaces matching the mask pattern
+                const groups = isAmex ? [4, 6, 5] : [4, 4, 4, 4];
+                let result = '';
+                let pos = 0;
+                for (const len of groups) {
+                    const chunk = masked.slice(pos, pos + len);
+                    if (!chunk) break;
+                    if (result) result += ' ';
+                    result += chunk;
+                    pos += len;
+                }
+                return result;
+            },
             minCardMonth() {
                 if (this.cardYear === this.minCardYear) return new Date().getMonth() + 1;
                 return 1;
@@ -380,6 +405,39 @@
             }
         },
         methods: {
+            onCardNumberKeydown(e) {
+                const isAmex = this.getCardType === 'amex';
+                const max = isAmex ? 15 : 16;
+                // Work with raw digits only
+                const raw = this.cardNumber.replace(/\s/g, '');
+                if (e.key === 'Backspace' || e.key === 'Delete') {
+                    e.preventDefault();
+                    const newRaw = raw.slice(0, -1);
+                    this.cardNumber = this._formatRaw(newRaw, isAmex);
+                } else if (/^\d$/.test(e.key) && raw.length < max) {
+                    e.preventDefault();
+                    const newRaw = raw + e.key;
+                    this.cardNumber = this._formatRaw(newRaw, isAmex);
+                } else if (!['Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) {
+                    e.preventDefault();
+                }
+                this.$nextTick(() => {
+                    const el = document.getElementById('cardNumber');
+                    if (el) el.value = this.maskedCardNumberDisplay;
+                });
+            },
+            _formatRaw(raw, isAmex) {
+                const groups = isAmex ? [4, 6, 5] : [4, 4, 4, 4];
+                let result = '', pos = 0;
+                for (const len of groups) {
+                    const chunk = raw.slice(pos, pos + len);
+                    if (!chunk) break;
+                    if (result) result += ' ';
+                    result += chunk;
+                    pos += len;
+                }
+                return result;
+            },
             flipCard(status) {
                 this.isCardFlipped = status;
             },

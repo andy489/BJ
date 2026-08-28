@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -199,7 +200,10 @@ public class Game {
                 .setSplitBet(walletEntity.getSplitBet())
                 .setPerfectPairsBet(walletEntity.getPerfectPairsBet())
                 .setTwentyOneThreeBet(walletEntity.getTwentyOneThreeBet())
-                .setDealerPerfectPairsBet(walletEntity.getDealerPerfectPairsBet());
+                .setDealerPerfectPairsBet(walletEntity.getDealerPerfectPairsBet())
+                .setPpPreviewWin(walletEntity.getPpPreviewWin() != null ? walletEntity.getPpPreviewWin() : BigDecimal.ZERO)
+                .setT3PreviewWin(walletEntity.getT3PreviewWin() != null ? walletEntity.getT3PreviewWin() : BigDecimal.ZERO)
+                .setDppPreviewWin(walletEntity.getDppPreviewWin() != null ? walletEntity.getDppPreviewWin() : BigDecimal.ZERO);
 
         return game.setWallet(wallet);
     }

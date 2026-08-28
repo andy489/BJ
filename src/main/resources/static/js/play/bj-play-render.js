@@ -374,20 +374,72 @@ var BJ_RENDER = (function () {
         if (betInput) betInput.value = parseFloat(w.currentBet) || 0
 
         // last win
-        var lwEl = document.querySelector('.last-bet-box-value span, .balance-box-value ~ .cash-stat .last-bet-box-value')
         // Target "Last Win" display by structure — 2nd cash-stat
         var cashStats = document.querySelectorAll('.cash-stat')
         if (cashStats[1]) {
             var lwVal = cashStats[1].querySelector('.last-bet-box-value span')
             if (lwVal) lwVal.textContent = fmt(w.lastWin)
         }
-        // Last Bet — 3rd cash-stat
-        if (cashStats[2]) {
-            var lbVal = cashStats[2].querySelector('.last-bet-box-value span')
+        // Last Bet — find by class to be resilient against curr-win-stat insertion
+        var lastBetStat = document.querySelector('.cash-stat:not(.curr-win-stat) .last-bet-box-title:not(.curr-bet-box-title)')
+        if (lastBetStat) {
+            var lbVal = lastBetStat.parentElement.querySelector('.last-bet-box-value span')
             if (lbVal) {
                 var lastTotal = parseFloat(w.lastTotalBet) || parseFloat(w.lastBet) || 0
                 lbVal.textContent = fmt(lastTotal)
             }
+        }
+
+        // Current win: side bet preview (shown during active hand when any side bet placed)
+        var currWinStat = document.querySelector('.curr-win-stat')
+        var hasSideBet = (parseFloat(w.perfectPairsBet) || 0) > 0
+                      || (parseFloat(w.twentyOneThreeBet) || 0) > 0
+                      || (parseFloat(w.dealerPerfectPairsBet) || 0) > 0
+        if (state.dealt && hasSideBet) {
+            if (!currWinStat) {
+                // Create the element if not present (e.g. first AJAX response after deal)
+                var lastBetStatEl = document.querySelector('.cash-stat .last-bet-box-title')
+                if (lastBetStatEl) {
+                    var newStat = document.createElement('div')
+                    newStat.className = 'cash-stat curr-win-stat'
+                    newStat.innerHTML = '<div class="last-bet-box-title">Side Bets:</div>'
+                                     + '<div class="bet-breakdown win-breakdown curr-win-breakdown"></div>'
+                    lastBetStatEl.closest('.cash-stat').before(newStat)
+                    currWinStat = newStat
+                }
+            }
+            if (currWinStat) {
+                var cwBreakdown = currWinStat.querySelector('.curr-win-breakdown')
+                if (cwBreakdown) {
+                    cwBreakdown.innerHTML = ''
+                    var sideBets = [
+                        { label: 'PP',   bet: parseFloat(w.perfectPairsBet) || 0,      win: parseFloat(w.ppPreviewWin)  || 0 },
+                        { label: '21+3', bet: parseFloat(w.twentyOneThreeBet) || 0,    win: parseFloat(w.t3PreviewWin)  || 0 },
+                        { label: 'DPP',  bet: parseFloat(w.dealerPerfectPairsBet) || 0, win: parseFloat(w.dppPreviewWin) || 0 }
+                    ]
+                    sideBets.forEach(function(sb) {
+                        if (sb.bet <= 0) return
+                        var item = document.createElement('span')
+                        item.className = 'bet-breakdown-item'
+                        var lbl = document.createElement('span')
+                        lbl.className = 'bet-breakdown-label'
+                        lbl.textContent = sb.label
+                        var val = document.createElement('span')
+                        if (sb.win > 0) {
+                            val.className = 'bet-breakdown-value'
+                            val.textContent = fmt(sb.win)
+                        } else {
+                            val.className = 'bet-breakdown-value bet-breakdown-value--loss'
+                            val.textContent = 'Loss'
+                        }
+                        item.appendChild(lbl)
+                        item.appendChild(val)
+                        cwBreakdown.appendChild(item)
+                    })
+                }
+            }
+        } else if (currWinStat) {
+            currWinStat.remove()
         }
 
         // side bet circles (server-committed amounts during hand)

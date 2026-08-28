@@ -22,6 +22,9 @@ public class WalletStateDto {
     private BigDecimal doubleBet;
     private BigDecimal insuranceBet;
     private BigDecimal splitBet;
+    private BigDecimal ppPreviewWin;
+    private BigDecimal t3PreviewWin;
+    private BigDecimal dppPreviewWin;
 
     public WalletStateDto() {}
 
@@ -44,6 +47,9 @@ public class WalletStateDto {
     public BigDecimal getDoubleBet()                { return doubleBet; }
     public BigDecimal getInsuranceBet()             { return insuranceBet; }
     public BigDecimal getSplitBet()                 { return splitBet; }
+    public BigDecimal getPpPreviewWin()             { return ppPreviewWin; }
+    public BigDecimal getT3PreviewWin()             { return t3PreviewWin; }
+    public BigDecimal getDppPreviewWin()            { return dppPreviewWin; }
 
     public WalletStateDto setBalance(BigDecimal v)               { balance = v; return this; }
     public WalletStateDto setCurrentBet(BigDecimal v)            { currentBet = v; return this; }
@@ -64,4 +70,7 @@ public class WalletStateDto {
     public WalletStateDto setDoubleBet(BigDecimal v)             { doubleBet = v; return this; }
     public WalletStateDto setInsuranceBet(BigDecimal v)          { insuranceBet = v; return this; }
     public WalletStateDto setSplitBet(BigDecimal v)              { splitBet = v; return this; }
+    public WalletStateDto setPpPreviewWin(BigDecimal v)          { ppPreviewWin = v; return this; }
+    public WalletStateDto setT3PreviewWin(BigDecimal v)          { t3PreviewWin = v; return this; }
+    public WalletStateDto setDppPreviewWin(BigDecimal v)         { dppPreviewWin = v; return this; }
 }
