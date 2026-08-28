@@ -105,6 +105,15 @@
                 }
             });
 
+            // Alt+Tab keyboard shortcut to toggle theme
+            document.addEventListener('keydown', function(e) {
+                if (e.altKey && e.key === 'Tab') {
+                    e.preventDefault();
+                    var cur = document.documentElement.getAttribute('data-theme');
+                    applyTheme(cur === 'dark' ? 'light' : 'dark');
+                }
+            });
+
             // Close all dropdowns on outside click
             document.addEventListener('click', function () {
                 allDds.forEach(function (d) { d.classList.remove('open'); });
