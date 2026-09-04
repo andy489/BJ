@@ -4,6 +4,9 @@
 <head>
     <title th:text="#{page.index.title}">Blackjack Lobby</title>
     <th:block th:insert="~{fragment/common::head}"></th:block>
+    <script th:inline="javascript">
+        window.WEATHER_API_KEY = /*[[${weatherApiKey}]]*/ '';
+    </script>
     <script defer th:src="@{/js/weather/weather.js}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {

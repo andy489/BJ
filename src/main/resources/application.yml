@@ -39,6 +39,9 @@ spring:
       filter:
         enabled: true
 
+openweathermap:
+  api-key: ${OPENWEATHERMAP_API_KEY:}
+
 google.recaptcha:
   enabled: ${RECAPTCHA_ENABLED:false}
   site: ${RECAPTCHA_SITE_KEY:6LftLZQpAAAAABngcJW_QJ-hZ3XCfb8GqAisD0s5}
